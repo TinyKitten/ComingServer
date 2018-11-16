@@ -1,0 +1,25 @@
+version: 2
+jobs:
+  test:
+    working_directory: /go/src/github.com/TinyKitten/ComingServer
+    docker:
+      - image: circleci/golang:1.10
+      - image: circleci/mysql:5.7
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin --innodb-large-prefix=true --innodb-file-format=Barracuda
+        environment:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: comingserver
+          MYSQL_USER: comingserver
+          MYSQL_PASSWORD: comingserver
+          TZ: "Asia/Tokyo"
+    steps:
+      - checkout
+      - run: go get -v -t -d ./...
+      - run: go vet -v ./...
+      - run: go test -v -race ./...
+
+workflows:
+  version: 2
+  test-deploy:
+    jobs:
+      - test
