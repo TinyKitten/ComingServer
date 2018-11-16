@@ -64,7 +64,7 @@ func main() {
 	}
 	app.MountAuthController(service, c)
 	// Mount "peers" controller
-	c2 := controller.NewPeersController(service, dbConn)
+	c2 := controller.NewPeersController(service, dbConn, redisdb)
 	app.MountPeersController(service, c2)
 	// Mount "pods" controller
 	c3 := controller.NewPodsController(service, dbConn)

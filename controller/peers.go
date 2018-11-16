@@ -2,25 +2,29 @@ package controller
 
 import (
 	"database/sql"
+	"encoding/json"
 	"log"
 	"time"
 
 	"github.com/TinyKitten/ComingServer/app"
 	"github.com/TinyKitten/ComingServer/models"
+	"github.com/go-redis/redis"
 	"github.com/goadesign/goa"
 )
 
 // PeersController implements the peers resource.
 type PeersController struct {
 	*goa.Controller
-	db *sql.DB
+	db          *sql.DB
+	redisClient *redis.Client
 }
 
 // NewPeersController creates a peers controller.
-func NewPeersController(service *goa.Service, db *sql.DB) *PeersController {
+func NewPeersController(service *goa.Service, db *sql.DB, redisClient *redis.Client) *PeersController {
 	return &PeersController{
-		Controller: service.NewController("PeersController"),
-		db:         db,
+		Controller:  service.NewController("PeersController"),
+		db:          db,
+		redisClient: redisClient,
 	}
 }
 
@@ -215,6 +219,37 @@ func (c *PeersController) SendLocation(ctx *app.SendLocationPeersContext) error 
 	}
 
 	err = loc.Insert(c.db)
+	if err != nil {
+		log.Println(err)
+		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
+	}
+
+	pm, err := models.PeersMapByPeerID(c.db, peer.ID)
+	if err != nil {
+		log.Println(err)
+		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
+	}
+
+	pod, err := pm.Pod(c.db)
+	if err != nil {
+		log.Println(err)
+		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
+	}
+
+	approachingMedia := app.PeerApproaching{
+		Type:      "APPROACHING",
+		Code:      peer.Code,
+		Latitude:  ctx.Payload.Latitude,
+		Longitude: ctx.Payload.Longitude,
+		CreatedAt: at.Unix(),
+	}
+	bytes, err := json.Marshal(approachingMedia)
+	if err != nil {
+		log.Println(err)
+		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
+	}
+
+	err = c.redisClient.Publish(pod.Code, bytes).Err()
 	if err != nil {
 		log.Println(err)
 		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))

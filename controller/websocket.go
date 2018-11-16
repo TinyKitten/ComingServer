@@ -73,7 +73,7 @@ func (c *WebsocketController) ReceivePeerLocationWSHandler(ctx *app.ReceivePeerL
 			case *redis.Subscription:
 				log.Println("subscribed to", msg.Channel)
 			case *redis.Message:
-				var peerLoc locationSendRequest
+				var peerLoc app.PeerApproaching
 				err := json.Unmarshal([]byte(msg.Payload), &peerLoc)
 				if err != nil {
 					log.Println(err)
@@ -200,7 +200,6 @@ func (c *WebsocketController) SendCurrentPeerLocationWSHandler(ctx *app.SendCurr
 				ws.Write([]byte(WsErrInternalServerError))
 				continue
 			}
-
 		}
 
 		// WebsocketController_SendCurrentPeerLocation: end_implement
