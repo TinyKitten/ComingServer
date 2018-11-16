@@ -9,20 +9,16 @@ import (
 
 	"github.com/TinyKitten/ComingServer/app"
 	"github.com/TinyKitten/ComingServer/controller"
+	"github.com/TinyKitten/ComingServer/database"
 	"github.com/TinyKitten/ComingServer/security"
+	"github.com/TinyKitten/ComingServer/utils"
 	"github.com/go-redis/redis"
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
-	"github.com/joho/godotenv"
-	"github.com/nppw/api/database"
-	"github.com/nppw/api/utils"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		exitOnFailure(err)
-	}
+	utils.LoadEnv()
 
 	cs, err := database.NewConfigsFromFile("dbconfig.yml")
 	if err != nil {
