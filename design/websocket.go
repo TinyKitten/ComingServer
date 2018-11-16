@@ -5,8 +5,8 @@ import (
 	. "github.com/goadesign/goa/design/apidsl"
 )
 
-var _ = Resource("send current peer location", func() {
-	Action("connect", func() {
+var _ = Resource("websocket", func() {
+	Action("send current peer location", func() {
 		Routing(GET("echo"))
 		Scheme("ws")
 		Description("echo websocket server")

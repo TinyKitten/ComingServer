@@ -1078,57 +1078,6 @@ func (ctx *UpdatePodsContext) InternalServerError(r error) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
 }
 
-// ConnectSendCurrentPeerLocationContext provides the send current peer location connect action context.
-type ConnectSendCurrentPeerLocationContext struct {
-	context.Context
-	*goa.ResponseData
-	*goa.RequestData
-	Latitude  float64
-	Longitude float64
-	Token     string
-}
-
-// NewConnectSendCurrentPeerLocationContext parses the incoming request URL and body, performs validations and creates the
-// context used by the send current peer location controller connect action.
-func NewConnectSendCurrentPeerLocationContext(ctx context.Context, r *http.Request, service *goa.Service) (*ConnectSendCurrentPeerLocationContext, error) {
-	var err error
-	resp := goa.ContextResponse(ctx)
-	resp.Service = service
-	req := goa.ContextRequest(ctx)
-	req.Request = r
-	rctx := ConnectSendCurrentPeerLocationContext{Context: ctx, ResponseData: resp, RequestData: req}
-	paramLatitude := req.Params["latitude"]
-	if len(paramLatitude) == 0 {
-		err = goa.MergeErrors(err, goa.MissingParamError("latitude"))
-	} else {
-		rawLatitude := paramLatitude[0]
-		if latitude, err2 := strconv.ParseFloat(rawLatitude, 64); err2 == nil {
-			rctx.Latitude = latitude
-		} else {
-			err = goa.MergeErrors(err, goa.InvalidParamTypeError("latitude", rawLatitude, "number"))
-		}
-	}
-	paramLongitude := req.Params["longitude"]
-	if len(paramLongitude) == 0 {
-		err = goa.MergeErrors(err, goa.MissingParamError("longitude"))
-	} else {
-		rawLongitude := paramLongitude[0]
-		if longitude, err2 := strconv.ParseFloat(rawLongitude, 64); err2 == nil {
-			rctx.Longitude = longitude
-		} else {
-			err = goa.MergeErrors(err, goa.InvalidParamTypeError("longitude", rawLongitude, "number"))
-		}
-	}
-	paramToken := req.Params["token"]
-	if len(paramToken) == 0 {
-		err = goa.MergeErrors(err, goa.MissingParamError("token"))
-	} else {
-		rawToken := paramToken[0]
-		rctx.Token = rawToken
-	}
-	return &rctx, err
-}
-
 // AddUsersContext provides the users add action context.
 type AddUsersContext struct {
 	context.Context
@@ -1371,4 +1320,55 @@ func (ctx *ShowUsersContext) InternalServerError(r error) error {
 		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
 	}
 	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}
+
+// SendCurrentPeerLocationWebsocketContext provides the websocket send current peer location action context.
+type SendCurrentPeerLocationWebsocketContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	Latitude  float64
+	Longitude float64
+	Token     string
+}
+
+// NewSendCurrentPeerLocationWebsocketContext parses the incoming request URL and body, performs validations and creates the
+// context used by the websocket controller send current peer location action.
+func NewSendCurrentPeerLocationWebsocketContext(ctx context.Context, r *http.Request, service *goa.Service) (*SendCurrentPeerLocationWebsocketContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := SendCurrentPeerLocationWebsocketContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramLatitude := req.Params["latitude"]
+	if len(paramLatitude) == 0 {
+		err = goa.MergeErrors(err, goa.MissingParamError("latitude"))
+	} else {
+		rawLatitude := paramLatitude[0]
+		if latitude, err2 := strconv.ParseFloat(rawLatitude, 64); err2 == nil {
+			rctx.Latitude = latitude
+		} else {
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("latitude", rawLatitude, "number"))
+		}
+	}
+	paramLongitude := req.Params["longitude"]
+	if len(paramLongitude) == 0 {
+		err = goa.MergeErrors(err, goa.MissingParamError("longitude"))
+	} else {
+		rawLongitude := paramLongitude[0]
+		if longitude, err2 := strconv.ParseFloat(rawLongitude, 64); err2 == nil {
+			rctx.Longitude = longitude
+		} else {
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("longitude", rawLongitude, "number"))
+		}
+	}
+	paramToken := req.Params["token"]
+	if len(paramToken) == 0 {
+		err = goa.MergeErrors(err, goa.MissingParamError("token"))
+	} else {
+		rawToken := paramToken[0]
+		rctx.Token = rawToken
+	}
+	return &rctx, err
 }

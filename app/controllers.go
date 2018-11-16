@@ -520,62 +520,6 @@ func unmarshalUpdatePodsPayload(ctx context.Context, service *goa.Service, req *
 	return nil
 }
 
-// SendCurrentPeerLocationController is the controller interface for the SendCurrentPeerLocation actions.
-type SendCurrentPeerLocationController interface {
-	goa.Muxer
-	Connect(*ConnectSendCurrentPeerLocationContext) error
-}
-
-// MountSendCurrentPeerLocationController "mounts" a SendCurrentPeerLocation resource controller on the given service.
-func MountSendCurrentPeerLocationController(service *goa.Service, ctrl SendCurrentPeerLocationController) {
-	initService(service)
-	var h goa.Handler
-	service.Mux.Handle("OPTIONS", "/v1/echo", ctrl.MuxHandler("preflight", handleSendCurrentPeerLocationOrigin(cors.HandlePreflight()), nil))
-
-	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
-		// Check if there was an error loading the request
-		if err := goa.ContextError(ctx); err != nil {
-			return err
-		}
-		// Build the context
-		rctx, err := NewConnectSendCurrentPeerLocationContext(ctx, req, service)
-		if err != nil {
-			return err
-		}
-		return ctrl.Connect(rctx)
-	}
-	h = handleSendCurrentPeerLocationOrigin(h)
-	service.Mux.Handle("GET", "/v1/echo", ctrl.MuxHandler("connect", h, nil))
-	service.LogInfo("mount", "ctrl", "SendCurrentPeerLocation", "action", "Connect", "route", "GET /v1/echo")
-}
-
-// handleSendCurrentPeerLocationOrigin applies the CORS response headers corresponding to the origin.
-func handleSendCurrentPeerLocationOrigin(h goa.Handler) goa.Handler {
-
-	return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
-		origin := req.Header.Get("Origin")
-		if origin == "" {
-			// Not a CORS request
-			return h(ctx, rw, req)
-		}
-		if cors.MatchOrigin(origin, "*") {
-			ctx = goa.WithLogContext(ctx, "origin", origin)
-			rw.Header().Set("Access-Control-Allow-Origin", origin)
-			rw.Header().Set("Access-Control-Expose-Headers", "X-Time")
-			rw.Header().Set("Access-Control-Max-Age", "600")
-			rw.Header().Set("Access-Control-Allow-Credentials", "true")
-			if acrm := req.Header.Get("Access-Control-Request-Method"); acrm != "" {
-				// We are handling a preflight request
-				rw.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-				rw.Header().Set("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept")
-			}
-			return h(ctx, rw, req)
-		}
-
-		return h(ctx, rw, req)
-	}
-}
-
 // SwaggerController is the controller interface for the Swagger actions.
 type SwaggerController interface {
 	goa.Muxer
@@ -743,4 +687,60 @@ func unmarshalAddUsersPayload(ctx context.Context, service *goa.Service, req *ht
 	}
 	goa.ContextRequest(ctx).Payload = payload.Publicize()
 	return nil
+}
+
+// WebsocketController is the controller interface for the Websocket actions.
+type WebsocketController interface {
+	goa.Muxer
+	SendCurrentPeerLocation(*SendCurrentPeerLocationWebsocketContext) error
+}
+
+// MountWebsocketController "mounts" a Websocket resource controller on the given service.
+func MountWebsocketController(service *goa.Service, ctrl WebsocketController) {
+	initService(service)
+	var h goa.Handler
+	service.Mux.Handle("OPTIONS", "/v1/echo", ctrl.MuxHandler("preflight", handleWebsocketOrigin(cors.HandlePreflight()), nil))
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewSendCurrentPeerLocationWebsocketContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.SendCurrentPeerLocation(rctx)
+	}
+	h = handleWebsocketOrigin(h)
+	service.Mux.Handle("GET", "/v1/echo", ctrl.MuxHandler("send current peer location", h, nil))
+	service.LogInfo("mount", "ctrl", "Websocket", "action", "SendCurrentPeerLocation", "route", "GET /v1/echo")
+}
+
+// handleWebsocketOrigin applies the CORS response headers corresponding to the origin.
+func handleWebsocketOrigin(h goa.Handler) goa.Handler {
+
+	return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		origin := req.Header.Get("Origin")
+		if origin == "" {
+			// Not a CORS request
+			return h(ctx, rw, req)
+		}
+		if cors.MatchOrigin(origin, "*") {
+			ctx = goa.WithLogContext(ctx, "origin", origin)
+			rw.Header().Set("Access-Control-Allow-Origin", origin)
+			rw.Header().Set("Access-Control-Expose-Headers", "X-Time")
+			rw.Header().Set("Access-Control-Max-Age", "600")
+			rw.Header().Set("Access-Control-Allow-Credentials", "true")
+			if acrm := req.Header.Get("Access-Control-Request-Method"); acrm != "" {
+				// We are handling a preflight request
+				rw.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+				rw.Header().Set("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept")
+			}
+			return h(ctx, rw, req)
+		}
+
+		return h(ctx, rw, req)
+	}
 }

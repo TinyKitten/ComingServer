@@ -138,17 +138,6 @@ type (
 		PrettyPrint bool
 	}
 
-	// ConnectSendCurrentPeerLocationCommand is the command line data structure for the connect action of send current peer location
-	ConnectSendCurrentPeerLocationCommand struct {
-		// 緯度
-		Latitude string
-		// スクリーンネーム
-		Longitude string
-		// Secret token for send location
-		Token       string
-		PrettyPrint bool
-	}
-
 	// AddUsersCommand is the command line data structure for the add action of users
 	AddUsersCommand struct {
 		Payload     string
@@ -169,6 +158,17 @@ type (
 	ShowUsersCommand struct {
 		// ユーザーID
 		ID          int
+		PrettyPrint bool
+	}
+
+	// SendCurrentPeerLocationWebsocketCommand is the command line data structure for the send current peer location action of websocket
+	SendCurrentPeerLocationWebsocketCommand struct {
+		// 緯度
+		Latitude string
+		// スクリーンネーム
+		Longitude string
+		// Secret token for send location
+		Token       string
 		PrettyPrint bool
 	}
 
@@ -263,12 +263,12 @@ Payload example:
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "connect",
-		Short: `echo websocket server`,
+		Use:   "current-location",
+		Short: `ピアの現在位置`,
 	}
-	tmp5 := new(ConnectSendCurrentPeerLocationCommand)
+	tmp5 := new(CurrentLocationPeersCommand)
 	sub = &cobra.Command{
-		Use:   `send current peer location ["/v1/echo"]`,
+		Use:   `peers ["/v1/peers/ID/location"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp5.Run(c, args) },
 	}
@@ -277,44 +277,44 @@ Payload example:
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "current-location",
-		Short: `ピアの現在位置`,
+		Use:   "list",
+		Short: `list action`,
 	}
-	tmp6 := new(CurrentLocationPeersCommand)
+	tmp6 := new(ListPeersCommand)
 	sub = &cobra.Command{
-		Use:   `peers ["/v1/peers/ID/location"]`,
+		Use:   `peers ["/v1/peers"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp6.Run(c, args) },
 	}
 	tmp6.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp6.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	app.AddCommand(command)
-	command = &cobra.Command{
-		Use:   "list",
-		Short: `list action`,
-	}
-	tmp7 := new(ListPeersCommand)
+	tmp7 := new(ListPodsCommand)
 	sub = &cobra.Command{
-		Use:   `peers ["/v1/peers"]`,
+		Use:   `pods ["/v1/pods"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp7.Run(c, args) },
 	}
 	tmp7.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp7.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	tmp8 := new(ListPodsCommand)
+	tmp8 := new(ListUsersCommand)
 	sub = &cobra.Command{
-		Use:   `pods ["/v1/pods"]`,
+		Use:   `users ["/v1/users"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp8.Run(c, args) },
 	}
 	tmp8.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp8.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	tmp9 := new(ListUsersCommand)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "locations",
+		Short: `ピアの位置履歴`,
+	}
+	tmp9 := new(LocationsPeersCommand)
 	sub = &cobra.Command{
-		Use:   `users ["/v1/users"]`,
+		Use:   `peers ["/v1/peers/ID/locations"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp9.Run(c, args) },
 	}
@@ -323,35 +323,35 @@ Payload example:
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "locations",
-		Short: `ピアの位置履歴`,
+		Use:   "regenerate-token",
+		Short: `regenerateToken action`,
 	}
-	tmp10 := new(LocationsPeersCommand)
+	tmp10 := new(RegenerateTokenPeersCommand)
 	sub = &cobra.Command{
-		Use:   `peers ["/v1/peers/ID/locations"]`,
+		Use:   `peers ["/v1/peers/ID"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp10.Run(c, args) },
 	}
 	tmp10.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp10.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	app.AddCommand(command)
-	command = &cobra.Command{
-		Use:   "regenerate-token",
-		Short: `regenerateToken action`,
-	}
-	tmp11 := new(RegenerateTokenPeersCommand)
+	tmp11 := new(RegenerateTokenPodsCommand)
 	sub = &cobra.Command{
-		Use:   `peers ["/v1/peers/ID"]`,
+		Use:   `pods ["/v1/pods/ID"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp11.Run(c, args) },
 	}
 	tmp11.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp11.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	tmp12 := new(RegenerateTokenPodsCommand)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "send-current-peer-location",
+		Short: `echo websocket server`,
+	}
+	tmp12 := new(SendCurrentPeerLocationWebsocketCommand)
 	sub = &cobra.Command{
-		Use:   `pods ["/v1/pods/ID"]`,
+		Use:   `websocket ["/v1/echo"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp12.Run(c, args) },
 	}
@@ -1081,63 +1081,6 @@ func (cmd *UpdatePodsCommand) RegisterFlags(cc *cobra.Command, c *client.Client)
 	cc.Flags().IntVar(&cmd.ID, "id", id, `ポッドID`)
 }
 
-// Run establishes a websocket connection for the ConnectSendCurrentPeerLocationCommand command.
-func (cmd *ConnectSendCurrentPeerLocationCommand) Run(c *client.Client, args []string) error {
-	var path string
-	if len(args) > 0 {
-		path = args[0]
-	} else {
-		path = "/v1/echo"
-	}
-	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
-	ctx := goa.WithLogger(context.Background(), logger)
-	var tmp19 *float64
-	if cmd.Latitude != "" {
-		var err error
-		tmp19, err = float64Val(cmd.Latitude)
-		if err != nil {
-			goa.LogError(ctx, "failed to parse flag into *float64 value", "flag", "--latitude", "err", err)
-			return err
-		}
-	}
-	if tmp19 == nil {
-		goa.LogError(ctx, "required flag is missing", "flag", "--latitude")
-		return fmt.Errorf("required flag latitude is missing")
-	}
-	var tmp20 *float64
-	if cmd.Longitude != "" {
-		var err error
-		tmp20, err = float64Val(cmd.Longitude)
-		if err != nil {
-			goa.LogError(ctx, "failed to parse flag into *float64 value", "flag", "--longitude", "err", err)
-			return err
-		}
-	}
-	if tmp20 == nil {
-		goa.LogError(ctx, "required flag is missing", "flag", "--longitude")
-		return fmt.Errorf("required flag longitude is missing")
-	}
-	ws, err := c.ConnectSendCurrentPeerLocation(ctx, path, *tmp19, *tmp20, cmd.Token)
-	if err != nil {
-		goa.LogError(ctx, "failed", "err", err)
-		return err
-	}
-	go goaclient.WSWrite(ws)
-	goaclient.WSRead(ws)
-
-	return nil
-}
-
-// RegisterFlags registers the command flags with the command line.
-func (cmd *ConnectSendCurrentPeerLocationCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
-	var latitude string
-	cc.Flags().StringVar(&cmd.Latitude, "latitude", latitude, `緯度`)
-	var longitude string
-	cc.Flags().StringVar(&cmd.Longitude, "longitude", longitude, `スクリーンネーム`)
-	var token string
-	cc.Flags().StringVar(&cmd.Token, "token", token, `Secret token for send location`)
-}
-
 // Run makes the HTTP request corresponding to the AddUsersCommand command.
 func (cmd *AddUsersCommand) Run(c *client.Client, args []string) error {
 	var path string
@@ -1222,4 +1165,61 @@ func (cmd *ShowUsersCommand) Run(c *client.Client, args []string) error {
 func (cmd *ShowUsersCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 	var id int
 	cc.Flags().IntVar(&cmd.ID, "id", id, `ユーザーID`)
+}
+
+// Run establishes a websocket connection for the SendCurrentPeerLocationWebsocketCommand command.
+func (cmd *SendCurrentPeerLocationWebsocketCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = "/v1/echo"
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	var tmp19 *float64
+	if cmd.Latitude != "" {
+		var err error
+		tmp19, err = float64Val(cmd.Latitude)
+		if err != nil {
+			goa.LogError(ctx, "failed to parse flag into *float64 value", "flag", "--latitude", "err", err)
+			return err
+		}
+	}
+	if tmp19 == nil {
+		goa.LogError(ctx, "required flag is missing", "flag", "--latitude")
+		return fmt.Errorf("required flag latitude is missing")
+	}
+	var tmp20 *float64
+	if cmd.Longitude != "" {
+		var err error
+		tmp20, err = float64Val(cmd.Longitude)
+		if err != nil {
+			goa.LogError(ctx, "failed to parse flag into *float64 value", "flag", "--longitude", "err", err)
+			return err
+		}
+	}
+	if tmp20 == nil {
+		goa.LogError(ctx, "required flag is missing", "flag", "--longitude")
+		return fmt.Errorf("required flag longitude is missing")
+	}
+	ws, err := c.SendCurrentPeerLocationWebsocket(ctx, path, *tmp19, *tmp20, cmd.Token)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+	go goaclient.WSWrite(ws)
+	goaclient.WSRead(ws)
+
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *SendCurrentPeerLocationWebsocketCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	var latitude string
+	cc.Flags().StringVar(&cmd.Latitude, "latitude", latitude, `緯度`)
+	var longitude string
+	cc.Flags().StringVar(&cmd.Longitude, "longitude", longitude, `スクリーンネーム`)
+	var token string
+	cc.Flags().StringVar(&cmd.Token, "token", token, `Secret token for send location`)
 }

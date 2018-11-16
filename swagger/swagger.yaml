@@ -516,7 +516,7 @@ paths:
   /v1/echo:
     get:
       description: echo websocket server
-      operationId: send current peer location#connect
+      operationId: websocket#send current peer location
       parameters:
       - description: 緯度
         in: query
@@ -538,9 +538,9 @@ paths:
           description: Switching Protocols
       schemes:
       - ws
-      summary: connect send current peer location
+      summary: send current peer location websocket
       tags:
-      - send current peer location
+      - websocket
   /v1/peers:
     get:
       description: |-
