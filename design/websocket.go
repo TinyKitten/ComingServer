@@ -14,13 +14,7 @@ var _ = Resource("websocket", func() {
 			Param("token", String, "接続用トークン", func() {
 				Example("AHO-AHO-MAN")
 			})
-			Param("latitude", Number, "緯度", func() {
-				Example(35.658034)
-			})
-			Param("longitude", Number, "スクリーンネーム", func() {
-				Example(139.701636)
-			})
-			Required("token", "latitude", "longitude")
+			Required("token")
 		})
 		Response(SwitchingProtocols)
 	})

@@ -101,12 +101,12 @@ func (c *Client) NewListPodsRequest(ctx context.Context, path string, limit *int
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	values := u.Query()
 	if limit != nil {
-		tmp25 := strconv.Itoa(*limit)
-		values.Set("limit", tmp25)
+		tmp23 := strconv.Itoa(*limit)
+		values.Set("limit", tmp23)
 	}
 	if offset != nil {
-		tmp26 := strconv.Itoa(*offset)
-		values.Set("offset", tmp26)
+		tmp24 := strconv.Itoa(*offset)
+		values.Set("offset", tmp24)
 	}
 	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -146,12 +146,12 @@ func (c *Client) NewPeersListPodsRequest(ctx context.Context, path string, limit
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	values := u.Query()
 	if limit != nil {
-		tmp27 := strconv.Itoa(*limit)
-		values.Set("limit", tmp27)
+		tmp25 := strconv.Itoa(*limit)
+		values.Set("limit", tmp25)
 	}
 	if offset != nil {
-		tmp28 := strconv.Itoa(*offset)
-		values.Set("offset", tmp28)
+		tmp26 := strconv.Itoa(*offset)
+		values.Set("offset", tmp26)
 	}
 	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)

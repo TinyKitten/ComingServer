@@ -86,7 +86,7 @@ var PodMedia = MediaType("application/vnd.pod+json", func() {
 		Attribute("longitude", Number, "経度", func() {
 			Example(139.701636)
 		})
-		Attribute("rumbling", Boolean, "鳴っている", func() {
+		Attribute("approaching", Boolean, "ポッド装置に接近している", func() {
 			Example(false)
 		})
 		Attribute("created_at", Number, "作成日", func() {
@@ -103,7 +103,7 @@ var PodMedia = MediaType("application/vnd.pod+json", func() {
 			"code",
 			"latitude",
 			"longitude",
-			"rumbling",
+			"approaching",
 			"created_at",
 			"updated_at",
 		)
@@ -113,7 +113,7 @@ var PodMedia = MediaType("application/vnd.pod+json", func() {
 		Attribute("code")
 		Attribute("latitude")
 		Attribute("longitude")
-		Attribute("rumbling")
+		Attribute("approaching")
 		Attribute("created_at")
 		Attribute("updated_at")
 	})
@@ -173,7 +173,7 @@ var PodCreatedMedia = MediaType("application/vnd.pod.created+json", func() {
 		Attribute("longitude", Number, "経度", func() {
 			Example(139.701636)
 		})
-		Attribute("rumbling", Boolean, "鳴っている", func() {
+		Attribute("approaching", Boolean, "ポッド装置に接近している", func() {
 			Example(false)
 		})
 		Attribute("token", String, "トークン", func() {
@@ -193,7 +193,7 @@ var PodCreatedMedia = MediaType("application/vnd.pod.created+json", func() {
 			"code",
 			"latitude",
 			"longitude",
-			"rumbling",
+			"approaching",
 			"token",
 			"created_at",
 			"updated_at",
@@ -204,7 +204,7 @@ var PodCreatedMedia = MediaType("application/vnd.pod.created+json", func() {
 		Attribute("code")
 		Attribute("latitude")
 		Attribute("longitude")
-		Attribute("rumbling")
+		Attribute("approaching")
 		Attribute("token")
 		Attribute("created_at")
 		Attribute("updated_at")
@@ -284,6 +284,46 @@ var PeerLocationMedia = MediaType("application/vnd.peer.location+json", func() {
 		Attribute("longitude")
 		Attribute("created_at")
 		Attribute("updated_at")
+	})
+})
+
+// PeerApproachingMedia ピア接近メディア
+var PeerApproachingMedia = MediaType("application/vnd.peer.approaching+json", func() {
+	Description("ピア接近")
+
+	Attributes(func() {
+		Attribute("type", String, "タイプ", func() {
+			Example("APPROACHING")
+			Default("APPROACHING")
+		})
+		Attribute("code", String, "ピアコード", func() {
+			Example("TS")
+		})
+		Attribute("latitude", Number, "緯度", func() {
+			Example(35.658034)
+		})
+		Attribute("longitude", Number, "経度", func() {
+			Example(139.701636)
+		})
+		Attribute("created_at", Number, "作成日", func() {
+			Metadata("struct:field:type", "int64")
+			Example(1017327600)
+		})
+
+		Required(
+			"type",
+			"code",
+			"latitude",
+			"longitude",
+			"created_at",
+		)
+	})
+	View("default", func() {
+		Attribute("type")
+		Attribute("code")
+		Attribute("latitude")
+		Attribute("longitude")
+		Attribute("created_at")
 	})
 })
 

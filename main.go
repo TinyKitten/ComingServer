@@ -10,13 +10,20 @@ import (
 	"github.com/TinyKitten/ComingServer/app"
 	"github.com/TinyKitten/ComingServer/controller"
 	"github.com/TinyKitten/ComingServer/security"
+	"github.com/go-redis/redis"
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
+	"github.com/joho/godotenv"
 	"github.com/nppw/api/database"
 	"github.com/nppw/api/utils"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		exitOnFailure(err)
+	}
+
 	cs, err := database.NewConfigsFromFile("dbconfig.yml")
 	if err != nil {
 		log.Fatalf("cannot open database configuration. exit. %s", err)
@@ -25,6 +32,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("database initialization failed: %s", err)
 	}
+
+	opt, err := redis.ParseURL(os.Getenv("REDIS_URL"))
+	if err != nil {
+		exitOnFailure(err)
+	}
+
+	redisdb := redis.NewClient(opt)
 	// Create service
 	service := goa.New("ComingServer")
 
@@ -56,7 +70,7 @@ func main() {
 	c3 := controller.NewPodsController(service, dbConn)
 	app.MountPodsController(service, c3)
 	// Mount "send current peer location" controller
-	c4 := controller.NewWebsocketController(service, dbConn)
+	c4 := controller.NewWebsocketController(service, dbConn, redisdb)
 	app.MountWebsocketController(service, c4)
 	// Mount "swagger" controller
 	c5 := controller.NewSwaggerController(service)

@@ -179,10 +179,6 @@ type (
 
 	// SendCurrentPeerLocationWebsocketCommand is the command line data structure for the send current peer location action of websocket
 	SendCurrentPeerLocationWebsocketCommand struct {
-		// 緯度
-		Latitude string
-		// スクリーンネーム
-		Longitude string
 		// 接続用トークン
 		Token       string
 		PrettyPrint bool
@@ -1276,33 +1272,7 @@ func (cmd *SendCurrentPeerLocationWebsocketCommand) Run(c *client.Client, args [
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	var tmp21 *float64
-	if cmd.Latitude != "" {
-		var err error
-		tmp21, err = float64Val(cmd.Latitude)
-		if err != nil {
-			goa.LogError(ctx, "failed to parse flag into *float64 value", "flag", "--latitude", "err", err)
-			return err
-		}
-	}
-	if tmp21 == nil {
-		goa.LogError(ctx, "required flag is missing", "flag", "--latitude")
-		return fmt.Errorf("required flag latitude is missing")
-	}
-	var tmp22 *float64
-	if cmd.Longitude != "" {
-		var err error
-		tmp22, err = float64Val(cmd.Longitude)
-		if err != nil {
-			goa.LogError(ctx, "failed to parse flag into *float64 value", "flag", "--longitude", "err", err)
-			return err
-		}
-	}
-	if tmp22 == nil {
-		goa.LogError(ctx, "required flag is missing", "flag", "--longitude")
-		return fmt.Errorf("required flag longitude is missing")
-	}
-	ws, err := c.SendCurrentPeerLocationWebsocket(ctx, path, *tmp21, *tmp22, cmd.Token)
+	ws, err := c.SendCurrentPeerLocationWebsocket(ctx, path, cmd.Token)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -1315,10 +1285,6 @@ func (cmd *SendCurrentPeerLocationWebsocketCommand) Run(c *client.Client, args [
 
 // RegisterFlags registers the command flags with the command line.
 func (cmd *SendCurrentPeerLocationWebsocketCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
-	var latitude string
-	cc.Flags().StringVar(&cmd.Latitude, "latitude", latitude, `緯度`)
-	var longitude string
-	cc.Flags().StringVar(&cmd.Longitude, "longitude", longitude, `スクリーンネーム`)
 	var token string
 	cc.Flags().StringVar(&cmd.Token, "token", token, `接続用トークン`)
 }

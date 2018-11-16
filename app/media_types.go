@@ -59,6 +59,34 @@ func (mt *Peer) Validate() (err error) {
 	return
 }
 
+// ピア接近 (default view)
+//
+// Identifier: application/vnd.peer.approaching+json; view=default
+type PeerApproaching struct {
+	// ピアコード
+	Code string `form:"code" json:"code" yaml:"code" xml:"code"`
+	// 作成日
+	CreatedAt int64 `form:"created_at" json:"created_at" yaml:"created_at" xml:"created_at"`
+	// 緯度
+	Latitude float64 `form:"latitude" json:"latitude" yaml:"latitude" xml:"latitude"`
+	// 経度
+	Longitude float64 `form:"longitude" json:"longitude" yaml:"longitude" xml:"longitude"`
+	// タイプ
+	Type string `form:"type" json:"type" yaml:"type" xml:"type"`
+}
+
+// Validate validates the PeerApproaching media type instance.
+func (mt *PeerApproaching) Validate() (err error) {
+	if mt.Type == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "type"))
+	}
+	if mt.Code == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "code"))
+	}
+
+	return
+}
+
 // ピア作成成功 (default view)
 //
 // Identifier: application/vnd.peer.created+json; view=default
@@ -146,6 +174,8 @@ func (mt PeerCollection) Validate() (err error) {
 //
 // Identifier: application/vnd.pod+json; view=default
 type Pod struct {
+	// ポッド装置に接近している
+	Approaching bool `form:"approaching" json:"approaching" yaml:"approaching" xml:"approaching"`
 	// コード
 	Code string `form:"code" json:"code" yaml:"code" xml:"code"`
 	// 作成日
@@ -156,8 +186,6 @@ type Pod struct {
 	Latitude float64 `form:"latitude" json:"latitude" yaml:"latitude" xml:"latitude"`
 	// 経度
 	Longitude float64 `form:"longitude" json:"longitude" yaml:"longitude" xml:"longitude"`
-	// 鳴っている
-	Rumbling bool `form:"rumbling" json:"rumbling" yaml:"rumbling" xml:"rumbling"`
 	// 更新日
 	UpdatedAt int64 `form:"updated_at" json:"updated_at" yaml:"updated_at" xml:"updated_at"`
 }
@@ -176,6 +204,8 @@ func (mt *Pod) Validate() (err error) {
 //
 // Identifier: application/vnd.pod.created+json; view=default
 type PodCreated struct {
+	// ポッド装置に接近している
+	Approaching bool `form:"approaching" json:"approaching" yaml:"approaching" xml:"approaching"`
 	// コード
 	Code string `form:"code" json:"code" yaml:"code" xml:"code"`
 	// 作成日
@@ -186,8 +216,6 @@ type PodCreated struct {
 	Latitude float64 `form:"latitude" json:"latitude" yaml:"latitude" xml:"latitude"`
 	// 経度
 	Longitude float64 `form:"longitude" json:"longitude" yaml:"longitude" xml:"longitude"`
-	// 鳴っている
-	Rumbling bool `form:"rumbling" json:"rumbling" yaml:"rumbling" xml:"rumbling"`
 	// トークン
 	Token string `form:"token" json:"token" yaml:"token" xml:"token"`
 	// 更新日

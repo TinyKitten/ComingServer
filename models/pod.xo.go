@@ -11,14 +11,14 @@ import (
 
 // Pod represents a row from 'comingserver.pods'.
 type Pod struct {
-	ID        uint64       `json:"id"`         // id
-	Code      string       `json:"code"`       // code
-	Latitude  float64      `json:"latitude"`   // latitude
-	Longitude float64      `json:"longitude"`  // longitude
-	Rumbling  sql.NullBool `json:"rumbling"`   // rumbling
-	Token     string       `json:"token"`      // token
-	CreatedAt time.Time    `json:"created_at"` // created_at
-	UpdatedAt time.Time    `json:"updated_at"` // updated_at
+	ID          uint64       `json:"id"`          // id
+	Code        string       `json:"code"`        // code
+	Latitude    float64      `json:"latitude"`    // latitude
+	Longitude   float64      `json:"longitude"`   // longitude
+	Approaching sql.NullBool `json:"approaching"` // approaching
+	Token       string       `json:"token"`       // token
+	CreatedAt   time.Time    `json:"created_at"`  // created_at
+	UpdatedAt   time.Time    `json:"updated_at"`  // updated_at
 
 	// xo fields
 	_exists, _deleted bool
@@ -45,14 +45,14 @@ func (p *Pod) Insert(db XODB) error {
 
 	// sql insert query, primary key provided by autoincrement
 	const sqlstr = `INSERT INTO comingserver.pods (` +
-		`code, latitude, longitude, rumbling, token, created_at, updated_at` +
+		`code, latitude, longitude, approaching, token, created_at, updated_at` +
 		`) VALUES (` +
 		`?, ?, ?, ?, ?, ?, ?` +
 		`)`
 
 	// run query
-	XOLog(sqlstr, p.Code, p.Latitude, p.Longitude, p.Rumbling, p.Token, p.CreatedAt, p.UpdatedAt)
-	res, err := db.Exec(sqlstr, p.Code, p.Latitude, p.Longitude, p.Rumbling, p.Token, p.CreatedAt, p.UpdatedAt)
+	XOLog(sqlstr, p.Code, p.Latitude, p.Longitude, p.Approaching, p.Token, p.CreatedAt, p.UpdatedAt)
+	res, err := db.Exec(sqlstr, p.Code, p.Latitude, p.Longitude, p.Approaching, p.Token, p.CreatedAt, p.UpdatedAt)
 	if err != nil {
 		return err
 	}
@@ -86,12 +86,12 @@ func (p *Pod) Update(db XODB) error {
 
 	// sql query
 	const sqlstr = `UPDATE comingserver.pods SET ` +
-		`code = ?, latitude = ?, longitude = ?, rumbling = ?, token = ?, created_at = ?, updated_at = ?` +
+		`code = ?, latitude = ?, longitude = ?, approaching = ?, token = ?, created_at = ?, updated_at = ?` +
 		` WHERE id = ?`
 
 	// run query
-	XOLog(sqlstr, p.Code, p.Latitude, p.Longitude, p.Rumbling, p.Token, p.CreatedAt, p.UpdatedAt, p.ID)
-	_, err = db.Exec(sqlstr, p.Code, p.Latitude, p.Longitude, p.Rumbling, p.Token, p.CreatedAt, p.UpdatedAt, p.ID)
+	XOLog(sqlstr, p.Code, p.Latitude, p.Longitude, p.Approaching, p.Token, p.CreatedAt, p.UpdatedAt, p.ID)
+	_, err = db.Exec(sqlstr, p.Code, p.Latitude, p.Longitude, p.Approaching, p.Token, p.CreatedAt, p.UpdatedAt, p.ID)
 	return err
 }
 
@@ -142,7 +142,7 @@ func PodByCode(db XODB, code string) (*Pod, error) {
 
 	// sql query
 	const sqlstr = `SELECT ` +
-		`id, code, latitude, longitude, rumbling, token, created_at, updated_at ` +
+		`id, code, latitude, longitude, approaching, token, created_at, updated_at ` +
 		`FROM comingserver.pods ` +
 		`WHERE code = ?`
 
@@ -152,7 +152,7 @@ func PodByCode(db XODB, code string) (*Pod, error) {
 		_exists: true,
 	}
 
-	err = db.QueryRow(sqlstr, code).Scan(&p.ID, &p.Code, &p.Latitude, &p.Longitude, &p.Rumbling, &p.Token, &p.CreatedAt, &p.UpdatedAt)
+	err = db.QueryRow(sqlstr, code).Scan(&p.ID, &p.Code, &p.Latitude, &p.Longitude, &p.Approaching, &p.Token, &p.CreatedAt, &p.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +168,7 @@ func PodByID(db XODB, id uint64) (*Pod, error) {
 
 	// sql query
 	const sqlstr = `SELECT ` +
-		`id, code, latitude, longitude, rumbling, token, created_at, updated_at ` +
+		`id, code, latitude, longitude, approaching, token, created_at, updated_at ` +
 		`FROM comingserver.pods ` +
 		`WHERE id = ?`
 
@@ -178,7 +178,7 @@ func PodByID(db XODB, id uint64) (*Pod, error) {
 		_exists: true,
 	}
 
-	err = db.QueryRow(sqlstr, id).Scan(&p.ID, &p.Code, &p.Latitude, &p.Longitude, &p.Rumbling, &p.Token, &p.CreatedAt, &p.UpdatedAt)
+	err = db.QueryRow(sqlstr, id).Scan(&p.ID, &p.Code, &p.Latitude, &p.Longitude, &p.Approaching, &p.Token, &p.CreatedAt, &p.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}

@@ -262,14 +262,18 @@ definitions:
   Pod:
     description: ポッド (default view)
     example:
+      approaching: false
       code: SHIBUYA
       created_at: 1.0173276e+09
       id: 0
       latitude: 35.658034
       longitude: 139.701636
-      rumbling: false
       updated_at: 1.0173276e+09
     properties:
+      approaching:
+        description: ポッド装置に接近している
+        example: false
+        type: boolean
       code:
         description: コード
         example: SHIBUYA
@@ -294,10 +298,6 @@ definitions:
         example: 139.701636
         format: double
         type: number
-      rumbling:
-        description: 鳴っている
-        example: false
-        type: boolean
       updated_at:
         description: 更新日
         example: 1.0173276e+09
@@ -308,7 +308,7 @@ definitions:
     - code
     - latitude
     - longitude
-    - rumbling
+    - approaching
     - created_at
     - updated_at
     title: 'Mediatype identifier: application/vnd.pod+json; view=default'
@@ -316,12 +316,12 @@ definitions:
   PodCollection:
     description: PodCollection is the media type for an array of Pod (default view)
     example:
-    - code: SHIBUYA
+    - approaching: false
+      code: SHIBUYA
       created_at: 1.0173276e+09
       id: 0
       latitude: 35.658034
       longitude: 139.701636
-      rumbling: false
       updated_at: 1.0173276e+09
     items:
       $ref: '#/definitions/Pod'
@@ -330,15 +330,19 @@ definitions:
   PodCreated:
     description: ポッド作成成功 (default view)
     example:
+      approaching: false
       code: SHIBUYA
       created_at: 1.0173276e+09
       id: 0
       latitude: 35.658034
       longitude: 139.701636
-      rumbling: false
       token: AHO-AHO-MAN
       updated_at: 1.0173276e+09
     properties:
+      approaching:
+        description: ポッド装置に接近している
+        example: false
+        type: boolean
       code:
         description: コード
         example: SHIBUYA
@@ -363,10 +367,6 @@ definitions:
         example: 139.701636
         format: double
         type: number
-      rumbling:
-        description: 鳴っている
-        example: false
-        type: boolean
       token:
         description: トークン
         example: AHO-AHO-MAN
@@ -381,7 +381,7 @@ definitions:
     - code
     - latitude
     - longitude
-    - rumbling
+    - approaching
     - token
     - created_at
     - updated_at
@@ -642,16 +642,6 @@ paths:
       description: ピアのWebSocketエンドポイント
       operationId: websocket#send current peer location
       parameters:
-      - description: 緯度
-        in: query
-        name: latitude
-        required: true
-        type: number
-      - description: スクリーンネーム
-        in: query
-        name: longitude
-        required: true
-        type: number
       - description: 接続用トークン
         in: query
         name: token

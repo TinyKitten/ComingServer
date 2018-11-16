@@ -2,7 +2,7 @@ package models
 
 // PodList すべてのポッド
 func PodList(db XODB, offset, limit int) ([]*Pod, error) {
-	sqlstr := `SELECT id, code, latitude, longitude, rumbling, created_at, updated_At
+	sqlstr := `SELECT id, code, latitude, longitude, approaching, created_at, updated_At
 	FROM pods
 	LIMIT ?
 	OFFSET ?`
@@ -22,7 +22,7 @@ func PodList(db XODB, offset, limit int) ([]*Pod, error) {
 			&r.Code,
 			&r.Latitude,
 			&r.Longitude,
-			&r.Rumbling,
+			&r.Approaching,
 			&r.CreatedAt,
 			&r.UpdatedAt,
 		)
@@ -33,4 +33,28 @@ func PodList(db XODB, offset, limit int) ([]*Pod, error) {
 	}
 
 	return res, nil
+}
+
+// PodByToken トークンでポッドを探す
+func PodByToken(db XODB, token string) (*Pod, error) {
+	var err error
+
+	// sql query
+	const sqlstr = `SELECT ` +
+		`id, code, latitude, longitude, approaching, token, created_at, updated_at ` +
+		`FROM comingserver.pods ` +
+		`WHERE token = ?`
+
+	// run query
+	XOLog(sqlstr, token)
+	p := Pod{
+		_exists: true,
+	}
+
+	err = db.QueryRow(sqlstr, token).Scan(&p.ID, &p.Code, &p.Latitude, &p.Longitude, &p.Approaching, &p.Token, &p.CreatedAt, &p.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	return &p, nil
 }

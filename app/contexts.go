@@ -1457,9 +1457,7 @@ type SendCurrentPeerLocationWebsocketContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
-	Latitude  float64
-	Longitude float64
-	Token     string
+	Token string
 }
 
 // NewSendCurrentPeerLocationWebsocketContext parses the incoming request URL and body, performs validations and creates the
@@ -1471,28 +1469,6 @@ func NewSendCurrentPeerLocationWebsocketContext(ctx context.Context, r *http.Req
 	req := goa.ContextRequest(ctx)
 	req.Request = r
 	rctx := SendCurrentPeerLocationWebsocketContext{Context: ctx, ResponseData: resp, RequestData: req}
-	paramLatitude := req.Params["latitude"]
-	if len(paramLatitude) == 0 {
-		err = goa.MergeErrors(err, goa.MissingParamError("latitude"))
-	} else {
-		rawLatitude := paramLatitude[0]
-		if latitude, err2 := strconv.ParseFloat(rawLatitude, 64); err2 == nil {
-			rctx.Latitude = latitude
-		} else {
-			err = goa.MergeErrors(err, goa.InvalidParamTypeError("latitude", rawLatitude, "number"))
-		}
-	}
-	paramLongitude := req.Params["longitude"]
-	if len(paramLongitude) == 0 {
-		err = goa.MergeErrors(err, goa.MissingParamError("longitude"))
-	} else {
-		rawLongitude := paramLongitude[0]
-		if longitude, err2 := strconv.ParseFloat(rawLongitude, 64); err2 == nil {
-			rctx.Longitude = longitude
-		} else {
-			err = goa.MergeErrors(err, goa.InvalidParamTypeError("longitude", rawLongitude, "number"))
-		}
-	}
 	paramToken := req.Params["token"]
 	if len(paramToken) == 0 {
 		err = goa.MergeErrors(err, goa.MissingParamError("token"))

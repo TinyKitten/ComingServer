@@ -51,14 +51,14 @@ func (c *PodsController) Add(ctx *app.AddPodsContext) error {
 	}
 
 	created := &app.PodCreated{
-		ID:        int64(pod.ID),
-		Code:      ctx.Payload.Code,
-		CreatedAt: at.Unix(),
-		UpdatedAt: at.Unix(),
-		Rumbling:  false,
-		Token:     token,
-		Latitude:  ctx.Payload.Latitude,
-		Longitude: ctx.Payload.Longitude,
+		ID:          int64(pod.ID),
+		Code:        ctx.Payload.Code,
+		CreatedAt:   at.Unix(),
+		UpdatedAt:   at.Unix(),
+		Approaching: false,
+		Token:       token,
+		Latitude:    ctx.Payload.Latitude,
+		Longitude:   ctx.Payload.Longitude,
 	}
 
 	return ctx.Created(created)

@@ -15,7 +15,6 @@ import (
 	"fmt"
 	"golang.org/x/net/websocket"
 	"net/url"
-	"strconv"
 )
 
 // ReceivePeerLocationWebsocketPath computes a request path to the receive peer location action of websocket.
@@ -49,17 +48,13 @@ func SendCurrentPeerLocationWebsocketPath() string {
 }
 
 // ピアのWebSocketエンドポイント
-func (c *Client) SendCurrentPeerLocationWebsocket(ctx context.Context, path string, latitude float64, longitude float64, token string) (*websocket.Conn, error) {
+func (c *Client) SendCurrentPeerLocationWebsocket(ctx context.Context, path string, token string) (*websocket.Conn, error) {
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "ws"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	values := u.Query()
-	tmp31 := strconv.FormatFloat(latitude, 'f', -1, 64)
-	values.Set("latitude", tmp31)
-	tmp32 := strconv.FormatFloat(longitude, 'f', -1, 64)
-	values.Set("longitude", tmp32)
 	values.Set("token", token)
 	u.RawQuery = values.Encode()
 	url_ := u.String()
