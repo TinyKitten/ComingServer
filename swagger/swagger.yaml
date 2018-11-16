@@ -1,0 +1,1192 @@
+consumes:
+- application/json
+- application/xml
+- application/gob
+- application/x-gob
+definitions:
+  AddPeersPayload:
+    example:
+      code: TS
+    properties:
+      code:
+        description: ポッド名
+        example: TS
+        type: string
+    required:
+    - code
+    title: AddPeersPayload
+    type: object
+  AddPodsPayload:
+    example:
+      code: SHIBUYA
+      latitude: 35.658034
+      longitude: 139.701636
+    properties:
+      code:
+        description: ポッド名
+        example: SHIBUYA
+        type: string
+      latitude:
+        description: 緯度
+        example: 35.658034
+        format: double
+        type: number
+      longitude:
+        description: スクリーンネーム
+        example: 139.701636
+        format: double
+        type: number
+    required:
+    - code
+    - latitude
+    - longitude
+    title: AddPodsPayload
+    type: object
+  AddUsersPayload:
+    example:
+      password: password
+      privilege_id: 0
+      screen_name: tinykitten
+    properties:
+      password:
+        description: パスワード
+        example: password
+        minLength: 6
+        type: string
+      privilege_id:
+        default: 2
+        description: 権限ID
+        example: 0
+        format: int64
+        type: integer
+      screen_name:
+        description: スクリーンネーム
+        example: tinykitten
+        type: string
+    required:
+    - privilege_id
+    - password
+    - screen_name
+    title: AddUsersPayload
+    type: object
+  AuthAuthPayload:
+    example:
+      id: 0
+      password: password
+      screen_name: tinykitten
+    properties:
+      id:
+        description: ID
+        example: 0
+        format: int64
+        type: integer
+      password:
+        description: パスワード
+        example: password
+        minLength: 6
+        type: string
+      screen_name:
+        description: スクリーンネーム
+        example: tinykitten
+        type: string
+    required:
+    - screen_name
+    - password
+    title: AuthAuthPayload
+    type: object
+  AuthSucces:
+    description: 認証成功 (default view)
+    example:
+      screen_name: tinykitten
+      token: gjsjgvorjldvifj
+    properties:
+      screen_name:
+        description: コード
+        example: tinykitten
+        type: string
+      token:
+        description: トークン
+        example: gjsjgvorjldvifj
+        type: string
+    required:
+    - screen_name
+    - token
+    title: 'Mediatype identifier: application/vnd.auth.succes+json; view=default'
+    type: object
+  Peer:
+    description: ピア (default view)
+    example:
+      code: TS
+      created_at: 1.0173276e+09
+      updated_at: 1.0173276e+09
+    properties:
+      code:
+        description: コード
+        example: TS
+        type: string
+      created_at:
+        description: 作成日
+        example: 1.0173276e+09
+        format: double
+        type: number
+      updated_at:
+        description: 更新日
+        example: 1.0173276e+09
+        format: int64
+        type: integer
+    required:
+    - code
+    - created_at
+    - updated_at
+    title: 'Mediatype identifier: application/vnd.peer+json; view=default'
+    type: object
+  PeerCollection:
+    description: PeerCollection is the media type for an array of Peer (default view)
+    example:
+    - code: TS
+      created_at: 1.0173276e+09
+      updated_at: 1.0173276e+09
+    - code: TS
+      created_at: 1.0173276e+09
+      updated_at: 1.0173276e+09
+    items:
+      $ref: '#/definitions/Peer'
+    title: 'Mediatype identifier: application/vnd.peer+json; type=collection; view=default'
+    type: array
+  PeerLocation:
+    description: ピア位置情報 (default view)
+    example:
+      created_at: 1.0173276e+09
+      latitude: 35.658034
+      longitude: 139.701636
+      updated_at: 1.0173276e+09
+    properties:
+      created_at:
+        description: 作成日
+        example: 1.0173276e+09
+        format: double
+        type: number
+      latitude:
+        description: 緯度
+        example: 35.658034
+        format: double
+        type: number
+      longitude:
+        description: 経度
+        example: 139.701636
+        format: double
+        type: number
+      updated_at:
+        description: 更新日
+        example: 1.0173276e+09
+        format: int64
+        type: integer
+    required:
+    - latitude
+    - longitude
+    - created_at
+    - updated_at
+    title: 'Mediatype identifier: application/vnd.peer.location+json; view=default'
+    type: object
+  PeerLocationCollection:
+    description: PeerLocationCollection is the media type for an array of PeerLocation
+      (default view)
+    example:
+    - created_at: 1.0173276e+09
+      latitude: 35.658034
+      longitude: 139.701636
+      updated_at: 1.0173276e+09
+    - created_at: 1.0173276e+09
+      latitude: 35.658034
+      longitude: 139.701636
+      updated_at: 1.0173276e+09
+    - created_at: 1.0173276e+09
+      latitude: 35.658034
+      longitude: 139.701636
+      updated_at: 1.0173276e+09
+    items:
+      $ref: '#/definitions/PeerLocation'
+    title: 'Mediatype identifier: application/vnd.peer.location+json; type=collection;
+      view=default'
+    type: array
+  Pod:
+    description: ポッド (default view)
+    example:
+      code: SHIBUYA
+      created_at: 1.0173276e+09
+      latitude: 35.658034
+      longitude: 139.701636
+      rumbling: false
+      updated_at: 1.0173276e+09
+    properties:
+      code:
+        description: コード
+        example: SHIBUYA
+        type: string
+      created_at:
+        description: 作成日
+        example: 1.0173276e+09
+        format: double
+        type: number
+      latitude:
+        description: 緯度
+        example: 35.658034
+        format: double
+        type: number
+      longitude:
+        description: 経度
+        example: 139.701636
+        format: double
+        type: number
+      rumbling:
+        description: 鳴っている
+        example: false
+        type: boolean
+      updated_at:
+        description: 更新日
+        example: 1.0173276e+09
+        format: int64
+        type: integer
+    required:
+    - code
+    - latitude
+    - longitude
+    - rumbling
+    - created_at
+    - updated_at
+    title: 'Mediatype identifier: application/vnd.pod+json; view=default'
+    type: object
+  PodCollection:
+    description: PodCollection is the media type for an array of Pod (default view)
+    example:
+    - code: SHIBUYA
+      created_at: 1.0173276e+09
+      latitude: 35.658034
+      longitude: 139.701636
+      rumbling: false
+      updated_at: 1.0173276e+09
+    items:
+      $ref: '#/definitions/Pod'
+    title: 'Mediatype identifier: application/vnd.pod+json; type=collection; view=default'
+    type: array
+  SendLocationPeersPayload:
+    example:
+      latitude: 35.658034
+      longitude: 139.701636
+    properties:
+      latitude:
+        description: 緯度
+        example: 35.658034
+        format: double
+        type: number
+      longitude:
+        description: スクリーンネーム
+        example: 139.701636
+        format: double
+        type: number
+    required:
+    - latitude
+    - longitude
+    title: SendLocationPeersPayload
+    type: object
+  Token:
+    description: トークン (default view)
+    example:
+      id: 0
+      token: AHO-AHO-MAN
+      updated_at: 1.0173276e+09
+    properties:
+      id:
+        description: 対象ID
+        example: 0
+        format: int64
+        type: integer
+      token:
+        description: トークン
+        example: AHO-AHO-MAN
+        type: string
+      updated_at:
+        description: 更新日
+        example: 1.0173276e+09
+        format: int64
+        type: integer
+    required:
+    - id
+    - token
+    - updated_at
+    title: 'Mediatype identifier: application/vnd.token+json; view=default'
+    type: object
+  UpdatePeersPayload:
+    example:
+      name: TS-IPHONE
+    properties:
+      name:
+        description: 名前
+        example: TS-IPHONE
+        type: string
+    title: UpdatePeersPayload
+    type: object
+  UpdatePodsPayload:
+    example:
+      latitude: 35.689592
+      longitude: 139.700413
+      name: SHINJUKU
+    properties:
+      latitude:
+        description: 緯度
+        example: 35.689592
+        format: double
+        type: number
+      longitude:
+        description: 経度
+        example: 139.700413
+        format: double
+        type: number
+      name:
+        description: 名前
+        example: SHINJUKU
+        type: string
+    title: UpdatePodsPayload
+    type: object
+  User:
+    description: ユーザー (default view)
+    example:
+      created_at: 1.0173276e+09
+      id: 0
+      screen_name: tinykitten
+      updated_at: 1.0173276e+09
+    properties:
+      created_at:
+        description: 作成日
+        example: 1.0173276e+09
+        format: int64
+        type: integer
+      id:
+        description: ID
+        example: 0
+        format: int64
+        type: integer
+      screen_name:
+        description: スクリーンネーム
+        example: tinykitten
+        type: string
+      updated_at:
+        description: 更新日
+        example: 1.0173276e+09
+        format: int64
+        type: integer
+    required:
+    - id
+    - screen_name
+    - created_at
+    - updated_at
+    title: 'Mediatype identifier: application/vnd.user+json; view=default'
+    type: object
+  UserCollection:
+    description: UserCollection is the media type for an array of User (default view)
+    example:
+    - created_at: 1.0173276e+09
+      id: 0
+      screen_name: tinykitten
+      updated_at: 1.0173276e+09
+    items:
+      $ref: '#/definitions/User'
+    title: 'Mediatype identifier: application/vnd.user+json; type=collection; view=default'
+    type: array
+  error:
+    description: Error response media type (default view)
+    example:
+      code: invalid_value
+      detail: Value of ID must be an integer
+      id: 3F1FKVRR
+      meta:
+        timestamp: 1.458609066e+09
+      status: "400"
+    properties:
+      code:
+        description: an application-specific error code, expressed as a string value.
+        example: invalid_value
+        type: string
+      detail:
+        description: a human-readable explanation specific to this occurrence of the
+          problem.
+        example: Value of ID must be an integer
+        type: string
+      id:
+        description: a unique identifier for this particular occurrence of the problem.
+        example: 3F1FKVRR
+        type: string
+      meta:
+        additionalProperties: true
+        description: a meta object containing non-standard meta-information about
+          the error.
+        example:
+          timestamp: 1.458609066e+09
+        type: object
+      status:
+        description: the HTTP status code applicable to this problem, expressed as
+          a string value.
+        example: "400"
+        type: string
+    title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+    type: object
+externalDocs:
+  description: wiki
+  url: https://github.com/TeamKitten/ComingServer/wiki
+host: localhost:8080
+info:
+  contact:
+    email: catwalk8205@gmail.com
+    name: TinyKitten
+    url: https://github.com/TinyKitten/ComingServer/issues
+  description: Coming API Server
+  license:
+    name: MIT
+    url: https://github.com/TeamKitten/ComingServer/blob/master/LICENSE
+  title: TinyKitten/ComingServer
+  version: ""
+paths:
+  /swagger.json:
+    get:
+      operationId: swagger#/swagger.json
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+      schemes:
+      - http
+      summary: Download swagger/swagger.json
+  /swaggerui/{filepath}:
+    get:
+      operationId: swagger#/swaggerui/*filepath
+      parameters:
+      - description: Relative file path
+        in: path
+        name: filepath
+        required: true
+        type: string
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+        "404":
+          description: File not found
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      summary: Download swaggerui/dist
+  /v1/auth:
+    post:
+      description: JWTトークンを生成する
+      operationId: auth#auth
+      parameters:
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/AuthAuthPayload'
+      produces:
+      - application/vnd.auth.succes+json
+      - application/vnd.goa.error
+      responses:
+        "200":
+          description: OK
+          headers:
+            Authorization:
+              description: Generated JWT
+              type: string
+          schema:
+            $ref: '#/definitions/AuthSucces'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      summary: auth auth
+      tags:
+      - auth
+  /v1/echo:
+    get:
+      description: echo websocket server
+      operationId: send current peer location#connect
+      parameters:
+      - description: 緯度
+        in: query
+        name: latitude
+        required: true
+        type: number
+      - description: スクリーンネーム
+        in: query
+        name: longitude
+        required: true
+        type: number
+      - description: Secret token for send location
+        in: query
+        name: token
+        required: true
+        type: string
+      responses:
+        "101":
+          description: Switching Protocols
+      schemes:
+      - ws
+      summary: connect send current peer location
+      tags:
+      - send current peer location
+  /v1/peers:
+    get:
+      description: |-
+        すべてのピアを取得
+
+        Required security scopes:
+          * `api:read`
+      operationId: peers#list
+      parameters:
+      - default: 100
+        description: 最大件数
+        in: query
+        name: limit
+        required: false
+        type: integer
+      - default: 0
+        description: 取得開始位置
+        in: query
+        name: offset
+        required: false
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.peer+json; type=collection
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/PeerCollection'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:read
+      summary: list peers
+      tags:
+      - peers
+    post:
+      description: |-
+        ピア追加
+
+        Required security scopes:
+          * `api:write`
+      operationId: peers#add
+      parameters:
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/AddPeersPayload'
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.pod+json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Pod'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:write
+      summary: add peers
+      tags:
+      - peers
+  /v1/peers/{id}:
+    get:
+      description: |-
+        ピアをIDで取得
+
+        Required security scopes:
+          * `api:read`
+      operationId: peers#show
+      parameters:
+      - description: ピアID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.peer+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Peer'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:read
+      summary: show peers
+      tags:
+      - peers
+    post:
+      description: |-
+        ピア位置送信
+
+        Required security scopes:
+          * `api:admin`
+      operationId: peers#send location
+      parameters:
+      - description: ピアID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/SendLocationPeersPayload'
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.token+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Token'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - optional_jwt:
+        - api:admin
+      summary: send location peers
+      tags:
+      - peers
+    put:
+      description: |-
+        ピア更新
+
+        Required security scopes:
+          * `api:write`
+      operationId: peers#update
+      parameters:
+      - description: ピアID
+        in: query
+        name: code
+        required: false
+        type: integer
+      - in: path
+        name: id
+        required: true
+        type: string
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/UpdatePeersPayload'
+      produces:
+      - application/vnd.goa.error
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:write
+      summary: update peers
+      tags:
+      - peers
+  /v1/peers/{id}/location:
+    get:
+      description: |-
+        ピアの現在位置
+
+        Required security scopes:
+          * `api:read`
+      operationId: peers#current location
+      parameters:
+      - description: ピアID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.peer.location+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/PeerLocation'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:read
+      summary: current location peers
+      tags:
+      - peers
+  /v1/peers/{id}/locations:
+    get:
+      description: |-
+        ピアの位置履歴
+
+        Required security scopes:
+          * `api:read`
+      operationId: peers#locations
+      parameters:
+      - description: ピアID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.peer.location+json; type=collection
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/PeerLocationCollection'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:read
+      summary: locations peers
+      tags:
+      - peers
+  /v1/pods:
+    get:
+      description: |-
+        すべてのポッドを取得
+
+        Required security scopes:
+          * `api:read`
+      operationId: pods#list
+      parameters:
+      - default: 100
+        description: 最大件数
+        in: query
+        name: limit
+        required: false
+        type: integer
+      - default: 0
+        description: 取得開始位置
+        in: query
+        name: offset
+        required: false
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.pod+json; type=collection
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/PodCollection'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:read
+      summary: list pods
+      tags:
+      - pods
+    post:
+      description: |-
+        ポッド追加
+
+        Required security scopes:
+          * `api:write`
+      operationId: pods#add
+      parameters:
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/AddPodsPayload'
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.pod+json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Pod'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:write
+      summary: add pods
+      tags:
+      - pods
+  /v1/pods/{id}:
+    get:
+      description: |-
+        ポッドをIDで取得
+
+        Required security scopes:
+          * `api:read`
+      operationId: pods#show
+      parameters:
+      - description: ポッドID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.pod+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Pod'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:read
+      summary: show pods
+      tags:
+      - pods
+    post:
+      description: |-
+        トークン再発行
+
+        Required security scopes:
+          * `api:write`
+      operationId: pods#regenerate token
+      parameters:
+      - description: ポッドID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.token+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Token'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:write
+      summary: regenerate token pods
+      tags:
+      - pods
+    put:
+      description: |-
+        ポッド更新
+
+        Required security scopes:
+          * `api:write`
+      operationId: pods#update
+      parameters:
+      - description: ポッドID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/UpdatePodsPayload'
+      produces:
+      - application/vnd.goa.error
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:write
+      summary: update pods
+      tags:
+      - pods
+  /v1/users:
+    get:
+      description: |-
+        すべてのユーザーを取得
+
+        Required security scopes:
+          * `api:read`
+      operationId: users#list
+      parameters:
+      - default: 100
+        description: 最大件数
+        in: query
+        name: limit
+        required: false
+        type: integer
+      - default: 0
+        description: 取得開始位置
+        in: query
+        name: offset
+        required: false
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.user+json; type=collection
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/UserCollection'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - optional_jwt:
+        - api:read
+      summary: list users
+      tags:
+      - users
+    post:
+      description: |-
+        ユーザー追加
+
+        Required security scopes:
+          * `api:admin`
+      operationId: users#add
+      parameters:
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/AddUsersPayload'
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.user+json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:admin
+      summary: add users
+      tags:
+      - users
+  /v1/users/{id}:
+    get:
+      description: |-
+        ユーザーをIDで取得
+
+        Required security scopes:
+          * `api:read`
+      operationId: users#show
+      parameters:
+      - description: ユーザーID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.user+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - optional_jwt:
+        - api:read
+      summary: show users
+      tags:
+      - users
+produces:
+- application/json
+- application/xml
+- application/gob
+- application/x-gob
+responses:
+  NoContent:
+    description: No Content
+  SwitchingProtocols:
+    description: Switching Protocols
+schemes:
+- http
+securityDefinitions:
+  jwt:
+    description: |2-
+
+
+      **Security Scopes**:
+        * `api:admin`: API ADMIN access
+        * `api:read`: API READ access
+        * `api:write`: API WRITE access
+    in: header
+    name: Authorization
+    type: apiKey
+  optional_jwt:
+    description: |2-
+
+
+      **Security Scopes**:
+        * `api:admin`: API ADMIN access
+        * `api:read`: API READ access
+        * `api:write`: API WRITE access
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
