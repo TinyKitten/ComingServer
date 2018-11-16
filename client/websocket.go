@@ -18,13 +18,37 @@ import (
 	"strconv"
 )
 
+// ReceivePeerLocationWebsocketPath computes a request path to the receive peer location action of websocket.
+func ReceivePeerLocationWebsocketPath() string {
+
+	return fmt.Sprintf("/v1/pod")
+}
+
+// ポッドのWebSocketエンドポイント
+func (c *Client) ReceivePeerLocationWebsocket(ctx context.Context, path string, token string) (*websocket.Conn, error) {
+	scheme := c.Scheme
+	if scheme == "" {
+		scheme = "ws"
+	}
+	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	values := u.Query()
+	values.Set("token", token)
+	u.RawQuery = values.Encode()
+	url_ := u.String()
+	cfg, err := websocket.NewConfig(url_, url_)
+	if err != nil {
+		return nil, err
+	}
+	return websocket.DialConfig(cfg)
+}
+
 // SendCurrentPeerLocationWebsocketPath computes a request path to the send current peer location action of websocket.
 func SendCurrentPeerLocationWebsocketPath() string {
 
-	return fmt.Sprintf("/v1/echo")
+	return fmt.Sprintf("/v1/peer")
 }
 
-// echo websocket server
+// ピアのWebSocketエンドポイント
 func (c *Client) SendCurrentPeerLocationWebsocket(ctx context.Context, path string, latitude float64, longitude float64, token string) (*websocket.Conn, error) {
 	scheme := c.Scheme
 	if scheme == "" {
@@ -32,10 +56,10 @@ func (c *Client) SendCurrentPeerLocationWebsocket(ctx context.Context, path stri
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	values := u.Query()
-	tmp27 := strconv.FormatFloat(latitude, 'f', -1, 64)
-	values.Set("latitude", tmp27)
-	tmp28 := strconv.FormatFloat(longitude, 'f', -1, 64)
-	values.Set("longitude", tmp28)
+	tmp28 := strconv.FormatFloat(latitude, 'f', -1, 64)
+	values.Set("latitude", tmp28)
+	tmp29 := strconv.FormatFloat(longitude, 'f', -1, 64)
+	values.Set("longitude", tmp29)
 	values.Set("token", token)
 	u.RawQuery = values.Encode()
 	url_ := u.String()

@@ -7,11 +7,11 @@ import (
 
 var _ = Resource("websocket", func() {
 	Action("send current peer location", func() {
-		Routing(GET("echo"))
+		Routing(GET("peer"))
 		Scheme("ws")
-		Description("echo websocket server")
+		Description("ピアのWebSocketエンドポイント")
 		Params(func() {
-			Param("token", String, "Secret token for send location", func() {
+			Param("token", String, "接続用トークン", func() {
 				Example("AHO-AHO-MAN")
 			})
 			Param("latitude", Number, "緯度", func() {
@@ -25,4 +25,16 @@ var _ = Resource("websocket", func() {
 		Response(SwitchingProtocols)
 	})
 
+	Action("receive peer location", func() {
+		Routing(GET("pod"))
+		Scheme("ws")
+		Description("ポッドのWebSocketエンドポイント")
+		Params(func() {
+			Param("token", String, "接続用トークン", func() {
+				Example("AHO-AHO-MAN")
+			})
+			Required("token")
+		})
+		Response(SwitchingProtocols)
+	})
 })

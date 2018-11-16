@@ -159,13 +159,20 @@ type (
 		PrettyPrint bool
 	}
 
+	// ReceivePeerLocationWebsocketCommand is the command line data structure for the receive peer location action of websocket
+	ReceivePeerLocationWebsocketCommand struct {
+		// 接続用トークン
+		Token       string
+		PrettyPrint bool
+	}
+
 	// SendCurrentPeerLocationWebsocketCommand is the command line data structure for the send current peer location action of websocket
 	SendCurrentPeerLocationWebsocketCommand struct {
 		// 緯度
 		Latitude string
 		// スクリーンネーム
 		Longitude string
-		// Secret token for send location
+		// 接続用トークン
 		Token       string
 		PrettyPrint bool
 	}
@@ -320,35 +327,35 @@ Payload example:
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "regenerate-token",
-		Short: `regenerateToken action`,
+		Use:   "receive-peer-location",
+		Short: `ポッドのWebSocketエンドポイント`,
 	}
-	tmp10 := new(RegenerateTokenPeersCommand)
+	tmp10 := new(ReceivePeerLocationWebsocketCommand)
 	sub = &cobra.Command{
-		Use:   `peers ["/v1/peers/ID/token"]`,
+		Use:   `websocket ["/v1/pod"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp10.Run(c, args) },
 	}
 	tmp10.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp10.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	tmp11 := new(RegenerateTokenPodsCommand)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "regenerate-token",
+		Short: `regenerateToken action`,
+	}
+	tmp11 := new(RegenerateTokenPeersCommand)
 	sub = &cobra.Command{
-		Use:   `pods ["/v1/pods/ID/token"]`,
+		Use:   `peers ["/v1/peers/ID/token"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp11.Run(c, args) },
 	}
 	tmp11.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp11.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	app.AddCommand(command)
-	command = &cobra.Command{
-		Use:   "send-current-peer-location",
-		Short: `echo websocket server`,
-	}
-	tmp12 := new(SendCurrentPeerLocationWebsocketCommand)
+	tmp12 := new(RegenerateTokenPodsCommand)
 	sub = &cobra.Command{
-		Use:   `websocket ["/v1/echo"]`,
+		Use:   `pods ["/v1/pods/ID/token"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp12.Run(c, args) },
 	}
@@ -357,10 +364,24 @@ Payload example:
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
+		Use:   "send-current-peer-location",
+		Short: `ピアのWebSocketエンドポイント`,
+	}
+	tmp13 := new(SendCurrentPeerLocationWebsocketCommand)
+	sub = &cobra.Command{
+		Use:   `websocket ["/v1/peer"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp13.Run(c, args) },
+	}
+	tmp13.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp13.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
 		Use:   "send-location",
 		Short: `ピア位置送信`,
 	}
-	tmp13 := new(SendLocationPeersCommand)
+	tmp14 := new(SendLocationPeersCommand)
 	sub = &cobra.Command{
 		Use:   `peers ["/v1/peers/ID"]`,
 		Short: ``,
@@ -372,49 +393,49 @@ Payload example:
    "latitude": 35.658034,
    "longitude": 139.701636
 }`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp13.Run(c, args) },
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp14.Run(c, args) },
 	}
-	tmp13.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp13.PrettyPrint, "pp", false, "Pretty print response body")
+	tmp14.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp14.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
 		Use:   "show",
 		Short: `show action`,
 	}
-	tmp14 := new(ShowPeersCommand)
+	tmp15 := new(ShowPeersCommand)
 	sub = &cobra.Command{
 		Use:   `peers ["/v1/peers/ID"]`,
-		Short: ``,
-		RunE:  func(cmd *cobra.Command, args []string) error { return tmp14.Run(c, args) },
-	}
-	tmp14.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp14.PrettyPrint, "pp", false, "Pretty print response body")
-	command.AddCommand(sub)
-	tmp15 := new(ShowPodsCommand)
-	sub = &cobra.Command{
-		Use:   `pods ["/v1/pods/ID"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp15.Run(c, args) },
 	}
 	tmp15.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp15.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	tmp16 := new(ShowUsersCommand)
+	tmp16 := new(ShowPodsCommand)
 	sub = &cobra.Command{
-		Use:   `users ["/v1/users/ID"]`,
+		Use:   `pods ["/v1/pods/ID"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp16.Run(c, args) },
 	}
 	tmp16.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp16.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
+	tmp17 := new(ShowUsersCommand)
+	sub = &cobra.Command{
+		Use:   `users ["/v1/users/ID"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp17.Run(c, args) },
+	}
+	tmp17.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp17.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
 		Use:   "update",
 		Short: `update action`,
 	}
-	tmp17 := new(UpdatePeersCommand)
+	tmp18 := new(UpdatePeersCommand)
 	sub = &cobra.Command{
 		Use:   `peers ["/v1/peers/ID"]`,
 		Short: ``,
@@ -425,12 +446,12 @@ Payload example:
 {
    "code": "TS-IPHONE"
 }`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp17.Run(c, args) },
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp18.Run(c, args) },
 	}
-	tmp17.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp17.PrettyPrint, "pp", false, "Pretty print response body")
+	tmp18.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp18.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	tmp18 := new(UpdatePodsCommand)
+	tmp19 := new(UpdatePodsCommand)
 	sub = &cobra.Command{
 		Use:   `pods ["/v1/pods/ID"]`,
 		Short: ``,
@@ -443,10 +464,10 @@ Payload example:
    "latitude": 35.689592,
    "longitude": 139.700413
 }`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp18.Run(c, args) },
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp19.Run(c, args) },
 	}
-	tmp18.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp18.PrettyPrint, "pp", false, "Pretty print response body")
+	tmp19.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp19.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 
@@ -1162,43 +1183,70 @@ func (cmd *ShowUsersCommand) RegisterFlags(cc *cobra.Command, c *client.Client) 
 	cc.Flags().IntVar(&cmd.ID, "id", id, `ユーザーID`)
 }
 
+// Run establishes a websocket connection for the ReceivePeerLocationWebsocketCommand command.
+func (cmd *ReceivePeerLocationWebsocketCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = "/v1/pod"
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	ws, err := c.ReceivePeerLocationWebsocket(ctx, path, cmd.Token)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+	go goaclient.WSWrite(ws)
+	goaclient.WSRead(ws)
+
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *ReceivePeerLocationWebsocketCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	var token string
+	cc.Flags().StringVar(&cmd.Token, "token", token, `接続用トークン`)
+}
+
 // Run establishes a websocket connection for the SendCurrentPeerLocationWebsocketCommand command.
 func (cmd *SendCurrentPeerLocationWebsocketCommand) Run(c *client.Client, args []string) error {
 	var path string
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = "/v1/echo"
+		path = "/v1/peer"
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	var tmp19 *float64
+	var tmp20 *float64
 	if cmd.Latitude != "" {
 		var err error
-		tmp19, err = float64Val(cmd.Latitude)
+		tmp20, err = float64Val(cmd.Latitude)
 		if err != nil {
 			goa.LogError(ctx, "failed to parse flag into *float64 value", "flag", "--latitude", "err", err)
 			return err
 		}
 	}
-	if tmp19 == nil {
+	if tmp20 == nil {
 		goa.LogError(ctx, "required flag is missing", "flag", "--latitude")
 		return fmt.Errorf("required flag latitude is missing")
 	}
-	var tmp20 *float64
+	var tmp21 *float64
 	if cmd.Longitude != "" {
 		var err error
-		tmp20, err = float64Val(cmd.Longitude)
+		tmp21, err = float64Val(cmd.Longitude)
 		if err != nil {
 			goa.LogError(ctx, "failed to parse flag into *float64 value", "flag", "--longitude", "err", err)
 			return err
 		}
 	}
-	if tmp20 == nil {
+	if tmp21 == nil {
 		goa.LogError(ctx, "required flag is missing", "flag", "--longitude")
 		return fmt.Errorf("required flag longitude is missing")
 	}
-	ws, err := c.SendCurrentPeerLocationWebsocket(ctx, path, *tmp19, *tmp20, cmd.Token)
+	ws, err := c.SendCurrentPeerLocationWebsocket(ctx, path, *tmp20, *tmp21, cmd.Token)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -1216,5 +1264,5 @@ func (cmd *SendCurrentPeerLocationWebsocketCommand) RegisterFlags(cc *cobra.Comm
 	var longitude string
 	cc.Flags().StringVar(&cmd.Longitude, "longitude", longitude, `スクリーンネーム`)
 	var token string
-	cc.Flags().StringVar(&cmd.Token, "token", token, `Secret token for send location`)
+	cc.Flags().StringVar(&cmd.Token, "token", token, `接続用トークン`)
 }

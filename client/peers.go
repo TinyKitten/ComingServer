@@ -132,12 +132,12 @@ func (c *Client) NewListPeersRequest(ctx context.Context, path string, limit *in
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	values := u.Query()
 	if limit != nil {
-		tmp21 := strconv.Itoa(*limit)
-		values.Set("limit", tmp21)
+		tmp22 := strconv.Itoa(*limit)
+		values.Set("limit", tmp22)
 	}
 	if offset != nil {
-		tmp22 := strconv.Itoa(*offset)
-		values.Set("offset", tmp22)
+		tmp23 := strconv.Itoa(*offset)
+		values.Set("offset", tmp23)
 	}
 	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)

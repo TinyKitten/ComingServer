@@ -524,9 +524,9 @@ paths:
       summary: auth auth
       tags:
       - auth
-  /v1/echo:
+  /v1/peer:
     get:
-      description: echo websocket server
+      description: ピアのWebSocketエンドポイント
       operationId: websocket#send current peer location
       parameters:
       - description: 緯度
@@ -539,7 +539,7 @@ paths:
         name: longitude
         required: true
         type: number
-      - description: Secret token for send location
+      - description: 接続用トークン
         in: query
         name: token
         required: true
@@ -879,6 +879,24 @@ paths:
       summary: regenerate token peers
       tags:
       - peers
+  /v1/pod:
+    get:
+      description: ポッドのWebSocketエンドポイント
+      operationId: websocket#receive peer location
+      parameters:
+      - description: 接続用トークン
+        in: query
+        name: token
+        required: true
+        type: string
+      responses:
+        "101":
+          description: Switching Protocols
+      schemes:
+      - ws
+      summary: receive peer location websocket
+      tags:
+      - websocket
   /v1/pods:
     get:
       description: |-

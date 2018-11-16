@@ -1307,6 +1307,33 @@ func (ctx *ShowUsersContext) InternalServerError(r error) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
 }
 
+// ReceivePeerLocationWebsocketContext provides the websocket receive peer location action context.
+type ReceivePeerLocationWebsocketContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	Token string
+}
+
+// NewReceivePeerLocationWebsocketContext parses the incoming request URL and body, performs validations and creates the
+// context used by the websocket controller receive peer location action.
+func NewReceivePeerLocationWebsocketContext(ctx context.Context, r *http.Request, service *goa.Service) (*ReceivePeerLocationWebsocketContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := ReceivePeerLocationWebsocketContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramToken := req.Params["token"]
+	if len(paramToken) == 0 {
+		err = goa.MergeErrors(err, goa.MissingParamError("token"))
+	} else {
+		rawToken := paramToken[0]
+		rctx.Token = rawToken
+	}
+	return &rctx, err
+}
+
 // SendCurrentPeerLocationWebsocketContext provides the websocket send current peer location action context.
 type SendCurrentPeerLocationWebsocketContext struct {
 	context.Context

@@ -694,6 +694,7 @@ func unmarshalAddUsersPayload(ctx context.Context, service *goa.Service, req *ht
 // WebsocketController is the controller interface for the Websocket actions.
 type WebsocketController interface {
 	goa.Muxer
+	ReceivePeerLocation(*ReceivePeerLocationWebsocketContext) error
 	SendCurrentPeerLocation(*SendCurrentPeerLocationWebsocketContext) error
 }
 
@@ -701,7 +702,24 @@ type WebsocketController interface {
 func MountWebsocketController(service *goa.Service, ctrl WebsocketController) {
 	initService(service)
 	var h goa.Handler
-	service.Mux.Handle("OPTIONS", "/v1/echo", ctrl.MuxHandler("preflight", handleWebsocketOrigin(cors.HandlePreflight()), nil))
+	service.Mux.Handle("OPTIONS", "/v1/pod", ctrl.MuxHandler("preflight", handleWebsocketOrigin(cors.HandlePreflight()), nil))
+	service.Mux.Handle("OPTIONS", "/v1/peer", ctrl.MuxHandler("preflight", handleWebsocketOrigin(cors.HandlePreflight()), nil))
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewReceivePeerLocationWebsocketContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.ReceivePeerLocation(rctx)
+	}
+	h = handleWebsocketOrigin(h)
+	service.Mux.Handle("GET", "/v1/pod", ctrl.MuxHandler("receive peer location", h, nil))
+	service.LogInfo("mount", "ctrl", "Websocket", "action", "ReceivePeerLocation", "route", "GET /v1/pod")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -716,8 +734,8 @@ func MountWebsocketController(service *goa.Service, ctrl WebsocketController) {
 		return ctrl.SendCurrentPeerLocation(rctx)
 	}
 	h = handleWebsocketOrigin(h)
-	service.Mux.Handle("GET", "/v1/echo", ctrl.MuxHandler("send current peer location", h, nil))
-	service.LogInfo("mount", "ctrl", "Websocket", "action", "SendCurrentPeerLocation", "route", "GET /v1/echo")
+	service.Mux.Handle("GET", "/v1/peer", ctrl.MuxHandler("send current peer location", h, nil))
+	service.LogInfo("mount", "ctrl", "Websocket", "action", "SendCurrentPeerLocation", "route", "GET /v1/peer")
 }
 
 // handleWebsocketOrigin applies the CORS response headers corresponding to the origin.
