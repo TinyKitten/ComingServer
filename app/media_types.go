@@ -43,12 +43,15 @@ type Peer struct {
 	Code string `form:"code" json:"code" yaml:"code" xml:"code"`
 	// 作成日
 	CreatedAt int64 `form:"created_at" json:"created_at" yaml:"created_at" xml:"created_at"`
+	// ID
+	ID int64 `form:"id" json:"id" yaml:"id" xml:"id"`
 	// 更新日
 	UpdatedAt int64 `form:"updated_at" json:"updated_at" yaml:"updated_at" xml:"updated_at"`
 }
 
 // Validate validates the Peer media type instance.
 func (mt *Peer) Validate() (err error) {
+
 	if mt.Code == "" {
 		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "code"))
 	}
@@ -118,10 +121,12 @@ type Pod struct {
 	Code string `form:"code" json:"code" yaml:"code" xml:"code"`
 	// 作成日
 	CreatedAt int64 `form:"created_at" json:"created_at" yaml:"created_at" xml:"created_at"`
+	// ID
+	ID int64 `form:"id" json:"id" yaml:"id" xml:"id"`
 	// 緯度
-	Latitude int64 `form:"latitude" json:"latitude" yaml:"latitude" xml:"latitude"`
+	Latitude float64 `form:"latitude" json:"latitude" yaml:"latitude" xml:"latitude"`
 	// 経度
-	Longitude int64 `form:"longitude" json:"longitude" yaml:"longitude" xml:"longitude"`
+	Longitude float64 `form:"longitude" json:"longitude" yaml:"longitude" xml:"longitude"`
 	// 鳴っている
 	Rumbling bool `form:"rumbling" json:"rumbling" yaml:"rumbling" xml:"rumbling"`
 	// 更新日
@@ -130,6 +135,7 @@ type Pod struct {
 
 // Validate validates the Pod media type instance.
 func (mt *Pod) Validate() (err error) {
+
 	if mt.Code == "" {
 		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "code"))
 	}
@@ -159,7 +165,7 @@ func (mt PodCollection) Validate() (err error) {
 // Identifier: application/vnd.token+json; view=default
 type Token struct {
 	// 対象ID
-	ID int64 `form:"id" json:"id" yaml:"id" xml:"id"`
+	ID uint64 `form:"id" json:"id" yaml:"id" xml:"id"`
 	// トークン
 	Token string `form:"token" json:"token" yaml:"token" xml:"token"`
 	// 更新日
@@ -183,7 +189,7 @@ type User struct {
 	// 作成日
 	CreatedAt int64 `form:"created_at" json:"created_at" yaml:"created_at" xml:"created_at"`
 	// ID
-	ID int64 `form:"id" json:"id" yaml:"id" xml:"id"`
+	ID uint64 `form:"id" json:"id" yaml:"id" xml:"id"`
 	// スクリーンネーム
 	ScreenName string `form:"screen_name" json:"screen_name" yaml:"screen_name" xml:"screen_name"`
 	// 更新日

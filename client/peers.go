@@ -316,20 +316,20 @@ func (c *Client) NewShowPeersRequest(ctx context.Context, path string) (*http.Re
 
 // UpdatePeersPayload is the peers update action payload.
 type UpdatePeersPayload struct {
-	// 名前
-	Name *string `form:"name,omitempty" json:"name,omitempty" yaml:"name,omitempty" xml:"name,omitempty"`
+	// コード
+	Code *string `form:"code,omitempty" json:"code,omitempty" yaml:"code,omitempty" xml:"code,omitempty"`
 }
 
 // UpdatePeersPath computes a request path to the update action of peers.
-func UpdatePeersPath(id string) string {
-	param0 := id
+func UpdatePeersPath(id int) string {
+	param0 := strconv.Itoa(id)
 
 	return fmt.Sprintf("/v1/peers/%s", param0)
 }
 
 // ピア更新
-func (c *Client) UpdatePeers(ctx context.Context, path string, payload *UpdatePeersPayload, code *int, contentType string) (*http.Response, error) {
-	req, err := c.NewUpdatePeersRequest(ctx, path, payload, code, contentType)
+func (c *Client) UpdatePeers(ctx context.Context, path string, payload *UpdatePeersPayload, contentType string) (*http.Response, error) {
+	req, err := c.NewUpdatePeersRequest(ctx, path, payload, contentType)
 	if err != nil {
 		return nil, err
 	}
@@ -337,7 +337,7 @@ func (c *Client) UpdatePeers(ctx context.Context, path string, payload *UpdatePe
 }
 
 // NewUpdatePeersRequest create the request corresponding to the update action endpoint of the peers resource.
-func (c *Client) NewUpdatePeersRequest(ctx context.Context, path string, payload *UpdatePeersPayload, code *int, contentType string) (*http.Request, error) {
+func (c *Client) NewUpdatePeersRequest(ctx context.Context, path string, payload *UpdatePeersPayload, contentType string) (*http.Request, error) {
 	var body bytes.Buffer
 	if contentType == "" {
 		contentType = "*/*" // Use default encoder
@@ -351,12 +351,6 @@ func (c *Client) NewUpdatePeersRequest(ctx context.Context, path string, payload
 		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
-	values := u.Query()
-	if code != nil {
-		tmp23 := strconv.Itoa(*code)
-		values.Set("code", tmp23)
-	}
-	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("PUT", u.String(), &body)
 	if err != nil {
 		return nil, err

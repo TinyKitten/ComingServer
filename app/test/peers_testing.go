@@ -1778,7 +1778,7 @@ func ShowPeersOK(t goatest.TInterface, ctx context.Context, service *goa.Service
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func UpdatePeersBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.PeersController, id string, code *int, payload *app.UpdatePeersPayload) (http.ResponseWriter, error) {
+func UpdatePeersBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.PeersController, id int, payload *app.UpdatePeersPayload) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -1798,14 +1798,8 @@ func UpdatePeersBadRequest(t goatest.TInterface, ctx context.Context, service *g
 
 	// Setup request context
 	rw := httptest.NewRecorder()
-	query := url.Values{}
-	if code != nil {
-		sliceVal := []string{strconv.Itoa(*code)}
-		query["code"] = sliceVal
-	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/v1/peers/%v", id),
-		RawQuery: query.Encode(),
+		Path: fmt.Sprintf("/v1/peers/%v", id),
 	}
 	req, err := http.NewRequest("PUT", u.String(), nil)
 	if err != nil {
@@ -1813,10 +1807,6 @@ func UpdatePeersBadRequest(t goatest.TInterface, ctx context.Context, service *g
 	}
 	prms := url.Values{}
 	prms["id"] = []string{fmt.Sprintf("%v", id)}
-	if code != nil {
-		sliceVal := []string{strconv.Itoa(*code)}
-		prms["code"] = sliceVal
-	}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -1858,7 +1848,7 @@ func UpdatePeersBadRequest(t goatest.TInterface, ctx context.Context, service *g
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func UpdatePeersInternalServerError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.PeersController, id string, code *int, payload *app.UpdatePeersPayload) (http.ResponseWriter, error) {
+func UpdatePeersInternalServerError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.PeersController, id int, payload *app.UpdatePeersPayload) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -1878,14 +1868,8 @@ func UpdatePeersInternalServerError(t goatest.TInterface, ctx context.Context, s
 
 	// Setup request context
 	rw := httptest.NewRecorder()
-	query := url.Values{}
-	if code != nil {
-		sliceVal := []string{strconv.Itoa(*code)}
-		query["code"] = sliceVal
-	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/v1/peers/%v", id),
-		RawQuery: query.Encode(),
+		Path: fmt.Sprintf("/v1/peers/%v", id),
 	}
 	req, err := http.NewRequest("PUT", u.String(), nil)
 	if err != nil {
@@ -1893,10 +1877,6 @@ func UpdatePeersInternalServerError(t goatest.TInterface, ctx context.Context, s
 	}
 	prms := url.Values{}
 	prms["id"] = []string{fmt.Sprintf("%v", id)}
-	if code != nil {
-		sliceVal := []string{strconv.Itoa(*code)}
-		prms["code"] = sliceVal
-	}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -1938,7 +1918,7 @@ func UpdatePeersInternalServerError(t goatest.TInterface, ctx context.Context, s
 // It returns the response writer so it's possible to inspect the response headers.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func UpdatePeersNoContent(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.PeersController, id string, code *int, payload *app.UpdatePeersPayload) http.ResponseWriter {
+func UpdatePeersNoContent(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.PeersController, id int, payload *app.UpdatePeersPayload) http.ResponseWriter {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -1957,14 +1937,8 @@ func UpdatePeersNoContent(t goatest.TInterface, ctx context.Context, service *go
 
 	// Setup request context
 	rw := httptest.NewRecorder()
-	query := url.Values{}
-	if code != nil {
-		sliceVal := []string{strconv.Itoa(*code)}
-		query["code"] = sliceVal
-	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/v1/peers/%v", id),
-		RawQuery: query.Encode(),
+		Path: fmt.Sprintf("/v1/peers/%v", id),
 	}
 	req, err := http.NewRequest("PUT", u.String(), nil)
 	if err != nil {
@@ -1972,10 +1946,6 @@ func UpdatePeersNoContent(t goatest.TInterface, ctx context.Context, service *go
 	}
 	prms := url.Values{}
 	prms["id"] = []string{fmt.Sprintf("%v", id)}
-	if code != nil {
-		sliceVal := []string{strconv.Itoa(*code)}
-		prms["code"] = sliceVal
-	}
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -2010,7 +1980,7 @@ func UpdatePeersNoContent(t goatest.TInterface, ctx context.Context, service *go
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func UpdatePeersNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.PeersController, id string, code *int, payload *app.UpdatePeersPayload) (http.ResponseWriter, error) {
+func UpdatePeersNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.PeersController, id int, payload *app.UpdatePeersPayload) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -2030,14 +2000,8 @@ func UpdatePeersNotFound(t goatest.TInterface, ctx context.Context, service *goa
 
 	// Setup request context
 	rw := httptest.NewRecorder()
-	query := url.Values{}
-	if code != nil {
-		sliceVal := []string{strconv.Itoa(*code)}
-		query["code"] = sliceVal
-	}
 	u := &url.URL{
-		Path:     fmt.Sprintf("/v1/peers/%v", id),
-		RawQuery: query.Encode(),
+		Path: fmt.Sprintf("/v1/peers/%v", id),
 	}
 	req, err := http.NewRequest("PUT", u.String(), nil)
 	if err != nil {
@@ -2045,10 +2009,6 @@ func UpdatePeersNotFound(t goatest.TInterface, ctx context.Context, service *goa
 	}
 	prms := url.Values{}
 	prms["id"] = []string{fmt.Sprintf("%v", id)}
-	if code != nil {
-		sliceVal := []string{strconv.Itoa(*code)}
-		prms["code"] = sliceVal
-	}
 	if ctx == nil {
 		ctx = context.Background()
 	}

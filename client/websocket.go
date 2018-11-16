@@ -32,10 +32,10 @@ func (c *Client) SendCurrentPeerLocationWebsocket(ctx context.Context, path stri
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	values := u.Query()
-	tmp28 := strconv.FormatFloat(latitude, 'f', -1, 64)
-	values.Set("latitude", tmp28)
-	tmp29 := strconv.FormatFloat(longitude, 'f', -1, 64)
-	values.Set("longitude", tmp29)
+	tmp27 := strconv.FormatFloat(latitude, 'f', -1, 64)
+	values.Set("latitude", tmp27)
+	tmp28 := strconv.FormatFloat(longitude, 'f', -1, 64)
+	values.Set("longitude", tmp28)
 	values.Set("token", token)
 	u.RawQuery = values.Encode()
 	url_ := u.String()

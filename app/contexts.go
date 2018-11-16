@@ -606,8 +606,7 @@ type UpdatePeersContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
-	Code    *int
-	ID      string
+	ID      int
 	Payload *UpdatePeersPayload
 }
 
@@ -620,44 +619,37 @@ func NewUpdatePeersContext(ctx context.Context, r *http.Request, service *goa.Se
 	req := goa.ContextRequest(ctx)
 	req.Request = r
 	rctx := UpdatePeersContext{Context: ctx, ResponseData: resp, RequestData: req}
-	paramCode := req.Params["code"]
-	if len(paramCode) > 0 {
-		rawCode := paramCode[0]
-		if code, err2 := strconv.Atoi(rawCode); err2 == nil {
-			tmp9 := code
-			tmp8 := &tmp9
-			rctx.Code = tmp8
-		} else {
-			err = goa.MergeErrors(err, goa.InvalidParamTypeError("code", rawCode, "integer"))
-		}
-	}
 	paramID := req.Params["id"]
 	if len(paramID) > 0 {
 		rawID := paramID[0]
-		rctx.ID = rawID
+		if id, err2 := strconv.Atoi(rawID); err2 == nil {
+			rctx.ID = id
+		} else {
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("id", rawID, "integer"))
+		}
 	}
 	return &rctx, err
 }
 
 // updatePeersPayload is the peers update action payload.
 type updatePeersPayload struct {
-	// 名前
-	Name *string `form:"name,omitempty" json:"name,omitempty" yaml:"name,omitempty" xml:"name,omitempty"`
+	// コード
+	Code *string `form:"code,omitempty" json:"code,omitempty" yaml:"code,omitempty" xml:"code,omitempty"`
 }
 
 // Publicize creates UpdatePeersPayload from updatePeersPayload
 func (payload *updatePeersPayload) Publicize() *UpdatePeersPayload {
 	var pub UpdatePeersPayload
-	if payload.Name != nil {
-		pub.Name = payload.Name
+	if payload.Code != nil {
+		pub.Code = payload.Code
 	}
 	return &pub
 }
 
 // UpdatePeersPayload is the peers update action payload.
 type UpdatePeersPayload struct {
-	// 名前
-	Name *string `form:"name,omitempty" json:"name,omitempty" yaml:"name,omitempty" xml:"name,omitempty"`
+	// コード
+	Code *string `form:"code,omitempty" json:"code,omitempty" yaml:"code,omitempty" xml:"code,omitempty"`
 }
 
 // NoContent sends a HTTP response with status code 204.
@@ -1008,37 +1000,37 @@ func NewUpdatePodsContext(ctx context.Context, r *http.Request, service *goa.Ser
 
 // updatePodsPayload is the pods update action payload.
 type updatePodsPayload struct {
+	// コード
+	Code *string `form:"code,omitempty" json:"code,omitempty" yaml:"code,omitempty" xml:"code,omitempty"`
 	// 緯度
 	Latitude *float64 `form:"latitude,omitempty" json:"latitude,omitempty" yaml:"latitude,omitempty" xml:"latitude,omitempty"`
 	// 経度
 	Longitude *float64 `form:"longitude,omitempty" json:"longitude,omitempty" yaml:"longitude,omitempty" xml:"longitude,omitempty"`
-	// 名前
-	Name *string `form:"name,omitempty" json:"name,omitempty" yaml:"name,omitempty" xml:"name,omitempty"`
 }
 
 // Publicize creates UpdatePodsPayload from updatePodsPayload
 func (payload *updatePodsPayload) Publicize() *UpdatePodsPayload {
 	var pub UpdatePodsPayload
+	if payload.Code != nil {
+		pub.Code = payload.Code
+	}
 	if payload.Latitude != nil {
 		pub.Latitude = payload.Latitude
 	}
 	if payload.Longitude != nil {
 		pub.Longitude = payload.Longitude
 	}
-	if payload.Name != nil {
-		pub.Name = payload.Name
-	}
 	return &pub
 }
 
 // UpdatePodsPayload is the pods update action payload.
 type UpdatePodsPayload struct {
+	// コード
+	Code *string `form:"code,omitempty" json:"code,omitempty" yaml:"code,omitempty" xml:"code,omitempty"`
 	// 緯度
 	Latitude *float64 `form:"latitude,omitempty" json:"latitude,omitempty" yaml:"latitude,omitempty" xml:"latitude,omitempty"`
 	// 経度
 	Longitude *float64 `form:"longitude,omitempty" json:"longitude,omitempty" yaml:"longitude,omitempty" xml:"longitude,omitempty"`
-	// 名前
-	Name *string `form:"name,omitempty" json:"name,omitempty" yaml:"name,omitempty" xml:"name,omitempty"`
 }
 
 // NoContent sends a HTTP response with status code 204.

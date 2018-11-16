@@ -101,12 +101,12 @@ func (c *Client) NewListPodsRequest(ctx context.Context, path string, limit *int
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	values := u.Query()
 	if limit != nil {
-		tmp24 := strconv.Itoa(*limit)
-		values.Set("limit", tmp24)
+		tmp23 := strconv.Itoa(*limit)
+		values.Set("limit", tmp23)
 	}
 	if offset != nil {
-		tmp25 := strconv.Itoa(*offset)
-		values.Set("offset", tmp25)
+		tmp24 := strconv.Itoa(*offset)
+		values.Set("offset", tmp24)
 	}
 	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -193,12 +193,12 @@ func (c *Client) NewShowPodsRequest(ctx context.Context, path string) (*http.Req
 
 // UpdatePodsPayload is the pods update action payload.
 type UpdatePodsPayload struct {
+	// コード
+	Code *string `form:"code,omitempty" json:"code,omitempty" yaml:"code,omitempty" xml:"code,omitempty"`
 	// 緯度
 	Latitude *float64 `form:"latitude,omitempty" json:"latitude,omitempty" yaml:"latitude,omitempty" xml:"latitude,omitempty"`
 	// 経度
 	Longitude *float64 `form:"longitude,omitempty" json:"longitude,omitempty" yaml:"longitude,omitempty" xml:"longitude,omitempty"`
-	// 名前
-	Name *string `form:"name,omitempty" json:"name,omitempty" yaml:"name,omitempty" xml:"name,omitempty"`
 }
 
 // UpdatePodsPath computes a request path to the update action of pods.

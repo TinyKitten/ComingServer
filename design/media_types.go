@@ -11,7 +11,7 @@ var AuthSuccessMedia = MediaType("application/vnd.auth.succes+json", func() {
 
 	Attributes(func() {
 		Attribute("id", Integer, "ID", func() {
-			Metadata("struct:field:type", "int64")
+			Metadata("struct:field:type", "uint64")
 			Example(0)
 		})
 		Attribute("screen_name", String, "コード", func() {
@@ -38,7 +38,7 @@ var UserMedia = MediaType("application/vnd.user+json", func() {
 
 	Attributes(func() {
 		Attribute("id", Integer, "ID", func() {
-			Metadata("struct:field:type", "int64")
+			Metadata("struct:field:type", "uint64")
 			Example(0)
 		})
 		Attribute("screen_name", String, "スクリーンネーム", func() {
@@ -73,15 +73,17 @@ var PodMedia = MediaType("application/vnd.pod+json", func() {
 	Description("ポッド")
 
 	Attributes(func() {
+		Attribute("id", Integer, "ID", func() {
+			Metadata("struct:field:type", "int64")
+			Example(0)
+		})
 		Attribute("code", String, "コード", func() {
 			Example("SHIBUYA")
 		})
 		Attribute("latitude", Number, "緯度", func() {
-			Metadata("struct:field:type", "int64")
 			Example(35.658034)
 		})
 		Attribute("longitude", Number, "経度", func() {
-			Metadata("struct:field:type", "int64")
 			Example(139.701636)
 		})
 		Attribute("rumbling", Boolean, "鳴っている", func() {
@@ -97,6 +99,7 @@ var PodMedia = MediaType("application/vnd.pod+json", func() {
 		})
 
 		Required(
+			"id",
 			"code",
 			"latitude",
 			"longitude",
@@ -106,6 +109,7 @@ var PodMedia = MediaType("application/vnd.pod+json", func() {
 		)
 	})
 	View("default", func() {
+		Attribute("id")
 		Attribute("code")
 		Attribute("latitude")
 		Attribute("longitude")
@@ -120,6 +124,10 @@ var PeerMedia = MediaType("application/vnd.peer+json", func() {
 	Description("ピア")
 
 	Attributes(func() {
+		Attribute("id", Integer, "ID", func() {
+			Metadata("struct:field:type", "int64")
+			Example(0)
+		})
 		Attribute("code", String, "コード", func() {
 			Example("TS")
 		})
@@ -133,12 +141,14 @@ var PeerMedia = MediaType("application/vnd.peer+json", func() {
 		})
 
 		Required(
+			"id",
 			"code",
 			"created_at",
 			"updated_at",
 		)
 	})
 	View("default", func() {
+		Attribute("id")
 		Attribute("code")
 		Attribute("created_at")
 		Attribute("updated_at")
@@ -186,7 +196,7 @@ var TokenMedia = MediaType("application/vnd.token+json", func() {
 
 	Attributes(func() {
 		Attribute("id", Integer, "対象ID", func() {
-			Metadata("struct:field:type", "int64")
+			Metadata("struct:field:type", "uint64")
 			Example(0)
 		})
 		Attribute("token", String, "トークン", func() {

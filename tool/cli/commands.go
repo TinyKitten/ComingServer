@@ -20,7 +20,6 @@ import (
 	uuid "github.com/goadesign/goa/uuid"
 	"github.com/spf13/cobra"
 	"log"
-	"net/url"
 	"os"
 	"path"
 	"strconv"
@@ -93,9 +92,8 @@ type (
 	UpdatePeersCommand struct {
 		Payload     string
 		ContentType string
-		ID          string
 		// ピアID
-		Code        int
+		ID          int
 		PrettyPrint bool
 	}
 
@@ -425,7 +423,7 @@ Payload example:
 Payload example:
 
 {
-   "name": "TS-IPHONE"
+   "code": "TS-IPHONE"
 }`,
 		RunE: func(cmd *cobra.Command, args []string) error { return tmp17.Run(c, args) },
 	}
@@ -441,9 +439,9 @@ Payload example:
 Payload example:
 
 {
+   "code": "SHINJUKU",
    "latitude": 35.689592,
-   "longitude": 139.700413,
-   "name": "SHINJUKU"
+   "longitude": 139.700413
 }`,
 		RunE: func(cmd *cobra.Command, args []string) error { return tmp18.Run(c, args) },
 	}
@@ -902,7 +900,7 @@ func (cmd *UpdatePeersCommand) Run(c *client.Client, args []string) error {
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = fmt.Sprintf("/v1/peers/%v", url.QueryEscape(cmd.ID))
+		path = fmt.Sprintf("/v1/peers/%v", cmd.ID)
 	}
 	var payload client.UpdatePeersPayload
 	if cmd.Payload != "" {
@@ -913,7 +911,7 @@ func (cmd *UpdatePeersCommand) Run(c *client.Client, args []string) error {
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.UpdatePeers(ctx, path, &payload, intFlagVal("code", cmd.Code), cmd.ContentType)
+	resp, err := c.UpdatePeers(ctx, path, &payload, cmd.ContentType)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -927,10 +925,8 @@ func (cmd *UpdatePeersCommand) Run(c *client.Client, args []string) error {
 func (cmd *UpdatePeersCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
 	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
-	var id string
-	cc.Flags().StringVar(&cmd.ID, "id", id, ``)
-	var code int
-	cc.Flags().IntVar(&cmd.Code, "code", code, `ピアID`)
+	var id int
+	cc.Flags().IntVar(&cmd.ID, "id", id, `ピアID`)
 }
 
 // Run makes the HTTP request corresponding to the AddPodsCommand command.

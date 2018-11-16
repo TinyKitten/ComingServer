@@ -101,12 +101,12 @@ func (c *Client) NewListUsersRequest(ctx context.Context, path string, limit *in
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	values := u.Query()
 	if limit != nil {
-		tmp26 := strconv.Itoa(*limit)
-		values.Set("limit", tmp26)
+		tmp25 := strconv.Itoa(*limit)
+		values.Set("limit", tmp25)
 	}
 	if offset != nil {
-		tmp27 := strconv.Itoa(*offset)
-		values.Set("offset", tmp27)
+		tmp26 := strconv.Itoa(*offset)
+		values.Set("offset", tmp26)
 	}
 	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)

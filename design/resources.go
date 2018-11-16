@@ -201,7 +201,7 @@ var _ = Resource("pods", func() {
 			Attribute("longitude", Number, "経度", func() {
 				Example(139.700413)
 			})
-			Attribute("name", String, "名前", func() {
+			Attribute("code", String, "コード", func() {
 				Example("SHINJUKU")
 			})
 		})
@@ -328,12 +328,12 @@ var _ = Resource("peers", func() {
 			PUT("/:id"),
 		)
 		Params(func() {
-			Param("code", Integer, "ピアID", func() {
+			Param("id", Integer, "ピアID", func() {
 				Example(0)
 			})
 		})
 		Payload(func() {
-			Attribute("name", String, "名前", func() {
+			Attribute("code", String, "コード", func() {
 				Example("TS-IPHONE")
 			})
 		})
