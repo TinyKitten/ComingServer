@@ -440,6 +440,19 @@ definitions:
     - updated_at
     title: 'Mediatype identifier: application/vnd.token+json; view=default'
     type: object
+  UpdatePasswordAccountPayload:
+    example:
+      password: password
+    properties:
+      password:
+        description: パスワード
+        example: password
+        minLength: 6
+        type: string
+    required:
+    - password
+    title: UpdatePasswordAccountPayload
+    type: object
   UpdatePeersPayload:
     example:
       code: TS-IPHONE
@@ -602,6 +615,45 @@ paths:
       schemes:
       - http
       summary: Download swaggerui/dist
+  /v1/account/password:
+    put:
+      description: |-
+        アカウントのパスワードを更新
+
+        Required security scopes:
+          * `api:read`
+      operationId: account#update password
+      parameters:
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/UpdatePasswordAccountPayload'
+      produces:
+      - application/vnd.goa.error
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:read
+      summary: update password account
+      tags:
+      - account
   /v1/auth:
     post:
       description: JWTトークンを生成する

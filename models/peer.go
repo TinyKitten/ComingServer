@@ -2,7 +2,7 @@ package models
 
 // PeerList すべてのピア
 func PeerList(db XODB, offset, limit int) ([]*Peer, error) {
-	sqlstr := `SELECT id, code, created_at, updated_At
+	sqlstr := `SELECT id, code, created_at, updated_at
 	FROM peers
 	LIMIT ?
 	OFFSET ?`

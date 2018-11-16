@@ -32,6 +32,84 @@ func initService(service *goa.Service) {
 	service.Decoder.Register(goa.NewJSONDecoder, "*/*")
 }
 
+// AccountController is the controller interface for the Account actions.
+type AccountController interface {
+	goa.Muxer
+	UpdatePassword(*UpdatePasswordAccountContext) error
+}
+
+// MountAccountController "mounts" a Account resource controller on the given service.
+func MountAccountController(service *goa.Service, ctrl AccountController) {
+	initService(service)
+	var h goa.Handler
+	service.Mux.Handle("OPTIONS", "/v1/account/password", ctrl.MuxHandler("preflight", handleAccountOrigin(cors.HandlePreflight()), nil))
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewUpdatePasswordAccountContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		// Build the payload
+		if rawPayload := goa.ContextRequest(ctx).Payload; rawPayload != nil {
+			rctx.Payload = rawPayload.(*UpdatePasswordAccountPayload)
+		} else {
+			return goa.MissingPayloadError()
+		}
+		return ctrl.UpdatePassword(rctx)
+	}
+	h = handleSecurity("jwt", h, "api:read")
+	h = handleAccountOrigin(h)
+	service.Mux.Handle("PUT", "/v1/account/password", ctrl.MuxHandler("update password", h, unmarshalUpdatePasswordAccountPayload))
+	service.LogInfo("mount", "ctrl", "Account", "action", "UpdatePassword", "route", "PUT /v1/account/password", "security", "jwt")
+}
+
+// handleAccountOrigin applies the CORS response headers corresponding to the origin.
+func handleAccountOrigin(h goa.Handler) goa.Handler {
+
+	return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		origin := req.Header.Get("Origin")
+		if origin == "" {
+			// Not a CORS request
+			return h(ctx, rw, req)
+		}
+		if cors.MatchOrigin(origin, "*") {
+			ctx = goa.WithLogContext(ctx, "origin", origin)
+			rw.Header().Set("Access-Control-Allow-Origin", origin)
+			rw.Header().Set("Access-Control-Expose-Headers", "X-Time")
+			rw.Header().Set("Access-Control-Max-Age", "600")
+			rw.Header().Set("Access-Control-Allow-Credentials", "true")
+			if acrm := req.Header.Get("Access-Control-Request-Method"); acrm != "" {
+				// We are handling a preflight request
+				rw.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+				rw.Header().Set("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept")
+			}
+			return h(ctx, rw, req)
+		}
+
+		return h(ctx, rw, req)
+	}
+}
+
+// unmarshalUpdatePasswordAccountPayload unmarshals the request body into the context request data Payload field.
+func unmarshalUpdatePasswordAccountPayload(ctx context.Context, service *goa.Service, req *http.Request) error {
+	payload := &updatePasswordAccountPayload{}
+	if err := service.DecodeRequest(req, payload); err != nil {
+		return err
+	}
+	if err := payload.Validate(); err != nil {
+		// Initialize payload with private data structure so it can be logged
+		goa.ContextRequest(ctx).Payload = payload
+		return err
+	}
+	goa.ContextRequest(ctx).Payload = payload.Publicize()
+	return nil
+}
+
 // AuthController is the controller interface for the Auth actions.
 type AuthController interface {
 	goa.Muxer

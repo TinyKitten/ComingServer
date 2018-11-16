@@ -2,7 +2,7 @@ package models
 
 // PodList すべてのポッド
 func PodList(db XODB, offset, limit int) ([]*Pod, error) {
-	sqlstr := `SELECT id, code, latitude, longitude, approaching, created_at, updated_At
+	sqlstr := `SELECT id, code, latitude, longitude, approaching, created_at, updated_at
 	FROM pods
 	LIMIT ?
 	OFFSET ?`

@@ -28,6 +28,13 @@ import (
 )
 
 type (
+	// UpdatePasswordAccountCommand is the command line data structure for the update password action of account
+	UpdatePasswordAccountCommand struct {
+		Payload     string
+		ContentType string
+		PrettyPrint bool
+	}
+
 	// AuthAuthCommand is the command line data structure for the auth action of auth
 	AuthAuthCommand struct {
 		Payload     string
@@ -493,6 +500,27 @@ Payload example:
 	sub.PersistentFlags().BoolVar(&tmp20.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "update-password",
+		Short: `アカウントのパスワードを更新`,
+	}
+	tmp21 := new(UpdatePasswordAccountCommand)
+	sub = &cobra.Command{
+		Use:   `account ["/v1/account/password"]`,
+		Short: ``,
+		Long: `
+
+Payload example:
+
+{
+   "password": "password"
+}`,
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp21.Run(c, args) },
+	}
+	tmp21.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp21.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
 
 	dl := new(DownloadCommand)
 	dlc := &cobra.Command{
@@ -704,6 +732,39 @@ found:
 	}
 
 	return nil
+}
+
+// Run makes the HTTP request corresponding to the UpdatePasswordAccountCommand command.
+func (cmd *UpdatePasswordAccountCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = "/v1/account/password"
+	}
+	var payload client.UpdatePasswordAccountPayload
+	if cmd.Payload != "" {
+		err := json.Unmarshal([]byte(cmd.Payload), &payload)
+		if err != nil {
+			return fmt.Errorf("failed to deserialize payload: %s", err)
+		}
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.UpdatePasswordAccount(ctx, path, &payload, cmd.ContentType)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *UpdatePasswordAccountCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
+	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
+	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
 }
 
 // Run makes the HTTP request corresponding to the AuthAuthCommand command.

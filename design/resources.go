@@ -41,6 +41,36 @@ var _ = Resource("auth", func() {
 	})
 })
 
+var _ = Resource("account", func() {
+	BasePath("/account")
+	Security(JWT, func() {
+		Scope("api:read")
+	})
+	Action("update password", func() {
+		Description("アカウントのパスワードを更新")
+		Security(JWT, func() {
+			Scope("api:read")
+		})
+		Routing(
+			PUT("/password"),
+		)
+
+		Payload(func() {
+			Attribute("password", String, "パスワード", func() {
+				Example("password")
+				MinLength(6)
+			})
+			Required("password")
+		})
+
+		Response(NoContent)
+
+		Response(NotFound, ErrorMedia)
+		Response(BadRequest, ErrorMedia)
+		Response(InternalServerError, ErrorMedia)
+	})
+})
+
 var _ = Resource("users", func() {
 	BasePath("/users")
 	Security(JWT, func() {

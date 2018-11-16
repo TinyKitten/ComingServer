@@ -18,6 +18,101 @@ import (
 	"unicode/utf8"
 )
 
+// UpdatePasswordAccountContext provides the account update password action context.
+type UpdatePasswordAccountContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	Payload *UpdatePasswordAccountPayload
+}
+
+// NewUpdatePasswordAccountContext parses the incoming request URL and body, performs validations and creates the
+// context used by the account controller update password action.
+func NewUpdatePasswordAccountContext(ctx context.Context, r *http.Request, service *goa.Service) (*UpdatePasswordAccountContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := UpdatePasswordAccountContext{Context: ctx, ResponseData: resp, RequestData: req}
+	return &rctx, err
+}
+
+// updatePasswordAccountPayload is the account update password action payload.
+type updatePasswordAccountPayload struct {
+	// パスワード
+	Password *string `form:"password,omitempty" json:"password,omitempty" yaml:"password,omitempty" xml:"password,omitempty"`
+}
+
+// Validate runs the validation rules defined in the design.
+func (payload *updatePasswordAccountPayload) Validate() (err error) {
+	if payload.Password == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`raw`, "password"))
+	}
+	if payload.Password != nil {
+		if utf8.RuneCountInString(*payload.Password) < 6 {
+			err = goa.MergeErrors(err, goa.InvalidLengthError(`raw.password`, *payload.Password, utf8.RuneCountInString(*payload.Password), 6, true))
+		}
+	}
+	return
+}
+
+// Publicize creates UpdatePasswordAccountPayload from updatePasswordAccountPayload
+func (payload *updatePasswordAccountPayload) Publicize() *UpdatePasswordAccountPayload {
+	var pub UpdatePasswordAccountPayload
+	if payload.Password != nil {
+		pub.Password = *payload.Password
+	}
+	return &pub
+}
+
+// UpdatePasswordAccountPayload is the account update password action payload.
+type UpdatePasswordAccountPayload struct {
+	// パスワード
+	Password string `form:"password" json:"password" yaml:"password" xml:"password"`
+}
+
+// Validate runs the validation rules defined in the design.
+func (payload *UpdatePasswordAccountPayload) Validate() (err error) {
+	if payload.Password == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`raw`, "password"))
+	}
+	if utf8.RuneCountInString(payload.Password) < 6 {
+		err = goa.MergeErrors(err, goa.InvalidLengthError(`raw.password`, payload.Password, utf8.RuneCountInString(payload.Password), 6, true))
+	}
+	return
+}
+
+// NoContent sends a HTTP response with status code 204.
+func (ctx *UpdatePasswordAccountContext) NoContent() error {
+	ctx.ResponseData.WriteHeader(204)
+	return nil
+}
+
+// BadRequest sends a HTTP response with status code 400.
+func (ctx *UpdatePasswordAccountContext) BadRequest(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
+}
+
+// NotFound sends a HTTP response with status code 404.
+func (ctx *UpdatePasswordAccountContext) NotFound(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
+}
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *UpdatePasswordAccountContext) InternalServerError(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}
+
 // AuthAuthContext provides the auth auth action context.
 type AuthAuthContext struct {
 	context.Context
