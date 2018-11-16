@@ -191,7 +191,7 @@ func (c *Client) NewLocationsPeersRequest(ctx context.Context, path string) (*ht
 func RegenerateTokenPeersPath(id int) string {
 	param0 := strconv.Itoa(id)
 
-	return fmt.Sprintf("/v1/peers/%s", param0)
+	return fmt.Sprintf("/v1/peers/%s/token", param0)
 }
 
 // トークン再発行
@@ -210,7 +210,7 @@ func (c *Client) NewRegenerateTokenPeersRequest(ctx context.Context, path string
 		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
-	req, err := http.NewRequest("POST", u.String(), nil)
+	req, err := http.NewRequest("PATCH", u.String(), nil)
 	if err != nil {
 		return nil, err
 	}

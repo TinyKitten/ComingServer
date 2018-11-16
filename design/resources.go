@@ -219,7 +219,7 @@ var _ = Resource("pods", func() {
 			Scope("api:write")
 		})
 		Routing(
-			POST("/:id"),
+			POST("/:id/token"),
 		)
 		Params(func() {
 			Param("id", Integer, "ポッドID", func() {
@@ -351,7 +351,7 @@ var _ = Resource("peers", func() {
 			Scope("api:write")
 		})
 		Routing(
-			POST("/:id"),
+			PATCH("/:id/token"),
 		)
 		Params(func() {
 			Param("id", Integer, "ピアID", func() {

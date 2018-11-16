@@ -125,7 +125,7 @@ func (c *Client) NewListPodsRequest(ctx context.Context, path string, limit *int
 func RegenerateTokenPodsPath(id int) string {
 	param0 := strconv.Itoa(id)
 
-	return fmt.Sprintf("/v1/pods/%s", param0)
+	return fmt.Sprintf("/v1/pods/%s/token", param0)
 }
 
 // トークン再発行

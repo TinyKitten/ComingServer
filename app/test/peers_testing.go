@@ -980,9 +980,9 @@ func RegenerateTokenPeersBadRequest(t goatest.TInterface, ctx context.Context, s
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/v1/peers/%v", id),
+		Path: fmt.Sprintf("/v1/peers/%v/token", id),
 	}
-	req, err := http.NewRequest("POST", u.String(), nil)
+	req, err := http.NewRequest("PATCH", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
@@ -1049,9 +1049,9 @@ func RegenerateTokenPeersInternalServerError(t goatest.TInterface, ctx context.C
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/v1/peers/%v", id),
+		Path: fmt.Sprintf("/v1/peers/%v/token", id),
 	}
-	req, err := http.NewRequest("POST", u.String(), nil)
+	req, err := http.NewRequest("PATCH", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
@@ -1118,9 +1118,9 @@ func RegenerateTokenPeersNotFound(t goatest.TInterface, ctx context.Context, ser
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/v1/peers/%v", id),
+		Path: fmt.Sprintf("/v1/peers/%v/token", id),
 	}
-	req, err := http.NewRequest("POST", u.String(), nil)
+	req, err := http.NewRequest("PATCH", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}
@@ -1187,9 +1187,9 @@ func RegenerateTokenPeersOK(t goatest.TInterface, ctx context.Context, service *
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/v1/peers/%v", id),
+		Path: fmt.Sprintf("/v1/peers/%v/token", id),
 	}
-	req, err := http.NewRequest("POST", u.String(), nil)
+	req, err := http.NewRequest("PATCH", u.String(), nil)
 	if err != nil {
 		panic("invalid test " + err.Error()) // bug
 	}

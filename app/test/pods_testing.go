@@ -556,7 +556,7 @@ func RegenerateTokenPodsBadRequest(t goatest.TInterface, ctx context.Context, se
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/v1/pods/%v", id),
+		Path: fmt.Sprintf("/v1/pods/%v/token", id),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
@@ -625,7 +625,7 @@ func RegenerateTokenPodsInternalServerError(t goatest.TInterface, ctx context.Co
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/v1/pods/%v", id),
+		Path: fmt.Sprintf("/v1/pods/%v/token", id),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
@@ -694,7 +694,7 @@ func RegenerateTokenPodsNotFound(t goatest.TInterface, ctx context.Context, serv
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/v1/pods/%v", id),
+		Path: fmt.Sprintf("/v1/pods/%v/token", id),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
@@ -763,7 +763,7 @@ func RegenerateTokenPodsOK(t goatest.TInterface, ctx context.Context, service *g
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/v1/pods/%v", id),
+		Path: fmt.Sprintf("/v1/pods/%v/token", id),
 	}
 	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {

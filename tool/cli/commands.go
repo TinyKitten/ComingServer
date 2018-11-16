@@ -328,7 +328,7 @@ Payload example:
 	}
 	tmp10 := new(RegenerateTokenPeersCommand)
 	sub = &cobra.Command{
-		Use:   `peers ["/v1/peers/ID"]`,
+		Use:   `peers ["/v1/peers/ID/token"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp10.Run(c, args) },
 	}
@@ -337,7 +337,7 @@ Payload example:
 	command.AddCommand(sub)
 	tmp11 := new(RegenerateTokenPodsCommand)
 	sub = &cobra.Command{
-		Use:   `pods ["/v1/pods/ID"]`,
+		Use:   `pods ["/v1/pods/ID/token"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp11.Run(c, args) },
 	}
@@ -816,7 +816,7 @@ func (cmd *RegenerateTokenPeersCommand) Run(c *client.Client, args []string) err
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = fmt.Sprintf("/v1/peers/%v", cmd.ID)
+		path = fmt.Sprintf("/v1/peers/%v/token", cmd.ID)
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
@@ -1000,7 +1000,7 @@ func (cmd *RegenerateTokenPodsCommand) Run(c *client.Client, args []string) erro
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = fmt.Sprintf("/v1/pods/%v", cmd.ID)
+		path = fmt.Sprintf("/v1/pods/%v/token", cmd.ID)
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)

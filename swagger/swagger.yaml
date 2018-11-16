@@ -830,6 +830,48 @@ paths:
       summary: locations peers
       tags:
       - peers
+  /v1/peers/{id}/token:
+    patch:
+      description: |-
+        トークン再発行
+
+        Required security scopes:
+          * `api:write`
+      operationId: peers#regenerate token
+      parameters:
+      - description: ピアID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.token+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Token'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:write
+      summary: regenerate token peers
+      tags:
+      - peers
   /v1/pods:
     get:
       description: |-
@@ -950,47 +992,6 @@ paths:
       summary: show pods
       tags:
       - pods
-    post:
-      description: |-
-        トークン再発行
-
-        Required security scopes:
-          * `api:write`
-      operationId: pods#regenerate token
-      parameters:
-      - description: ポッドID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/vnd.goa.error
-      - application/vnd.token+json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/Token'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/error'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/error'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/error'
-      schemes:
-      - http
-      security:
-      - jwt:
-        - api:write
-      summary: regenerate token pods
-      tags:
-      - pods
     put:
       description: |-
         ポッド更新
@@ -1032,6 +1033,48 @@ paths:
       - jwt:
         - api:write
       summary: update pods
+      tags:
+      - pods
+  /v1/pods/{id}/token:
+    post:
+      description: |-
+        トークン再発行
+
+        Required security scopes:
+          * `api:write`
+      operationId: pods#regenerate token
+      parameters:
+      - description: ポッドID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.token+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Token'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:write
+      summary: regenerate token pods
       tags:
       - pods
   /v1/users:
