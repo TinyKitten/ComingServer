@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/TinyKitten/ComingServer/app"
@@ -11,9 +12,19 @@ import (
 	"github.com/TinyKitten/ComingServer/security"
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
+	"github.com/nppw/api/database"
+	"github.com/nppw/api/utils"
 )
 
 func main() {
+	cs, err := database.NewConfigsFromFile("dbconfig.yml")
+	if err != nil {
+		log.Fatalf("cannot open database configuration. exit. %s", err)
+	}
+	dbConn, err := cs.Open(utils.GetEnv())
+	if err != nil {
+		log.Fatalf("database initialization failed: %s", err)
+	}
 	// Create service
 	service := goa.New("ComingServer")
 
@@ -33,22 +44,25 @@ func main() {
 	app.UseOptionalJWTMiddleware(service, optionalJwtMiddleware)
 
 	// Mount "auth" controller
-	c := controller.NewAuthController(service)
+	c, err := controller.NewAuthController(service, dbConn)
+	if err != nil {
+		exitOnFailure(err)
+	}
 	app.MountAuthController(service, c)
 	// Mount "peers" controller
-	c2 := controller.NewPeersController(service)
+	c2 := controller.NewPeersController(service, dbConn)
 	app.MountPeersController(service, c2)
 	// Mount "pods" controller
-	c3 := controller.NewPodsController(service)
+	c3 := controller.NewPodsController(service, dbConn)
 	app.MountPodsController(service, c3)
 	// Mount "send current peer location" controller
-	c4 := controller.NewWebsocketController(service)
+	c4 := controller.NewWebsocketController(service, dbConn)
 	app.MountWebsocketController(service, c4)
 	// Mount "swagger" controller
 	c5 := controller.NewSwaggerController(service)
 	app.MountSwaggerController(service, c5)
 	// Mount "users" controller
-	c6 := controller.NewUsersController(service)
+	c6 := controller.NewUsersController(service, dbConn)
 	app.MountUsersController(service, c6)
 
 	// Start service

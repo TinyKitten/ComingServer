@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"database/sql"
+
 	"github.com/TinyKitten/ComingServer/app"
 	"github.com/goadesign/goa"
 )
@@ -8,11 +10,15 @@ import (
 // UsersController implements the users resource.
 type UsersController struct {
 	*goa.Controller
+	db *sql.DB
 }
 
 // NewUsersController creates a users controller.
-func NewUsersController(service *goa.Service) *UsersController {
-	return &UsersController{Controller: service.NewController("UsersController")}
+func NewUsersController(service *goa.Service, db *sql.DB) *UsersController {
+	return &UsersController{
+		Controller: service.NewController("UsersController"),
+		db:         db,
+	}
 }
 
 // Add runs the add action.

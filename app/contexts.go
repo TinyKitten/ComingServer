@@ -40,8 +40,6 @@ func NewAuthAuthContext(ctx context.Context, r *http.Request, service *goa.Servi
 
 // authAuthPayload is the auth auth action payload.
 type authAuthPayload struct {
-	// ID
-	ID *int `form:"id,omitempty" json:"id,omitempty" yaml:"id,omitempty" xml:"id,omitempty"`
 	// パスワード
 	Password *string `form:"password,omitempty" json:"password,omitempty" yaml:"password,omitempty" xml:"password,omitempty"`
 	// スクリーンネーム
@@ -67,9 +65,6 @@ func (payload *authAuthPayload) Validate() (err error) {
 // Publicize creates AuthAuthPayload from authAuthPayload
 func (payload *authAuthPayload) Publicize() *AuthAuthPayload {
 	var pub AuthAuthPayload
-	if payload.ID != nil {
-		pub.ID = payload.ID
-	}
 	if payload.Password != nil {
 		pub.Password = *payload.Password
 	}
@@ -81,8 +76,6 @@ func (payload *authAuthPayload) Publicize() *AuthAuthPayload {
 
 // AuthAuthPayload is the auth auth action payload.
 type AuthAuthPayload struct {
-	// ID
-	ID *int `form:"id,omitempty" json:"id,omitempty" yaml:"id,omitempty" xml:"id,omitempty"`
 	// パスワード
 	Password string `form:"password" json:"password" yaml:"password" xml:"password"`
 	// スクリーンネーム

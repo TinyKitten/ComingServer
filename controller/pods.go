@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"database/sql"
+
 	"github.com/TinyKitten/ComingServer/app"
 	"github.com/goadesign/goa"
 )
@@ -8,11 +10,15 @@ import (
 // PodsController implements the pods resource.
 type PodsController struct {
 	*goa.Controller
+	db *sql.DB
 }
 
 // NewPodsController creates a pods controller.
-func NewPodsController(service *goa.Service) *PodsController {
-	return &PodsController{Controller: service.NewController("PodsController")}
+func NewPodsController(service *goa.Service, db *sql.DB) *PodsController {
+	return &PodsController{
+		Controller: service.NewController("PodsController"),
+		db:         db,
+	}
 }
 
 // Add runs the add action.

@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"database/sql"
+
 	"github.com/TinyKitten/ComingServer/app"
 	"github.com/goadesign/goa"
 )
@@ -8,11 +10,15 @@ import (
 // PeersController implements the peers resource.
 type PeersController struct {
 	*goa.Controller
+	db *sql.DB
 }
 
 // NewPeersController creates a peers controller.
-func NewPeersController(service *goa.Service) *PeersController {
-	return &PeersController{Controller: service.NewController("PeersController")}
+func NewPeersController(service *goa.Service, db *sql.DB) *PeersController {
+	return &PeersController{
+		Controller: service.NewController("PeersController"),
+		db:         db,
+	}
 }
 
 // Add runs the add action.

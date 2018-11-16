@@ -71,15 +71,9 @@ definitions:
     type: object
   AuthAuthPayload:
     example:
-      id: 0
       password: password
       screen_name: tinykitten
     properties:
-      id:
-        description: ID
-        example: 0
-        format: int64
-        type: integer
       password:
         description: パスワード
         example: password

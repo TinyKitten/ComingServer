@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"database/sql"
 	"io"
 
 	"github.com/TinyKitten/ComingServer/app"
@@ -11,11 +12,15 @@ import (
 // WebsocketController implements the websocket resource.
 type WebsocketController struct {
 	*goa.Controller
+	db *sql.DB
 }
 
 // NewWebsocketController creates a websocket controller.
-func NewWebsocketController(service *goa.Service) *WebsocketController {
-	return &WebsocketController{Controller: service.NewController("WebsocketController")}
+func NewWebsocketController(service *goa.Service, db *sql.DB) *WebsocketController {
+	return &WebsocketController{
+		Controller: service.NewController("WebsocketController"),
+		db:         db,
+	}
 }
 
 // SendCurrentPeerLocation runs the send current peer location action.

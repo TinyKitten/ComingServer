@@ -252,7 +252,6 @@ Payload example:
 Payload example:
 
 {
-   "id": 0,
    "password": "password",
    "screen_name": "tinykitten"
 }`,

@@ -20,8 +20,6 @@ import (
 
 // AuthAuthPayload is the auth auth action payload.
 type AuthAuthPayload struct {
-	// ID
-	ID *int `form:"id,omitempty" json:"id,omitempty" yaml:"id,omitempty" xml:"id,omitempty"`
 	// パスワード
 	Password string `form:"password" json:"password" yaml:"password" xml:"password"`
 	// スクリーンネーム

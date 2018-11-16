@@ -21,9 +21,6 @@ var _ = Resource("auth", func() {
 		Routing(POST(""))
 
 		Payload(func() {
-			Attribute("id", Integer, "ID", func() {
-				Example(0)
-			})
 			Attribute("screen_name", String, "スクリーンネーム", func() {
 				Example("tinykitten")
 			})

@@ -18,7 +18,7 @@ var AuthSuccessMedia = MediaType("application/vnd.auth.succes+json", func() {
 			Example("tinykitten")
 		})
 		Attribute("token", String, "トークン", func() {
-			Example("gjsjgvorjldvifj")
+			Example("eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0aW55a2l0dGVuIiwiZXhwIjoxNTQyMzQ1MTM1LCJpYXQiOjE1NDIzNDE1MzUsImlzcyI6IkNvbWluZyIsImp0aSI6IjI2ZGExM2E5LTAwZjEtNGQ1NS1hNjM2LWNkOWU5Njc5ZTliZSIsIm5iZiI6Miwic2NvcGVzIjpbImFwaTpyZWFkIiwiYXBpOndyaXRlIiwiYXBpOmFkbWluIl0sInN1YiI6IkFjY2Vzc1Rva2VuIn0.NbRlJqUDj5eSWI0v-PV87BVcqo-usM3xwgYjHQcAbS454zIqXUUt1bER3XXgQetrKgt1HRc7_6b3qUXvx6XfWZFqUyEHLZY2QBzKiTwo0rQlXOREDiDDunKTa7Z-BPPT2beJiYjhk7_wp6APbObbiUfW9iRNdNgOHKJ1_qy_6QoqRBrbTXEI-n8pgOsalzBYZuU5fIMLPHPKZmJelwpz5w5ag8ARtLahNlUYPT7iAU_XfBbQVZ5WAKwW2XaLsf4VP1XH4XKsCtUMjftpW7Xrn9avVtzHH9SmmN7HY_rje250g5rsz-nh7-ylUSOgxhu_93MkbnICu0DIjCxaKMOXsg")
 		})
 
 		Required(
