@@ -74,7 +74,7 @@ func (c *AuthController) Auth(ctx *app.AuthAuthContext) error {
 	expire := time.Now().Add(time.Hour * 1).Unix()
 	token.Claims = jwtgo.MapClaims{
 		"iss":    "Coming",                         // who creates the token and signs it
-		"aud":    user.ScreenName,                  // to whom the token is intended to be sent
+		"aud":    user.ID,                          // to whom the token is intended to be sent
 		"exp":    expire,                           // time when the token will expire (10 minutes from now)
 		"jti":    uuid.Must(uuid.NewV4()).String(), // a unique identifier for the token
 		"iat":    time.Now().Unix(),                // when the token was issued/created (now)

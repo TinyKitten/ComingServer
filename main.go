@@ -78,6 +78,9 @@ func main() {
 	// Mount "users" controller
 	c6 := controller.NewUsersController(service, dbConn)
 	app.MountUsersController(service, c6)
+	// Mount "account" controller
+	c7 := controller.NewAccountController(service, dbConn)
+	app.MountAccountController(service, c7)
 
 	// Start service
 	if err := service.ListenAndServe(":8080"); err != nil {
