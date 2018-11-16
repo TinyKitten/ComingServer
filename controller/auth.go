@@ -47,17 +47,17 @@ func (c *AuthController) Auth(ctx *app.AuthAuthContext) error {
 	// Put your logic here
 	user, err := models.UserByScreenName(c.db, ctx.Payload.ScreenName)
 	if err != nil {
-		return ctx.InternalServerError(ErrUnauthorized)
+		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(ctx.Payload.Password))
 	if err != nil {
-		return ctx.Unauthorized(ErrUnauthorized)
+		return ctx.Unauthorized(goa.ErrUnauthorized(ErrUnauthorized))
 	}
 
 	priv, err := user.Privilege(c.db)
 	if err != nil {
-		return ctx.Unauthorized(ErrUnauthorized)
+		return ctx.Unauthorized(goa.ErrUnauthorized(ErrUnauthorized))
 	}
 
 	var scopes []string

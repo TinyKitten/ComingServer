@@ -21,8 +21,10 @@ import (
 
 // AddPeersPayload is the peers add action payload.
 type AddPeersPayload struct {
-	// ポッド名
+	// ピアコード
 	Code string `form:"code" json:"code" yaml:"code" xml:"code"`
+	// ポッドID
+	PodID int `form:"pod_id" json:"pod_id" yaml:"pod_id" xml:"pod_id"`
 }
 
 // AddPeersPath computes a request path to the add action of peers.
@@ -132,12 +134,12 @@ func (c *Client) NewListPeersRequest(ctx context.Context, path string, limit *in
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	values := u.Query()
 	if limit != nil {
-		tmp22 := strconv.Itoa(*limit)
-		values.Set("limit", tmp22)
+		tmp23 := strconv.Itoa(*limit)
+		values.Set("limit", tmp23)
 	}
 	if offset != nil {
-		tmp23 := strconv.Itoa(*offset)
-		values.Set("offset", tmp23)
+		tmp24 := strconv.Itoa(*offset)
+		values.Set("offset", tmp24)
 	}
 	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -228,13 +230,15 @@ type SendLocationPeersPayload struct {
 	Latitude float64 `form:"latitude" json:"latitude" yaml:"latitude" xml:"latitude"`
 	// スクリーンネーム
 	Longitude float64 `form:"longitude" json:"longitude" yaml:"longitude" xml:"longitude"`
+	// ピアトークン
+	Token string `form:"token" json:"token" yaml:"token" xml:"token"`
 }
 
 // SendLocationPeersPath computes a request path to the send location action of peers.
 func SendLocationPeersPath(id int) string {
 	param0 := strconv.Itoa(id)
 
-	return fmt.Sprintf("/v1/peers/%s", param0)
+	return fmt.Sprintf("/v1/peers/%s/locations", param0)
 }
 
 // ピア位置送信

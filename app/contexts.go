@@ -142,14 +142,19 @@ func NewAddPeersContext(ctx context.Context, r *http.Request, service *goa.Servi
 
 // addPeersPayload is the peers add action payload.
 type addPeersPayload struct {
-	// ポッド名
+	// ピアコード
 	Code *string `form:"code,omitempty" json:"code,omitempty" yaml:"code,omitempty" xml:"code,omitempty"`
+	// ポッドID
+	PodID *int `form:"pod_id,omitempty" json:"pod_id,omitempty" yaml:"pod_id,omitempty" xml:"pod_id,omitempty"`
 }
 
 // Validate runs the validation rules defined in the design.
 func (payload *addPeersPayload) Validate() (err error) {
 	if payload.Code == nil {
 		err = goa.MergeErrors(err, goa.MissingAttributeError(`raw`, "code"))
+	}
+	if payload.PodID == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`raw`, "pod_id"))
 	}
 	return
 }
@@ -160,13 +165,18 @@ func (payload *addPeersPayload) Publicize() *AddPeersPayload {
 	if payload.Code != nil {
 		pub.Code = *payload.Code
 	}
+	if payload.PodID != nil {
+		pub.PodID = *payload.PodID
+	}
 	return &pub
 }
 
 // AddPeersPayload is the peers add action payload.
 type AddPeersPayload struct {
-	// ポッド名
+	// ピアコード
 	Code string `form:"code" json:"code" yaml:"code" xml:"code"`
+	// ポッドID
+	PodID int `form:"pod_id" json:"pod_id" yaml:"pod_id" xml:"pod_id"`
 }
 
 // Validate runs the validation rules defined in the design.
@@ -174,13 +184,14 @@ func (payload *AddPeersPayload) Validate() (err error) {
 	if payload.Code == "" {
 		err = goa.MergeErrors(err, goa.MissingAttributeError(`raw`, "code"))
 	}
+
 	return
 }
 
 // Created sends a HTTP response with status code 201.
-func (ctx *AddPeersContext) Created(r *Pod) error {
+func (ctx *AddPeersContext) Created(r *PeerCreated) error {
 	if ctx.ResponseData.Header().Get("Content-Type") == "" {
-		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.pod+json")
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.peer.created+json")
 	}
 	return ctx.ResponseData.Service.Send(ctx.Context, 201, r)
 }
@@ -191,6 +202,14 @@ func (ctx *AddPeersContext) BadRequest(r error) error {
 		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
 	}
 	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
+}
+
+// NotFound sends a HTTP response with status code 404.
+func (ctx *AddPeersContext) NotFound(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
 }
 
 // InternalServerError sends a HTTP response with status code 500.
@@ -477,10 +496,15 @@ type sendLocationPeersPayload struct {
 	Latitude *float64 `form:"latitude,omitempty" json:"latitude,omitempty" yaml:"latitude,omitempty" xml:"latitude,omitempty"`
 	// スクリーンネーム
 	Longitude *float64 `form:"longitude,omitempty" json:"longitude,omitempty" yaml:"longitude,omitempty" xml:"longitude,omitempty"`
+	// ピアトークン
+	Token *string `form:"token,omitempty" json:"token,omitempty" yaml:"token,omitempty" xml:"token,omitempty"`
 }
 
 // Validate runs the validation rules defined in the design.
 func (payload *sendLocationPeersPayload) Validate() (err error) {
+	if payload.Token == nil {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`raw`, "token"))
+	}
 	if payload.Latitude == nil {
 		err = goa.MergeErrors(err, goa.MissingAttributeError(`raw`, "latitude"))
 	}
@@ -499,6 +523,9 @@ func (payload *sendLocationPeersPayload) Publicize() *SendLocationPeersPayload {
 	if payload.Longitude != nil {
 		pub.Longitude = *payload.Longitude
 	}
+	if payload.Token != nil {
+		pub.Token = *payload.Token
+	}
 	return &pub
 }
 
@@ -508,20 +535,23 @@ type SendLocationPeersPayload struct {
 	Latitude float64 `form:"latitude" json:"latitude" yaml:"latitude" xml:"latitude"`
 	// スクリーンネーム
 	Longitude float64 `form:"longitude" json:"longitude" yaml:"longitude" xml:"longitude"`
+	// ピアトークン
+	Token string `form:"token" json:"token" yaml:"token" xml:"token"`
 }
 
 // Validate runs the validation rules defined in the design.
 func (payload *SendLocationPeersPayload) Validate() (err error) {
+	if payload.Token == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`raw`, "token"))
+	}
 
 	return
 }
 
-// OK sends a HTTP response with status code 200.
-func (ctx *SendLocationPeersContext) OK(r *Token) error {
-	if ctx.ResponseData.Header().Get("Content-Type") == "" {
-		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.token+json")
-	}
-	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+// NoContent sends a HTTP response with status code 204.
+func (ctx *SendLocationPeersContext) NoContent() error {
+	ctx.ResponseData.WriteHeader(204)
+	return nil
 }
 
 // BadRequest sends a HTTP response with status code 400.
@@ -530,6 +560,14 @@ func (ctx *SendLocationPeersContext) BadRequest(r error) error {
 		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
 	}
 	return ctx.ResponseData.Service.Send(ctx.Context, 400, r)
+}
+
+// Forbidden sends a HTTP response with status code 403.
+func (ctx *SendLocationPeersContext) Forbidden(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 403, r)
 }
 
 // NotFound sends a HTTP response with status code 404.
@@ -761,9 +799,9 @@ func (payload *AddPodsPayload) Validate() (err error) {
 }
 
 // Created sends a HTTP response with status code 201.
-func (ctx *AddPodsContext) Created(r *Pod) error {
+func (ctx *AddPodsContext) Created(r *PodCreated) error {
 	if ctx.ResponseData.Header().Get("Content-Type") == "" {
-		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.pod+json")
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.pod.created+json")
 	}
 	return ctx.ResponseData.Service.Send(ctx.Context, 201, r)
 }
@@ -848,6 +886,86 @@ func (ctx *ListPodsContext) NotFound(r error) error {
 
 // InternalServerError sends a HTTP response with status code 500.
 func (ctx *ListPodsContext) InternalServerError(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}
+
+// PeersListPodsContext provides the pods peers list action context.
+type PeersListPodsContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	ID     int
+	Limit  int
+	Offset int
+}
+
+// NewPeersListPodsContext parses the incoming request URL and body, performs validations and creates the
+// context used by the pods controller peers list action.
+func NewPeersListPodsContext(ctx context.Context, r *http.Request, service *goa.Service) (*PeersListPodsContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := PeersListPodsContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramID := req.Params["id"]
+	if len(paramID) > 0 {
+		rawID := paramID[0]
+		if id, err2 := strconv.Atoi(rawID); err2 == nil {
+			rctx.ID = id
+		} else {
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("id", rawID, "integer"))
+		}
+	}
+	paramLimit := req.Params["limit"]
+	if len(paramLimit) == 0 {
+		rctx.Limit = 100
+	} else {
+		rawLimit := paramLimit[0]
+		if limit, err2 := strconv.Atoi(rawLimit); err2 == nil {
+			rctx.Limit = limit
+		} else {
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("limit", rawLimit, "integer"))
+		}
+	}
+	paramOffset := req.Params["offset"]
+	if len(paramOffset) == 0 {
+		rctx.Offset = 0
+	} else {
+		rawOffset := paramOffset[0]
+		if offset, err2 := strconv.Atoi(rawOffset); err2 == nil {
+			rctx.Offset = offset
+		} else {
+			err = goa.MergeErrors(err, goa.InvalidParamTypeError("offset", rawOffset, "integer"))
+		}
+	}
+	return &rctx, err
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *PeersListPodsContext) OK(r PeerCollection) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.peer+json; type=collection")
+	}
+	if r == nil {
+		r = PeerCollection{}
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// NotFound sends a HTTP response with status code 404.
+func (ctx *PeersListPodsContext) NotFound(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
+}
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *PeersListPodsContext) InternalServerError(r error) error {
 	if ctx.ResponseData.Header().Get("Content-Type") == "" {
 		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
 	}

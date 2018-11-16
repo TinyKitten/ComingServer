@@ -101,12 +101,57 @@ func (c *Client) NewListPodsRequest(ctx context.Context, path string, limit *int
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	values := u.Query()
 	if limit != nil {
-		tmp24 := strconv.Itoa(*limit)
-		values.Set("limit", tmp24)
+		tmp25 := strconv.Itoa(*limit)
+		values.Set("limit", tmp25)
 	}
 	if offset != nil {
-		tmp25 := strconv.Itoa(*offset)
-		values.Set("offset", tmp25)
+		tmp26 := strconv.Itoa(*offset)
+		values.Set("offset", tmp26)
+	}
+	u.RawQuery = values.Encode()
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	if c.JWTSigner != nil {
+		if err := c.JWTSigner.Sign(req); err != nil {
+			return nil, err
+		}
+	}
+	return req, nil
+}
+
+// PeersListPodsPath computes a request path to the peers list action of pods.
+func PeersListPodsPath(id int) string {
+	param0 := strconv.Itoa(id)
+
+	return fmt.Sprintf("/v1/pods/%s/peers", param0)
+}
+
+// ポッドに属するすべてのピアを取得
+func (c *Client) PeersListPods(ctx context.Context, path string, limit *int, offset *int) (*http.Response, error) {
+	req, err := c.NewPeersListPodsRequest(ctx, path, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	return c.Client.Do(ctx, req)
+}
+
+// NewPeersListPodsRequest create the request corresponding to the peers list action endpoint of the pods resource.
+func (c *Client) NewPeersListPodsRequest(ctx context.Context, path string, limit *int, offset *int) (*http.Request, error) {
+	scheme := c.Scheme
+	if scheme == "" {
+		scheme = "http"
+	}
+	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	values := u.Query()
+	if limit != nil {
+		tmp27 := strconv.Itoa(*limit)
+		values.Set("limit", tmp27)
+	}
+	if offset != nil {
+		tmp28 := strconv.Itoa(*offset)
+		values.Set("offset", tmp28)
 	}
 	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)

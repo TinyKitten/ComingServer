@@ -3,13 +3,11 @@ package controller
 import (
 	"database/sql"
 	"log"
-	"strconv"
 	"time"
 
 	"github.com/TinyKitten/ComingServer/app"
 	"github.com/TinyKitten/ComingServer/models"
 	"github.com/goadesign/goa"
-	hashids "github.com/speps/go-hashids"
 )
 
 // PodsController implements the pods resource.
@@ -52,12 +50,13 @@ func (c *PodsController) Add(ctx *app.AddPodsContext) error {
 		return ctx.InternalServerError(goa.ErrInternal(err))
 	}
 
-	created := &app.Pod{
+	created := &app.PodCreated{
 		ID:        int64(pod.ID),
 		Code:      ctx.Payload.Code,
 		CreatedAt: at.Unix(),
 		UpdatedAt: at.Unix(),
 		Rumbling:  false,
+		Token:     token,
 		Latitude:  ctx.Payload.Latitude,
 		Longitude: ctx.Payload.Longitude,
 	}
@@ -100,11 +99,21 @@ func (c *PodsController) RegenerateToken(ctx *app.RegenerateTokenPodsContext) er
 	// Put your logic here
 	at := time.Now().Unix()
 	token, err := generateToken()
-	err = models.PodUpdateToken(c.db, uint64(ctx.ID), token)
 	if err != nil {
 		log.Println(err)
 		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
 	}
+
+	pod, err := models.PodByID(c.db, uint64(ctx.ID))
+	if err != nil {
+		log.Println(err)
+		return ctx.NotFound(goa.ErrNotFound(ErrPodNotFound))
+	}
+
+	pod.Token = token
+
+	pod.Update(c.db)
+
 	res := &app.Token{
 		ID:        uint64(ctx.ID),
 		Token:     token,
@@ -141,16 +150,22 @@ func (c *PodsController) Update(ctx *app.UpdatePodsContext) error {
 	// PodsController_Update: start_implement
 
 	// Put your logic here
-	id := uint64(ctx.ID)
-	pID := &id
-	updateInput := &models.PodUpdateInput{
-		ID:        pID,
-		Latitude:  ctx.Payload.Latitude,
-		Longitude: ctx.Payload.Longitude,
-		Code:      ctx.Payload.Code,
+	pod, err := models.PodByID(c.db, uint64(ctx.ID))
+	if err != nil {
+		log.Println(err)
+		return ctx.NotFound(goa.ErrNotFound(ErrPodNotFound))
+	}
+	if ctx.Payload.Latitude != nil {
+		pod.Latitude = *ctx.Payload.Latitude
+	}
+	if ctx.Payload.Longitude != nil {
+		pod.Longitude = *ctx.Payload.Longitude
+	}
+	if ctx.Payload.Code != nil {
+		pod.Code = *ctx.Payload.Code
 	}
 
-	err := models.PodUpdate(c.db, updateInput)
+	err = pod.Update(c.db)
 	if err != nil {
 		log.Println(err)
 		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
@@ -160,17 +175,38 @@ func (c *PodsController) Update(ctx *app.UpdatePodsContext) error {
 	// PodsController_Update: end_implement
 }
 
-func generateToken() (string, error) {
-	now := time.Now()
-	hd := hashids.NewData()
-	hd.Salt = strconv.FormatInt(now.Unix(), 10)
-	h, err := hashids.NewWithData(hd)
+// PeersList runs the peers list action.
+func (c *PodsController) PeersList(ctx *app.PeersListPodsContext) error {
+	// PodsController_PeersList: start_implement
+
+	// Put your logic here
+	peersMap, err := models.PeersMapsByPodID(c.db, uint64(ctx.ID))
 	if err != nil {
-		return "", err
+		log.Println(err)
+		return ctx.NotFound(goa.ErrNotFound("Pod not found"))
 	}
-	id, err := h.Encode([]int{1, 2, 3})
-	if err != nil {
-		return "", err
+
+	if len(peersMap) == 0 {
+		return ctx.NotFound(goa.ErrNotFound("Peers not recorded"))
 	}
-	return id, err
+
+	res := app.PeerCollection{}
+
+	for _, p := range peersMap {
+		peer, err := p.Peer(c.db)
+		if err != nil {
+			log.Println(err)
+			return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
+		}
+		peerMedia := &app.Peer{
+			ID:        int64(peer.ID),
+			Code:      peer.Code,
+			CreatedAt: peer.CreatedAt.Unix(),
+			UpdatedAt: peer.UpdatedAt.Unix(),
+		}
+		res = append(res, peerMedia)
+	}
+
+	return ctx.OK(res)
+	// PodsController_PeersList: end_implement
 }

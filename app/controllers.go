@@ -243,8 +243,8 @@ func MountPeersController(service *goa.Service, ctrl PeersController) {
 	}
 	h = handleSecurity("optional_jwt", h, "api:admin")
 	h = handlePeersOrigin(h)
-	service.Mux.Handle("POST", "/v1/peers/:id", ctrl.MuxHandler("send location", h, unmarshalSendLocationPeersPayload))
-	service.LogInfo("mount", "ctrl", "Peers", "action", "SendLocation", "route", "POST /v1/peers/:id", "security", "optional_jwt")
+	service.Mux.Handle("POST", "/v1/peers/:id/locations", ctrl.MuxHandler("send location", h, unmarshalSendLocationPeersPayload))
+	service.LogInfo("mount", "ctrl", "Peers", "action", "SendLocation", "route", "POST /v1/peers/:id/locations", "security", "optional_jwt")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -359,6 +359,7 @@ type PodsController interface {
 	goa.Muxer
 	Add(*AddPodsContext) error
 	List(*ListPodsContext) error
+	PeersList(*PeersListPodsContext) error
 	RegenerateToken(*RegenerateTokenPodsContext) error
 	Show(*ShowPodsContext) error
 	Update(*UpdatePodsContext) error
@@ -369,6 +370,7 @@ func MountPodsController(service *goa.Service, ctrl PodsController) {
 	initService(service)
 	var h goa.Handler
 	service.Mux.Handle("OPTIONS", "/v1/pods", ctrl.MuxHandler("preflight", handlePodsOrigin(cors.HandlePreflight()), nil))
+	service.Mux.Handle("OPTIONS", "/v1/pods/:id/peers", ctrl.MuxHandler("preflight", handlePodsOrigin(cors.HandlePreflight()), nil))
 	service.Mux.Handle("OPTIONS", "/v1/pods/:id/token", ctrl.MuxHandler("preflight", handlePodsOrigin(cors.HandlePreflight()), nil))
 	service.Mux.Handle("OPTIONS", "/v1/pods/:id", ctrl.MuxHandler("preflight", handlePodsOrigin(cors.HandlePreflight()), nil))
 
@@ -411,6 +413,23 @@ func MountPodsController(service *goa.Service, ctrl PodsController) {
 	h = handlePodsOrigin(h)
 	service.Mux.Handle("GET", "/v1/pods", ctrl.MuxHandler("list", h, nil))
 	service.LogInfo("mount", "ctrl", "Pods", "action", "List", "route", "GET /v1/pods", "security", "jwt")
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewPeersListPodsContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.PeersList(rctx)
+	}
+	h = handleSecurity("jwt", h, "api:read")
+	h = handlePodsOrigin(h)
+	service.Mux.Handle("GET", "/v1/pods/:id/peers", ctrl.MuxHandler("peers list", h, nil))
+	service.LogInfo("mount", "ctrl", "Pods", "action", "PeersList", "route", "GET /v1/pods/:id/peers", "security", "jwt")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request

@@ -108,7 +108,7 @@ func AddPodsBadRequest(t goatest.TInterface, ctx context.Context, service *goa.S
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func AddPodsCreated(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.PodsController, payload *app.AddPodsPayload) (http.ResponseWriter, *app.Pod) {
+func AddPodsCreated(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.PodsController, payload *app.AddPodsPayload) (http.ResponseWriter, *app.PodCreated) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -172,12 +172,12 @@ func AddPodsCreated(t goatest.TInterface, ctx context.Context, service *goa.Serv
 	if rw.Code != 201 {
 		t.Errorf("invalid response status code: got %+v, expected 201", rw.Code)
 	}
-	var mt *app.Pod
+	var mt *app.PodCreated
 	if resp != nil {
 		var __ok bool
-		mt, __ok = resp.(*app.Pod)
+		mt, __ok = resp.(*app.PodCreated)
 		if !__ok {
-			t.Fatalf("invalid response media: got variable of type %T, value %+v, expected instance of app.Pod", resp, resp)
+			t.Fatalf("invalid response media: got variable of type %T, value %+v, expected instance of app.PodCreated", resp, resp)
 		}
 		__err = mt.Validate()
 		if __err != nil {
@@ -520,6 +520,272 @@ func ListPodsOK(t goatest.TInterface, ctx context.Context, service *goa.Service,
 		mt, _ok = resp.(app.PodCollection)
 		if !_ok {
 			t.Fatalf("invalid response media: got variable of type %T, value %+v, expected instance of app.PodCollection", resp, resp)
+		}
+		_err = mt.Validate()
+		if _err != nil {
+			t.Errorf("invalid response media type: %s", _err)
+		}
+	}
+
+	// Return results
+	return rw, mt
+}
+
+// PeersListPodsInternalServerError runs the method PeersList of the given controller with the given parameters.
+// It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
+// If ctx is nil then context.Background() is used.
+// If service is nil then a default service is created.
+func PeersListPodsInternalServerError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.PodsController, id int, limit int, offset int) (http.ResponseWriter, error) {
+	// Setup service
+	var (
+		logBuf bytes.Buffer
+		resp   interface{}
+
+		respSetter goatest.ResponseSetterFunc = func(r interface{}) { resp = r }
+	)
+	if service == nil {
+		service = goatest.Service(&logBuf, respSetter)
+	} else {
+		logger := log.New(&logBuf, "", log.Ltime)
+		service.WithLogger(goa.NewLogger(logger))
+		newEncoder := func(io.Writer) goa.Encoder { return respSetter }
+		service.Encoder = goa.NewHTTPEncoder() // Make sure the code ends up using this decoder
+		service.Encoder.Register(newEncoder, "*/*")
+	}
+
+	// Setup request context
+	rw := httptest.NewRecorder()
+	query := url.Values{}
+	{
+		sliceVal := []string{strconv.Itoa(limit)}
+		query["limit"] = sliceVal
+	}
+	{
+		sliceVal := []string{strconv.Itoa(offset)}
+		query["offset"] = sliceVal
+	}
+	u := &url.URL{
+		Path:     fmt.Sprintf("/v1/pods/%v/peers", id),
+		RawQuery: query.Encode(),
+	}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		panic("invalid test " + err.Error()) // bug
+	}
+	prms := url.Values{}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
+	{
+		sliceVal := []string{strconv.Itoa(limit)}
+		prms["limit"] = sliceVal
+	}
+	{
+		sliceVal := []string{strconv.Itoa(offset)}
+		prms["offset"] = sliceVal
+	}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	goaCtx := goa.NewContext(goa.WithAction(ctx, "PodsTest"), rw, req, prms)
+	peersListCtx, _err := app.NewPeersListPodsContext(goaCtx, req, service)
+	if _err != nil {
+		e, ok := _err.(goa.ServiceError)
+		if !ok {
+			panic("invalid test data " + _err.Error()) // bug
+		}
+		return nil, e
+	}
+
+	// Perform action
+	_err = ctrl.PeersList(peersListCtx)
+
+	// Validate response
+	if _err != nil {
+		t.Fatalf("controller returned %+v, logs:\n%s", _err, logBuf.String())
+	}
+	if rw.Code != 500 {
+		t.Errorf("invalid response status code: got %+v, expected 500", rw.Code)
+	}
+	var mt error
+	if resp != nil {
+		var _ok bool
+		mt, _ok = resp.(error)
+		if !_ok {
+			t.Fatalf("invalid response media: got variable of type %T, value %+v, expected instance of error", resp, resp)
+		}
+	}
+
+	// Return results
+	return rw, mt
+}
+
+// PeersListPodsNotFound runs the method PeersList of the given controller with the given parameters.
+// It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
+// If ctx is nil then context.Background() is used.
+// If service is nil then a default service is created.
+func PeersListPodsNotFound(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.PodsController, id int, limit int, offset int) (http.ResponseWriter, error) {
+	// Setup service
+	var (
+		logBuf bytes.Buffer
+		resp   interface{}
+
+		respSetter goatest.ResponseSetterFunc = func(r interface{}) { resp = r }
+	)
+	if service == nil {
+		service = goatest.Service(&logBuf, respSetter)
+	} else {
+		logger := log.New(&logBuf, "", log.Ltime)
+		service.WithLogger(goa.NewLogger(logger))
+		newEncoder := func(io.Writer) goa.Encoder { return respSetter }
+		service.Encoder = goa.NewHTTPEncoder() // Make sure the code ends up using this decoder
+		service.Encoder.Register(newEncoder, "*/*")
+	}
+
+	// Setup request context
+	rw := httptest.NewRecorder()
+	query := url.Values{}
+	{
+		sliceVal := []string{strconv.Itoa(limit)}
+		query["limit"] = sliceVal
+	}
+	{
+		sliceVal := []string{strconv.Itoa(offset)}
+		query["offset"] = sliceVal
+	}
+	u := &url.URL{
+		Path:     fmt.Sprintf("/v1/pods/%v/peers", id),
+		RawQuery: query.Encode(),
+	}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		panic("invalid test " + err.Error()) // bug
+	}
+	prms := url.Values{}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
+	{
+		sliceVal := []string{strconv.Itoa(limit)}
+		prms["limit"] = sliceVal
+	}
+	{
+		sliceVal := []string{strconv.Itoa(offset)}
+		prms["offset"] = sliceVal
+	}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	goaCtx := goa.NewContext(goa.WithAction(ctx, "PodsTest"), rw, req, prms)
+	peersListCtx, _err := app.NewPeersListPodsContext(goaCtx, req, service)
+	if _err != nil {
+		e, ok := _err.(goa.ServiceError)
+		if !ok {
+			panic("invalid test data " + _err.Error()) // bug
+		}
+		return nil, e
+	}
+
+	// Perform action
+	_err = ctrl.PeersList(peersListCtx)
+
+	// Validate response
+	if _err != nil {
+		t.Fatalf("controller returned %+v, logs:\n%s", _err, logBuf.String())
+	}
+	if rw.Code != 404 {
+		t.Errorf("invalid response status code: got %+v, expected 404", rw.Code)
+	}
+	var mt error
+	if resp != nil {
+		var _ok bool
+		mt, _ok = resp.(error)
+		if !_ok {
+			t.Fatalf("invalid response media: got variable of type %T, value %+v, expected instance of error", resp, resp)
+		}
+	}
+
+	// Return results
+	return rw, mt
+}
+
+// PeersListPodsOK runs the method PeersList of the given controller with the given parameters.
+// It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
+// If ctx is nil then context.Background() is used.
+// If service is nil then a default service is created.
+func PeersListPodsOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.PodsController, id int, limit int, offset int) (http.ResponseWriter, app.PeerCollection) {
+	// Setup service
+	var (
+		logBuf bytes.Buffer
+		resp   interface{}
+
+		respSetter goatest.ResponseSetterFunc = func(r interface{}) { resp = r }
+	)
+	if service == nil {
+		service = goatest.Service(&logBuf, respSetter)
+	} else {
+		logger := log.New(&logBuf, "", log.Ltime)
+		service.WithLogger(goa.NewLogger(logger))
+		newEncoder := func(io.Writer) goa.Encoder { return respSetter }
+		service.Encoder = goa.NewHTTPEncoder() // Make sure the code ends up using this decoder
+		service.Encoder.Register(newEncoder, "*/*")
+	}
+
+	// Setup request context
+	rw := httptest.NewRecorder()
+	query := url.Values{}
+	{
+		sliceVal := []string{strconv.Itoa(limit)}
+		query["limit"] = sliceVal
+	}
+	{
+		sliceVal := []string{strconv.Itoa(offset)}
+		query["offset"] = sliceVal
+	}
+	u := &url.URL{
+		Path:     fmt.Sprintf("/v1/pods/%v/peers", id),
+		RawQuery: query.Encode(),
+	}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		panic("invalid test " + err.Error()) // bug
+	}
+	prms := url.Values{}
+	prms["id"] = []string{fmt.Sprintf("%v", id)}
+	{
+		sliceVal := []string{strconv.Itoa(limit)}
+		prms["limit"] = sliceVal
+	}
+	{
+		sliceVal := []string{strconv.Itoa(offset)}
+		prms["offset"] = sliceVal
+	}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	goaCtx := goa.NewContext(goa.WithAction(ctx, "PodsTest"), rw, req, prms)
+	peersListCtx, _err := app.NewPeersListPodsContext(goaCtx, req, service)
+	if _err != nil {
+		e, ok := _err.(goa.ServiceError)
+		if !ok {
+			panic("invalid test data " + _err.Error()) // bug
+		}
+		t.Errorf("unexpected parameter validation error: %+v", e)
+		return nil, nil
+	}
+
+	// Perform action
+	_err = ctrl.PeersList(peersListCtx)
+
+	// Validate response
+	if _err != nil {
+		t.Fatalf("controller returned %+v, logs:\n%s", _err, logBuf.String())
+	}
+	if rw.Code != 200 {
+		t.Errorf("invalid response status code: got %+v, expected 200", rw.Code)
+	}
+	var mt app.PeerCollection
+	if resp != nil {
+		var _ok bool
+		mt, _ok = resp.(app.PeerCollection)
+		if !_ok {
+			t.Fatalf("invalid response media: got variable of type %T, value %+v, expected instance of app.PeerCollection", resp, resp)
 		}
 		_err = mt.Validate()
 		if _err != nil {

@@ -2,8 +2,11 @@ package controller
 
 import (
 	"database/sql"
+	"log"
+	"time"
 
 	"github.com/TinyKitten/ComingServer/app"
+	"github.com/TinyKitten/ComingServer/models"
 	"github.com/goadesign/goa"
 )
 
@@ -26,8 +29,53 @@ func (c *PeersController) Add(ctx *app.AddPeersContext) error {
 	// PeersController_Add: start_implement
 
 	// Put your logic here
+	pod, err := models.PodByID(c.db, uint64(ctx.Payload.PodID))
+	if err != nil {
+		log.Println(err)
+		return ctx.NotFound(goa.ErrInternal("Pod not found"))
+	}
 
-	return nil
+	at := time.Now()
+	token, err := generateToken()
+	if err != nil {
+		log.Println(err)
+		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
+	}
+	peer := models.Peer{
+		Code:      ctx.Payload.Code,
+		Token:     token,
+		CreatedAt: at,
+		UpdatedAt: at,
+	}
+
+	err = peer.Insert(c.db)
+	if err != nil {
+		log.Println(err)
+		return ctx.InternalServerError(goa.ErrInternal(err))
+	}
+
+	pm := models.PeersMap{
+		PodID:     pod.ID,
+		PeerID:    peer.ID,
+		CreatedAt: at,
+		UpdatedAt: at,
+	}
+
+	err = pm.Insert(c.db)
+	if err != nil {
+		log.Println(err)
+		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
+	}
+
+	created := &app.PeerCreated{
+		ID:        int64(peer.ID),
+		Code:      ctx.Payload.Code,
+		Token:     token,
+		CreatedAt: at.Unix(),
+		UpdatedAt: at.Unix(),
+	}
+
+	return ctx.Created(created)
 	// PeersController_Add: end_implement
 }
 
@@ -36,8 +84,23 @@ func (c *PeersController) CurrentLocation(ctx *app.CurrentLocationPeersContext) 
 	// PeersController_CurrentLocation: start_implement
 
 	// Put your logic here
+	locs, err := models.PeerLocationsByPeerID(c.db, uint64(ctx.ID))
+	if err != nil {
+		log.Println(err)
+		return ctx.InternalServerError(goa.ErrInternal(err))
+	}
 
-	res := &app.PeerLocation{}
+	if len(locs) == 0 {
+		log.Println(err)
+		return ctx.NotFound(goa.ErrNotFound("peer location is not recorded"))
+	}
+
+	res := &app.PeerLocation{
+		Latitude:  locs[0].Latitude,
+		Longitude: locs[0].Longitude,
+		CreatedAt: locs[0].CreatedAt.Unix(),
+		UpdatedAt: locs[0].UpdatedAt.Unix(),
+	}
 	return ctx.OK(res)
 	// PeersController_CurrentLocation: end_implement
 }
@@ -47,8 +110,21 @@ func (c *PeersController) List(ctx *app.ListPeersContext) error {
 	// PeersController_List: start_implement
 
 	// Put your logic here
-
 	res := app.PeerCollection{}
+	peers, err := models.PeerList(c.db, ctx.Offset, ctx.Limit)
+	if err != nil {
+		log.Println(err)
+		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
+	}
+	for _, peer := range peers {
+		peerMedia := &app.Peer{
+			ID:        int64(peer.ID),
+			Code:      peer.Code,
+			CreatedAt: peer.CreatedAt.Unix(),
+			UpdatedAt: peer.UpdatedAt.Unix(),
+		}
+		res = append(res, peerMedia)
+	}
 	return ctx.OK(res)
 	// PeersController_List: end_implement
 }
@@ -59,7 +135,22 @@ func (c *PeersController) Locations(ctx *app.LocationsPeersContext) error {
 
 	// Put your logic here
 
+	locs, err := models.PeerLocationsByPeerID(c.db, uint64(ctx.ID))
+	if err != nil {
+		log.Println(err)
+		return ctx.InternalServerError(goa.ErrInternal(err))
+	}
+
 	res := app.PeerLocationCollection{}
+	for _, loc := range locs {
+		peerLocMedia := &app.PeerLocation{
+			Latitude:  loc.Latitude,
+			Longitude: loc.Longitude,
+			CreatedAt: loc.CreatedAt.Unix(),
+			UpdatedAt: loc.UpdatedAt.Unix(),
+		}
+		res = append(res, peerLocMedia)
+	}
 	return ctx.OK(res)
 	// PeersController_Locations: end_implement
 }
@@ -70,7 +161,31 @@ func (c *PeersController) RegenerateToken(ctx *app.RegenerateTokenPeersContext) 
 
 	// Put your logic here
 
-	res := &app.Token{}
+	at := time.Now().Unix()
+	token, err := generateToken()
+	if err != nil {
+		log.Println(err)
+		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
+	}
+
+	peer, err := models.PeerByID(c.db, uint64(ctx.ID))
+	if err != nil {
+		log.Println(err)
+		return ctx.NotFound(goa.ErrNotFound(ErrPeerNotFound))
+	}
+
+	peer.Token = token
+	err = peer.Update(c.db)
+	if err != nil {
+		log.Println(err)
+		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
+	}
+
+	res := &app.Token{
+		ID:        uint64(ctx.ID),
+		Token:     token,
+		UpdatedAt: at,
+	}
 	return ctx.OK(res)
 	// PeersController_RegenerateToken: end_implement
 }
@@ -80,9 +195,32 @@ func (c *PeersController) SendLocation(ctx *app.SendLocationPeersContext) error 
 	// PeersController_SendLocation: start_implement
 
 	// Put your logic here
+	peer, err := models.PeerByID(c.db, uint64(ctx.ID))
+	if err != nil {
+		log.Println(err)
+		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
+	}
 
-	res := &app.Token{}
-	return ctx.OK(res)
+	if peer.Token != ctx.Payload.Token {
+		return ctx.Forbidden(goa.ErrBadRequest("Token not matched"))
+	}
+
+	at := time.Now()
+	loc := models.PeerLocation{
+		PeerID:    uint64(ctx.ID),
+		Latitude:  ctx.Payload.Latitude,
+		Longitude: ctx.Payload.Longitude,
+		CreatedAt: at,
+		UpdatedAt: at,
+	}
+
+	err = loc.Insert(c.db)
+	if err != nil {
+		log.Println(err)
+		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
+	}
+
+	return ctx.NoContent()
 	// PeersController_SendLocation: end_implement
 }
 
@@ -91,8 +229,18 @@ func (c *PeersController) Show(ctx *app.ShowPeersContext) error {
 	// PeersController_Show: start_implement
 
 	// Put your logic here
+	peer, err := models.PeerByID(c.db, uint64(ctx.ID))
+	if err != nil {
+		log.Println(err)
+		return ctx.NotFound(goa.ErrNotFound(ErrPeerNotFound))
+	}
 
-	res := &app.Peer{}
+	res := &app.Peer{
+		ID:        int64(peer.ID),
+		Code:      peer.Code,
+		CreatedAt: peer.CreatedAt.Unix(),
+		UpdatedAt: peer.UpdatedAt.Unix(),
+	}
 	return ctx.OK(res)
 	// PeersController_Show: end_implement
 }
@@ -102,7 +250,20 @@ func (c *PeersController) Update(ctx *app.UpdatePeersContext) error {
 	// PeersController_Update: start_implement
 
 	// Put your logic here
+	peer, err := models.PeerByID(c.db, uint64(ctx.ID))
+	if err != nil {
+		log.Println(err)
+		return ctx.NotFound(goa.ErrNotFound(ErrPeerNotFound))
+	}
+	if ctx.Payload.Code != nil {
+		peer.Code = *ctx.Payload.Code
+	}
+	err = peer.Update(c.db)
+	if err != nil {
+		log.Println(err)
+		return ctx.NotFound(goa.ErrInternal(ErrInternalServerError))
+	}
 
-	return nil
+	return ctx.NoContent()
 	// PeersController_Update: end_implement
 }

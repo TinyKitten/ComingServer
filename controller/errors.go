@@ -1,10 +1,12 @@
 package controller
 
-import "errors"
-
 var (
 	// ErrInternalServerError 内部サーバエラー
-	ErrInternalServerError = errors.New("internal server error")
+	ErrInternalServerError = "internal server error"
 	// ErrUnauthorized 認証失敗
-	ErrUnauthorized = errors.New("unauthorized")
+	ErrUnauthorized = "unauthorized"
+	// ErrPodNotFound ポッドが見つからない
+	ErrPodNotFound = "Pod not found"
+	// ErrPeerNotFound ピアが見つからない
+	ErrPeerNotFound = "Peer not found"
 )

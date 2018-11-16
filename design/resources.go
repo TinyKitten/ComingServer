@@ -141,6 +141,32 @@ var _ = Resource("pods", func() {
 		Response(NotFound, ErrorMedia)
 		Response(InternalServerError, ErrorMedia)
 	})
+	Action("peers list", func() {
+		Description("ポッドに属するすべてのピアを取得")
+		Routing(
+			GET("/:id/peers"),
+		)
+
+		Params(func() {
+			Param("id", Integer, "ポッドID", func() {
+				Example(0)
+			})
+		})
+
+		Params(func() {
+			Param("limit", Integer, "最大件数", func() {
+				Default(100)
+			})
+			Param("offset", Integer, "取得開始位置", func() {
+				Default(0)
+			})
+		})
+
+		Response(OK, CollectionOf(PeerMedia))
+
+		Response(NotFound, ErrorMedia)
+		Response(InternalServerError, ErrorMedia)
+	})
 	Action("show", func() {
 		Description("ポッドをIDで取得")
 		Routing(
@@ -177,7 +203,7 @@ var _ = Resource("pods", func() {
 			Required("code", "latitude", "longitude")
 		})
 
-		Response(Created, PodMedia)
+		Response(Created, PodCreatedMedia)
 		Response(BadRequest, ErrorMedia)
 		Response(InternalServerError, ErrorMedia)
 	})
@@ -309,13 +335,17 @@ var _ = Resource("peers", func() {
 			POST(""),
 		)
 		Payload(func() {
-			Attribute("code", String, "ポッド名", func() {
+			Attribute("code", String, "ピアコード", func() {
 				Example("TS")
 			})
-			Required("code")
+			Attribute("pod_id", Integer, "ポッドID", func() {
+				Example(0)
+			})
+			Required("code", "pod_id")
 		})
 
-		Response(Created, PodMedia)
+		Response(Created, PeerCreatedMedia)
+		Response(NotFound, ErrorMedia)
 		Response(BadRequest, ErrorMedia)
 		Response(InternalServerError, ErrorMedia)
 	})
@@ -367,7 +397,7 @@ var _ = Resource("peers", func() {
 			Scope("api:admin")
 		})
 		Routing(
-			POST("/:id"),
+			POST("/:id/locations"),
 		)
 		Params(func() {
 			Param("id", Integer, "ピアID", func() {
@@ -375,16 +405,20 @@ var _ = Resource("peers", func() {
 			})
 		})
 		Payload(func() {
+			Attribute("token", String, "ピアトークン", func() {
+				Example("AHO-AHO-MAN")
+			})
 			Attribute("latitude", Number, "緯度", func() {
 				Example(35.658034)
 			})
 			Attribute("longitude", Number, "スクリーンネーム", func() {
 				Example(139.701636)
 			})
-			Required("latitude", "longitude")
+			Required("token", "latitude", "longitude")
 		})
-		Response(OK, TokenMedia)
+		Response(NoContent)
 		Response(NotFound, ErrorMedia)
+		Response(Forbidden, ErrorMedia)
 		Response(BadRequest, ErrorMedia)
 		Response(InternalServerError, ErrorMedia)
 	})

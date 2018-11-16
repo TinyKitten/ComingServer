@@ -81,6 +81,42 @@ func (c *Client) DecodePeer(resp *http.Response) (*Peer, error) {
 	return &decoded, err
 }
 
+// ピア作成成功 (default view)
+//
+// Identifier: application/vnd.peer.created+json; view=default
+type PeerCreated struct {
+	// コード
+	Code string `form:"code" json:"code" yaml:"code" xml:"code"`
+	// 作成日
+	CreatedAt int64 `form:"created_at" json:"created_at" yaml:"created_at" xml:"created_at"`
+	// ID
+	ID int64 `form:"id" json:"id" yaml:"id" xml:"id"`
+	// トークン
+	Token string `form:"token" json:"token" yaml:"token" xml:"token"`
+	// 更新日
+	UpdatedAt int64 `form:"updated_at" json:"updated_at" yaml:"updated_at" xml:"updated_at"`
+}
+
+// Validate validates the PeerCreated media type instance.
+func (mt *PeerCreated) Validate() (err error) {
+
+	if mt.Code == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "code"))
+	}
+	if mt.Token == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "token"))
+	}
+
+	return
+}
+
+// DecodePeerCreated decodes the PeerCreated instance encoded in resp body.
+func (c *Client) DecodePeerCreated(resp *http.Response) (*PeerCreated, error) {
+	var decoded PeerCreated
+	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
+	return &decoded, err
+}
+
 // ピア位置情報 (default view)
 //
 // Identifier: application/vnd.peer.location+json; view=default
@@ -189,6 +225,49 @@ func (mt *Pod) Validate() (err error) {
 // DecodePod decodes the Pod instance encoded in resp body.
 func (c *Client) DecodePod(resp *http.Response) (*Pod, error) {
 	var decoded Pod
+	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
+	return &decoded, err
+}
+
+// ポッド作成成功 (default view)
+//
+// Identifier: application/vnd.pod.created+json; view=default
+type PodCreated struct {
+	// コード
+	Code string `form:"code" json:"code" yaml:"code" xml:"code"`
+	// 作成日
+	CreatedAt int64 `form:"created_at" json:"created_at" yaml:"created_at" xml:"created_at"`
+	// ID
+	ID int64 `form:"id" json:"id" yaml:"id" xml:"id"`
+	// 緯度
+	Latitude float64 `form:"latitude" json:"latitude" yaml:"latitude" xml:"latitude"`
+	// 経度
+	Longitude float64 `form:"longitude" json:"longitude" yaml:"longitude" xml:"longitude"`
+	// 鳴っている
+	Rumbling bool `form:"rumbling" json:"rumbling" yaml:"rumbling" xml:"rumbling"`
+	// トークン
+	Token string `form:"token" json:"token" yaml:"token" xml:"token"`
+	// 更新日
+	UpdatedAt int64 `form:"updated_at" json:"updated_at" yaml:"updated_at" xml:"updated_at"`
+}
+
+// Validate validates the PodCreated media type instance.
+func (mt *PodCreated) Validate() (err error) {
+
+	if mt.Code == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "code"))
+	}
+
+	if mt.Token == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "token"))
+	}
+
+	return
+}
+
+// DecodePodCreated decodes the PodCreated instance encoded in resp body.
+func (c *Client) DecodePodCreated(resp *http.Response) (*PodCreated, error) {
+	var decoded PodCreated
 	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
 	return &decoded, err
 }

@@ -7,13 +7,20 @@ definitions:
   AddPeersPayload:
     example:
       code: TS
+      pod_id: 0
     properties:
       code:
-        description: ポッド名
+        description: ピアコード
         example: TS
         type: string
+      pod_id:
+        description: ポッドID
+        example: 0
+        format: int64
+        type: integer
     required:
     - code
+    - pod_id
     title: AddPeersPayload
     type: object
   AddPodsPayload:
@@ -156,6 +163,46 @@ definitions:
       $ref: '#/definitions/Peer'
     title: 'Mediatype identifier: application/vnd.peer+json; type=collection; view=default'
     type: array
+  PeerCreated:
+    description: ピア作成成功 (default view)
+    example:
+      code: TS
+      created_at: 1.0173276e+09
+      id: 0
+      token: AHO-AHO-MAN
+      updated_at: 1.0173276e+09
+    properties:
+      code:
+        description: コード
+        example: TS
+        type: string
+      created_at:
+        description: 作成日
+        example: 1.0173276e+09
+        format: double
+        type: number
+      id:
+        description: ID
+        example: 0
+        format: int64
+        type: integer
+      token:
+        description: トークン
+        example: AHO-AHO-MAN
+        type: string
+      updated_at:
+        description: 更新日
+        example: 1.0173276e+09
+        format: int64
+        type: integer
+    required:
+    - id
+    - code
+    - token
+    - created_at
+    - updated_at
+    title: 'Mediatype identifier: application/vnd.peer.created+json; view=default'
+    type: object
   PeerLocation:
     description: ピア位置情報 (default view)
     example:
@@ -280,10 +327,71 @@ definitions:
       $ref: '#/definitions/Pod'
     title: 'Mediatype identifier: application/vnd.pod+json; type=collection; view=default'
     type: array
+  PodCreated:
+    description: ポッド作成成功 (default view)
+    example:
+      code: SHIBUYA
+      created_at: 1.0173276e+09
+      id: 0
+      latitude: 35.658034
+      longitude: 139.701636
+      rumbling: false
+      token: AHO-AHO-MAN
+      updated_at: 1.0173276e+09
+    properties:
+      code:
+        description: コード
+        example: SHIBUYA
+        type: string
+      created_at:
+        description: 作成日
+        example: 1.0173276e+09
+        format: double
+        type: number
+      id:
+        description: ID
+        example: 0
+        format: int64
+        type: integer
+      latitude:
+        description: 緯度
+        example: 35.658034
+        format: double
+        type: number
+      longitude:
+        description: 経度
+        example: 139.701636
+        format: double
+        type: number
+      rumbling:
+        description: 鳴っている
+        example: false
+        type: boolean
+      token:
+        description: トークン
+        example: AHO-AHO-MAN
+        type: string
+      updated_at:
+        description: 更新日
+        example: 1.0173276e+09
+        format: int64
+        type: integer
+    required:
+    - id
+    - code
+    - latitude
+    - longitude
+    - rumbling
+    - token
+    - created_at
+    - updated_at
+    title: 'Mediatype identifier: application/vnd.pod.created+json; view=default'
+    type: object
   SendLocationPeersPayload:
     example:
       latitude: 35.658034
       longitude: 139.701636
+      token: AHO-AHO-MAN
     properties:
       latitude:
         description: 緯度
@@ -295,7 +403,12 @@ definitions:
         example: 139.701636
         format: double
         type: number
+      token:
+        description: ピアトークン
+        example: AHO-AHO-MAN
+        type: string
     required:
+    - token
     - latitude
     - longitude
     title: SendLocationPeersPayload
@@ -612,14 +725,18 @@ paths:
           $ref: '#/definitions/AddPeersPayload'
       produces:
       - application/vnd.goa.error
-      - application/vnd.pod+json
+      - application/vnd.peer.created+json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/Pod'
+            $ref: '#/definitions/PeerCreated'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/error'
         "500":
@@ -670,52 +787,6 @@ paths:
       - jwt:
         - api:read
       summary: show peers
-      tags:
-      - peers
-    post:
-      description: |-
-        ピア位置送信
-
-        Required security scopes:
-          * `api:admin`
-      operationId: peers#send location
-      parameters:
-      - description: ピアID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/SendLocationPeersPayload'
-      produces:
-      - application/vnd.goa.error
-      - application/vnd.token+json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/Token'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/error'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/error'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/error'
-      schemes:
-      - http
-      security:
-      - optional_jwt:
-        - api:admin
-      summary: send location peers
       tags:
       - peers
     put:
@@ -835,6 +906,53 @@ paths:
       - jwt:
         - api:read
       summary: locations peers
+      tags:
+      - peers
+    post:
+      description: |-
+        ピア位置送信
+
+        Required security scopes:
+          * `api:admin`
+      operationId: peers#send location
+      parameters:
+      - description: ピアID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/SendLocationPeersPayload'
+      produces:
+      - application/vnd.goa.error
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - optional_jwt:
+        - api:admin
+      summary: send location peers
       tags:
       - peers
   /v1/peers/{id}/token:
@@ -957,12 +1075,12 @@ paths:
           $ref: '#/definitions/AddPodsPayload'
       produces:
       - application/vnd.goa.error
-      - application/vnd.pod+json
+      - application/vnd.pod.created+json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/Pod'
+            $ref: '#/definitions/PodCreated'
         "400":
           description: Bad Request
           schema:
@@ -1058,6 +1176,56 @@ paths:
       - jwt:
         - api:write
       summary: update pods
+      tags:
+      - pods
+  /v1/pods/{id}/peers:
+    get:
+      description: |-
+        ポッドに属するすべてのピアを取得
+
+        Required security scopes:
+          * `api:read`
+      operationId: pods#peers list
+      parameters:
+      - description: ポッドID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - default: 100
+        description: 最大件数
+        in: query
+        name: limit
+        required: false
+        type: integer
+      - default: 0
+        description: 取得開始位置
+        in: query
+        name: offset
+        required: false
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.peer+json; type=collection
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/PeerCollection'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:read
+      summary: peers list pods
       tags:
       - pods
   /v1/pods/{id}/token:

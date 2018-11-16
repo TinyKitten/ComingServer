@@ -1,9 +1,9 @@
 package models
 
-// PodList すべてのポッド
-func PodList(db XODB, offset, limit int) ([]*Pod, error) {
-	sqlstr := `SELECT id, code, latitude, longitude, rumbling, created_at, updated_At
-	FROM pods
+// PeerList すべてのピア
+func PeerList(db XODB, offset, limit int) ([]*Peer, error) {
+	sqlstr := `SELECT id, code, created_at, updated_At
+	FROM peers
 	LIMIT ?
 	OFFSET ?`
 
@@ -14,15 +14,12 @@ func PodList(db XODB, offset, limit int) ([]*Pod, error) {
 	}
 	defer q.Close()
 
-	res := []*Pod{}
+	res := []*Peer{}
 	for q.Next() {
-		r := Pod{}
+		r := Peer{}
 		err = q.Scan(
 			&r.ID,
 			&r.Code,
-			&r.Latitude,
-			&r.Longitude,
-			&r.Rumbling,
 			&r.CreatedAt,
 			&r.UpdatedAt,
 		)

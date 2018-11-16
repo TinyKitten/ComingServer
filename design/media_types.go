@@ -155,6 +155,103 @@ var PeerMedia = MediaType("application/vnd.peer+json", func() {
 	})
 })
 
+// PodCreatedMedia ポッド作成成功
+var PodCreatedMedia = MediaType("application/vnd.pod.created+json", func() {
+	Description("ポッド作成成功")
+
+	Attributes(func() {
+		Attribute("id", Integer, "ID", func() {
+			Metadata("struct:field:type", "int64")
+			Example(0)
+		})
+		Attribute("code", String, "コード", func() {
+			Example("SHIBUYA")
+		})
+		Attribute("latitude", Number, "緯度", func() {
+			Example(35.658034)
+		})
+		Attribute("longitude", Number, "経度", func() {
+			Example(139.701636)
+		})
+		Attribute("rumbling", Boolean, "鳴っている", func() {
+			Example(false)
+		})
+		Attribute("token", String, "トークン", func() {
+			Example("AHO-AHO-MAN")
+		})
+		Attribute("created_at", Number, "作成日", func() {
+			Metadata("struct:field:type", "int64")
+			Example(1017327600)
+		})
+		Attribute("updated_at", Integer, "更新日", func() {
+			Metadata("struct:field:type", "int64")
+			Example(1017327600)
+		})
+
+		Required(
+			"id",
+			"code",
+			"latitude",
+			"longitude",
+			"rumbling",
+			"token",
+			"created_at",
+			"updated_at",
+		)
+	})
+	View("default", func() {
+		Attribute("id")
+		Attribute("code")
+		Attribute("latitude")
+		Attribute("longitude")
+		Attribute("rumbling")
+		Attribute("token")
+		Attribute("created_at")
+		Attribute("updated_at")
+	})
+})
+
+// PeerCreatedMedia ピア作成成功
+var PeerCreatedMedia = MediaType("application/vnd.peer.created+json", func() {
+	Description("ピア作成成功")
+
+	Attributes(func() {
+		Attribute("id", Integer, "ID", func() {
+			Metadata("struct:field:type", "int64")
+			Example(0)
+		})
+		Attribute("code", String, "コード", func() {
+			Example("TS")
+		})
+		Attribute("token", String, "トークン", func() {
+			Example("AHO-AHO-MAN")
+		})
+		Attribute("created_at", Number, "作成日", func() {
+			Metadata("struct:field:type", "int64")
+			Example(1017327600)
+		})
+		Attribute("updated_at", Integer, "更新日", func() {
+			Metadata("struct:field:type", "int64")
+			Example(1017327600)
+		})
+
+		Required(
+			"id",
+			"code",
+			"token",
+			"created_at",
+			"updated_at",
+		)
+	})
+	View("default", func() {
+		Attribute("id")
+		Attribute("code")
+		Attribute("token")
+		Attribute("created_at")
+		Attribute("updated_at")
+	})
+})
+
 // PeerLocationMedia ピア位置
 var PeerLocationMedia = MediaType("application/vnd.peer.location+json", func() {
 	Description("ピア位置情報")
