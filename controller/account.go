@@ -33,8 +33,8 @@ func (c *AccountController) UpdatePassword(ctx *app.UpdatePasswordAccountContext
 	// Put your logic here
 	token := jwt.ContextJWT(ctx)
 	claims := token.Claims.(jwtgo.MapClaims)
-	userID := claims["aud"].(uint64)
-	user, err := models.UserByID(c.db, userID)
+	userID := claims["aud"].(float64)
+	user, err := models.UserByID(c.db, uint64(userID))
 	if err != nil {
 		log.Println(err)
 		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
@@ -62,8 +62,8 @@ func (c *AccountController) Profile(ctx *app.ProfileAccountContext) error {
 	// Put your logic here
 	token := jwt.ContextJWT(ctx)
 	claims := token.Claims.(jwtgo.MapClaims)
-	userID := claims["aud"].(uint64)
-	user, err := models.UserByID(c.db, userID)
+	userID := claims["aud"].(float64)
+	user, err := models.UserByID(c.db, uint64(userID))
 	if err != nil {
 		log.Println(err)
 		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
