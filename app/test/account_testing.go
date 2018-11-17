@@ -49,7 +49,7 @@ func ProfileAccountInternalServerError(t goatest.TInterface, ctx context.Context
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/v1/account/"),
+		Path: fmt.Sprintf("/v1/account"),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
@@ -117,7 +117,7 @@ func ProfileAccountNotFound(t goatest.TInterface, ctx context.Context, service *
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/v1/account/"),
+		Path: fmt.Sprintf("/v1/account"),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
@@ -185,7 +185,7 @@ func ProfileAccountOK(t goatest.TInterface, ctx context.Context, service *goa.Se
 	// Setup request context
 	rw := httptest.NewRecorder()
 	u := &url.URL{
-		Path: fmt.Sprintf("/v1/account/"),
+		Path: fmt.Sprintf("/v1/account"),
 	}
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {

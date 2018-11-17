@@ -43,7 +43,7 @@ type AccountController interface {
 func MountAccountController(service *goa.Service, ctrl AccountController) {
 	initService(service)
 	var h goa.Handler
-	service.Mux.Handle("OPTIONS", "/v1/account/", ctrl.MuxHandler("preflight", handleAccountOrigin(cors.HandlePreflight()), nil))
+	service.Mux.Handle("OPTIONS", "/v1/account", ctrl.MuxHandler("preflight", handleAccountOrigin(cors.HandlePreflight()), nil))
 	service.Mux.Handle("OPTIONS", "/v1/account/password", ctrl.MuxHandler("preflight", handleAccountOrigin(cors.HandlePreflight()), nil))
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
@@ -60,8 +60,8 @@ func MountAccountController(service *goa.Service, ctrl AccountController) {
 	}
 	h = handleSecurity("jwt", h, "api:read")
 	h = handleAccountOrigin(h)
-	service.Mux.Handle("GET", "/v1/account/", ctrl.MuxHandler("profile", h, nil))
-	service.LogInfo("mount", "ctrl", "Account", "action", "Profile", "route", "GET /v1/account/", "security", "jwt")
+	service.Mux.Handle("GET", "/v1/account", ctrl.MuxHandler("profile", h, nil))
+	service.LogInfo("mount", "ctrl", "Account", "action", "Profile", "route", "GET /v1/account", "security", "jwt")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request

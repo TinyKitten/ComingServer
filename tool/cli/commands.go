@@ -366,7 +366,7 @@ Payload example:
 	}
 	tmp11 := new(ProfileAccountCommand)
 	sub = &cobra.Command{
-		Use:   `account ["/v1/account/"]`,
+		Use:   `account ["/v1/account"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp11.Run(c, args) },
 	}
@@ -759,7 +759,7 @@ func (cmd *ProfileAccountCommand) Run(c *client.Client, args []string) error {
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = "/v1/account/"
+		path = "/v1/account"
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)

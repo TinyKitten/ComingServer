@@ -615,7 +615,7 @@ paths:
       schemes:
       - http
       summary: Download swaggerui/dist
-  /v1/account/:
+  /v1/account:
     get:
       description: |-
         JWTトークンに紐付けられた情報を取得

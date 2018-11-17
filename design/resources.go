@@ -52,7 +52,7 @@ var _ = Resource("account", func() {
 			Scope("api:read")
 		})
 		Routing(
-			GET("/"),
+			GET(""),
 		)
 		Response(OK, UserMedia)
 

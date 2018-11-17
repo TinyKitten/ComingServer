@@ -21,7 +21,7 @@ import (
 // ProfileAccountPath computes a request path to the profile action of account.
 func ProfileAccountPath() string {
 
-	return fmt.Sprintf("/v1/account/")
+	return fmt.Sprintf("/v1/account")
 }
 
 // JWTトークンに紐付けられた情報を取得
