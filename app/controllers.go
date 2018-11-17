@@ -35,6 +35,7 @@ func initService(service *goa.Service) {
 // AccountController is the controller interface for the Account actions.
 type AccountController interface {
 	goa.Muxer
+	Profile(*ProfileAccountContext) error
 	UpdatePassword(*UpdatePasswordAccountContext) error
 }
 
@@ -42,7 +43,25 @@ type AccountController interface {
 func MountAccountController(service *goa.Service, ctrl AccountController) {
 	initService(service)
 	var h goa.Handler
+	service.Mux.Handle("OPTIONS", "/v1/account/", ctrl.MuxHandler("preflight", handleAccountOrigin(cors.HandlePreflight()), nil))
 	service.Mux.Handle("OPTIONS", "/v1/account/password", ctrl.MuxHandler("preflight", handleAccountOrigin(cors.HandlePreflight()), nil))
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewProfileAccountContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.Profile(rctx)
+	}
+	h = handleSecurity("jwt", h, "api:read")
+	h = handleAccountOrigin(h)
+	service.Mux.Handle("GET", "/v1/account/", ctrl.MuxHandler("profile", h, nil))
+	service.LogInfo("mount", "ctrl", "Account", "action", "Profile", "route", "GET /v1/account/", "security", "jwt")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request

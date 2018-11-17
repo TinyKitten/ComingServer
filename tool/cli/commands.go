@@ -28,6 +28,11 @@ import (
 )
 
 type (
+	// ProfileAccountCommand is the command line data structure for the profile action of account
+	ProfileAccountCommand struct {
+		PrettyPrint bool
+	}
+
 	// UpdatePasswordAccountCommand is the command line data structure for the update password action of account
 	UpdatePasswordAccountCommand struct {
 		Payload     string
@@ -356,12 +361,12 @@ Payload example:
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "receive-peer-location",
-		Short: `ポッドのWebSocketエンドポイント`,
+		Use:   "profile",
+		Short: `JWTトークンに紐付けられた情報を取得`,
 	}
-	tmp11 := new(ReceivePeerLocationWebsocketCommand)
+	tmp11 := new(ProfileAccountCommand)
 	sub = &cobra.Command{
-		Use:   `websocket ["/v1/pod"]`,
+		Use:   `account ["/v1/account/"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp11.Run(c, args) },
 	}
@@ -370,35 +375,35 @@ Payload example:
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
-		Use:   "regenerate-token",
-		Short: `regenerateToken action`,
+		Use:   "receive-peer-location",
+		Short: `ポッドのWebSocketエンドポイント`,
 	}
-	tmp12 := new(RegenerateTokenPeersCommand)
+	tmp12 := new(ReceivePeerLocationWebsocketCommand)
 	sub = &cobra.Command{
-		Use:   `peers ["/v1/peers/ID/token"]`,
+		Use:   `websocket ["/v1/pod"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp12.Run(c, args) },
 	}
 	tmp12.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp12.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	tmp13 := new(RegenerateTokenPodsCommand)
+	app.AddCommand(command)
+	command = &cobra.Command{
+		Use:   "regenerate-token",
+		Short: `regenerateToken action`,
+	}
+	tmp13 := new(RegenerateTokenPeersCommand)
 	sub = &cobra.Command{
-		Use:   `pods ["/v1/pods/ID/token"]`,
+		Use:   `peers ["/v1/peers/ID/token"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp13.Run(c, args) },
 	}
 	tmp13.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp13.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	app.AddCommand(command)
-	command = &cobra.Command{
-		Use:   "send-current-peer-location",
-		Short: `ピアのWebSocketエンドポイント`,
-	}
-	tmp14 := new(SendCurrentPeerLocationWebsocketCommand)
+	tmp14 := new(RegenerateTokenPodsCommand)
 	sub = &cobra.Command{
-		Use:   `websocket ["/v1/peer"]`,
+		Use:   `pods ["/v1/pods/ID/token"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp14.Run(c, args) },
 	}
@@ -407,10 +412,24 @@ Payload example:
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
+		Use:   "send-current-peer-location",
+		Short: `ピアのWebSocketエンドポイント`,
+	}
+	tmp15 := new(SendCurrentPeerLocationWebsocketCommand)
+	sub = &cobra.Command{
+		Use:   `websocket ["/v1/peer"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp15.Run(c, args) },
+	}
+	tmp15.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp15.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
+	app.AddCommand(command)
+	command = &cobra.Command{
 		Use:   "send-location",
 		Short: `ピア位置送信`,
 	}
-	tmp15 := new(SendLocationPeersCommand)
+	tmp16 := new(SendLocationPeersCommand)
 	sub = &cobra.Command{
 		Use:   `peers ["/v1/peers/ID/locations"]`,
 		Short: ``,
@@ -423,49 +442,49 @@ Payload example:
    "longitude": 139.701636,
    "token": "AHO-AHO-MAN"
 }`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp15.Run(c, args) },
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp16.Run(c, args) },
 	}
-	tmp15.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp15.PrettyPrint, "pp", false, "Pretty print response body")
+	tmp16.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp16.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
 		Use:   "show",
 		Short: `show action`,
 	}
-	tmp16 := new(ShowPeersCommand)
+	tmp17 := new(ShowPeersCommand)
 	sub = &cobra.Command{
 		Use:   `peers ["/v1/peers/ID"]`,
-		Short: ``,
-		RunE:  func(cmd *cobra.Command, args []string) error { return tmp16.Run(c, args) },
-	}
-	tmp16.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp16.PrettyPrint, "pp", false, "Pretty print response body")
-	command.AddCommand(sub)
-	tmp17 := new(ShowPodsCommand)
-	sub = &cobra.Command{
-		Use:   `pods ["/v1/pods/ID"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp17.Run(c, args) },
 	}
 	tmp17.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp17.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	tmp18 := new(ShowUsersCommand)
+	tmp18 := new(ShowPodsCommand)
 	sub = &cobra.Command{
-		Use:   `users ["/v1/users/ID"]`,
+		Use:   `pods ["/v1/pods/ID"]`,
 		Short: ``,
 		RunE:  func(cmd *cobra.Command, args []string) error { return tmp18.Run(c, args) },
 	}
 	tmp18.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp18.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
+	tmp19 := new(ShowUsersCommand)
+	sub = &cobra.Command{
+		Use:   `users ["/v1/users/ID"]`,
+		Short: ``,
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp19.Run(c, args) },
+	}
+	tmp19.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp19.PrettyPrint, "pp", false, "Pretty print response body")
+	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
 		Use:   "update",
 		Short: `update action`,
 	}
-	tmp19 := new(UpdatePeersCommand)
+	tmp20 := new(UpdatePeersCommand)
 	sub = &cobra.Command{
 		Use:   `peers ["/v1/peers/ID"]`,
 		Short: ``,
@@ -476,12 +495,12 @@ Payload example:
 {
    "code": "TS-IPHONE"
 }`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp19.Run(c, args) },
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp20.Run(c, args) },
 	}
-	tmp19.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp19.PrettyPrint, "pp", false, "Pretty print response body")
+	tmp20.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp20.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
-	tmp20 := new(UpdatePodsCommand)
+	tmp21 := new(UpdatePodsCommand)
 	sub = &cobra.Command{
 		Use:   `pods ["/v1/pods/ID"]`,
 		Short: ``,
@@ -494,17 +513,17 @@ Payload example:
    "latitude": 35.689592,
    "longitude": 139.700413
 }`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp20.Run(c, args) },
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp21.Run(c, args) },
 	}
-	tmp20.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp20.PrettyPrint, "pp", false, "Pretty print response body")
+	tmp21.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp21.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 	command = &cobra.Command{
 		Use:   "update-password",
 		Short: `アカウントのパスワードを更新`,
 	}
-	tmp21 := new(UpdatePasswordAccountCommand)
+	tmp22 := new(UpdatePasswordAccountCommand)
 	sub = &cobra.Command{
 		Use:   `account ["/v1/account/password"]`,
 		Short: ``,
@@ -515,10 +534,10 @@ Payload example:
 {
    "password": "password"
 }`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp21.Run(c, args) },
+		RunE: func(cmd *cobra.Command, args []string) error { return tmp22.Run(c, args) },
 	}
-	tmp21.RegisterFlags(sub, c)
-	sub.PersistentFlags().BoolVar(&tmp21.PrettyPrint, "pp", false, "Pretty print response body")
+	tmp22.RegisterFlags(sub, c)
+	sub.PersistentFlags().BoolVar(&tmp22.PrettyPrint, "pp", false, "Pretty print response body")
 	command.AddCommand(sub)
 	app.AddCommand(command)
 
@@ -732,6 +751,30 @@ found:
 	}
 
 	return nil
+}
+
+// Run makes the HTTP request corresponding to the ProfileAccountCommand command.
+func (cmd *ProfileAccountCommand) Run(c *client.Client, args []string) error {
+	var path string
+	if len(args) > 0 {
+		path = args[0]
+	} else {
+		path = "/v1/account/"
+	}
+	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
+	ctx := goa.WithLogger(context.Background(), logger)
+	resp, err := c.ProfileAccount(ctx, path)
+	if err != nil {
+		goa.LogError(ctx, "failed", "err", err)
+		return err
+	}
+
+	goaclient.HandleResponse(c.Client, resp, cmd.PrettyPrint)
+	return nil
+}
+
+// RegisterFlags registers the command flags with the command line.
+func (cmd *ProfileAccountCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
 }
 
 // Run makes the HTTP request corresponding to the UpdatePasswordAccountCommand command.

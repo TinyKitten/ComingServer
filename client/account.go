@@ -18,6 +18,40 @@ import (
 	"net/url"
 )
 
+// ProfileAccountPath computes a request path to the profile action of account.
+func ProfileAccountPath() string {
+
+	return fmt.Sprintf("/v1/account/")
+}
+
+// JWTトークンに紐付けられた情報を取得
+func (c *Client) ProfileAccount(ctx context.Context, path string) (*http.Response, error) {
+	req, err := c.NewProfileAccountRequest(ctx, path)
+	if err != nil {
+		return nil, err
+	}
+	return c.Client.Do(ctx, req)
+}
+
+// NewProfileAccountRequest create the request corresponding to the profile action endpoint of the account resource.
+func (c *Client) NewProfileAccountRequest(ctx context.Context, path string) (*http.Request, error) {
+	scheme := c.Scheme
+	if scheme == "" {
+		scheme = "http"
+	}
+	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	if c.JWTSigner != nil {
+		if err := c.JWTSigner.Sign(req); err != nil {
+			return nil, err
+		}
+	}
+	return req, nil
+}
+
 // UpdatePasswordAccountPayload is the account update password action payload.
 type UpdatePasswordAccountPayload struct {
 	// パスワード

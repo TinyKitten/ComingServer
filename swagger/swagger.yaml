@@ -615,6 +615,38 @@ paths:
       schemes:
       - http
       summary: Download swaggerui/dist
+  /v1/account/:
+    get:
+      description: |-
+        JWTトークンに紐付けられた情報を取得
+
+        Required security scopes:
+          * `api:read`
+      operationId: account#profile
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.user+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:read
+      summary: profile account
+      tags:
+      - account
   /v1/account/password:
     put:
       description: |-

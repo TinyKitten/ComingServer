@@ -54,3 +54,26 @@ func (c *AccountController) UpdatePassword(ctx *app.UpdatePasswordAccountContext
 	return ctx.NoContent()
 	// AccountController_UpdatePassword: end_implement
 }
+
+// Profile runs the profile action.
+func (c *AccountController) Profile(ctx *app.ProfileAccountContext) error {
+	// AccountController_Profile: start_implement
+
+	// Put your logic here
+	token := jwt.ContextJWT(ctx)
+	claims := token.Claims.(jwtgo.MapClaims)
+	userID := claims["aud"].(uint64)
+	user, err := models.UserByID(c.db, userID)
+	if err != nil {
+		log.Println(err)
+		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
+	}
+	res := &app.User{
+		ID:         user.ID,
+		ScreenName: user.ScreenName,
+		CreatedAt:  user.CreatedAt.Unix(),
+		UpdatedAt:  user.UpdatedAt.Unix(),
+	}
+	return ctx.OK(res)
+	// AccountController_Profile: end_implement
+}

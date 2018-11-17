@@ -46,6 +46,19 @@ var _ = Resource("account", func() {
 	Security(JWT, func() {
 		Scope("api:read")
 	})
+	Action("profile", func() {
+		Description("JWTトークンに紐付けられた情報を取得")
+		Security(JWT, func() {
+			Scope("api:read")
+		})
+		Routing(
+			GET("/"),
+		)
+		Response(OK, UserMedia)
+
+		Response(NotFound, ErrorMedia)
+		Response(InternalServerError, ErrorMedia)
+	})
 	Action("update password", func() {
 		Description("アカウントのパスワードを更新")
 		Security(JWT, func() {
