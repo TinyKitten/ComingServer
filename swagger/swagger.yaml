@@ -148,6 +148,47 @@ definitions:
     - updated_at
     title: 'Mediatype identifier: application/vnd.peer+json; view=default'
     type: object
+  PeerApproaching:
+    description: ピア接近 (default view)
+    example:
+      code: TS
+      created_at: 1.0173276e+09
+      latitude: 35.658034
+      longitude: 139.701636
+      type: APPROACHING
+    properties:
+      code:
+        description: ピアコード
+        example: TS
+        type: string
+      created_at:
+        description: 作成日
+        example: 1.0173276e+09
+        format: double
+        type: number
+      latitude:
+        description: 緯度
+        example: 35.658034
+        format: double
+        type: number
+      longitude:
+        description: 経度
+        example: 139.701636
+        format: double
+        type: number
+      type:
+        default: APPROACHING
+        description: タイプ
+        example: APPROACHING
+        type: string
+    required:
+    - type
+    - code
+    - latitude
+    - longitude
+    - created_at
+    title: 'Mediatype identifier: application/vnd.peer.approaching+json; view=default'
+    type: object
   PeerCollection:
     description: PeerCollection is the media type for an array of Peer (default view)
     example:
@@ -1002,9 +1043,12 @@ paths:
           $ref: '#/definitions/SendLocationPeersPayload'
       produces:
       - application/vnd.goa.error
+      - application/vnd.peer.approaching+json
       responses:
-        "204":
-          description: No Content
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/PeerApproaching'
         "400":
           description: Bad Request
           schema:

@@ -686,10 +686,12 @@ func (payload *SendLocationPeersPayload) Validate() (err error) {
 	return
 }
 
-// NoContent sends a HTTP response with status code 204.
-func (ctx *SendLocationPeersContext) NoContent() error {
-	ctx.ResponseData.WriteHeader(204)
-	return nil
+// Created sends a HTTP response with status code 201.
+func (ctx *SendLocationPeersContext) Created(r *PeerApproaching) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.peer.approaching+json")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 201, r)
 }
 
 // BadRequest sends a HTTP response with status code 400.

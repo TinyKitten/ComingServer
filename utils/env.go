@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -33,4 +34,30 @@ func GetEnv() string {
 		return "development"
 	}
 	return env
+}
+
+// GetApproachedThreshold 接近閾値を返す
+func GetApproachedThreshold() (float64, error) {
+	thresholdStr := os.Getenv("APPROACHED_THRESHOLD")
+	if thresholdStr == "" {
+		return 1000, nil
+	}
+	threshold, err := strconv.ParseFloat(thresholdStr, 64)
+	if err != nil {
+		return 0, err
+	}
+	return threshold, nil
+}
+
+// GetLeaveThreshold 出発閾値を返す
+func GetLeaveThreshold() (float64, error) {
+	thresholdStr := os.Getenv("LEAVE_THRESHOLD")
+	if thresholdStr == "" {
+		return 1500, nil
+	}
+	threshold, err := strconv.ParseFloat(thresholdStr, 64)
+	if err != nil {
+		return 0, err
+	}
+	return threshold, nil
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/TinyKitten/ComingServer/app"
 	"github.com/TinyKitten/ComingServer/math"
 	"github.com/TinyKitten/ComingServer/models"
+	"github.com/TinyKitten/ComingServer/utils"
 	"github.com/go-redis/redis"
 	"github.com/goadesign/goa"
 	"golang.org/x/net/websocket"
@@ -60,6 +61,17 @@ func (c *WebsocketController) ReceivePeerLocationWSHandler(ctx *app.ReceivePeerL
 			ws.Close()
 		}
 
+		approachThreshold, err := utils.GetApproachedThreshold()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		leaveThreshold, err := utils.GetLeaveThreshold()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
 		pubsub := c.redisClient.Subscribe(pod.Code)
 		defer pubsub.Close()
 		for {
@@ -73,6 +85,12 @@ func (c *WebsocketController) ReceivePeerLocationWSHandler(ctx *app.ReceivePeerL
 			case *redis.Subscription:
 				log.Println("subscribed to", msg.Channel)
 			case *redis.Message:
+				pod, err = models.PodByToken(c.db, ctx.Token)
+				if err != nil {
+					log.Println(err)
+					ws.Write([]byte(WsErrPodNotFound))
+					return
+				}
 				var peerLoc app.PeerApproaching
 				err := json.Unmarshal([]byte(msg.Payload), &peerLoc)
 				if err != nil {
@@ -88,28 +106,42 @@ func (c *WebsocketController) ReceivePeerLocationWSHandler(ctx *app.ReceivePeerL
 					Longitude: peerLoc.Longitude,
 				}
 				gap := math.HubenyDistance(podCoords, peerCoords)
-				if gap < 1000.0 && !pod.Approaching.Bool {
-					ws.Write([]byte(msg.Payload))
-					pod.Approaching = sql.NullBool{
-						Valid: true,
-						Bool:  true,
+				log.Println(pod.Approaching.Bool)
+				if gap <= approachThreshold && !pod.Approaching.Bool {
+					approachingMedia := app.PeerApproaching{
+						Type:      APPROACHING,
+						Code:      peerLoc.Code,
+						Latitude:  peerLoc.Latitude,
+						Longitude: peerLoc.Longitude,
+						CreatedAt: peerLoc.CreatedAt,
 					}
-					err = pod.Update(c.db)
+					bytes, err := json.Marshal(approachingMedia)
 					if err != nil {
 						log.Println(err)
+						ws.Write([]byte(WsErrInternalServerError))
 						continue
 					}
+
+					ws.Write([]byte(bytes))
+					continue
 				}
-				if gap > 1500.0 && pod.Approaching.Bool {
-					pod.Approaching = sql.NullBool{
-						Valid: true,
-						Bool:  false,
+				if gap >= leaveThreshold && pod.Approaching.Bool {
+					approachingMedia := app.PeerApproaching{
+						Type:      LEAVED,
+						Code:      peerLoc.Code,
+						Latitude:  peerLoc.Latitude,
+						Longitude: peerLoc.Longitude,
+						CreatedAt: peerLoc.CreatedAt,
 					}
-					err = pod.Update(c.db)
+					bytes, err := json.Marshal(approachingMedia)
 					if err != nil {
 						log.Println(err)
+						ws.Write([]byte(WsErrInternalServerError))
 						continue
 					}
+
+					ws.Write([]byte(bytes))
+					continue
 				}
 			default:
 				ws.Write([]byte(WsErrInternalServerError))
@@ -153,6 +185,17 @@ func (c *WebsocketController) SendCurrentPeerLocationWSHandler(ctx *app.SendCurr
 			return
 		}
 
+		approachThreshold, err := utils.GetApproachedThreshold()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		leaveThreshold, err := utils.GetLeaveThreshold()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
 		for {
 			var req locationSendRequest
 
@@ -181,7 +224,7 @@ func (c *WebsocketController) SendCurrentPeerLocationWSHandler(ctx *app.SendCurr
 			}
 
 			approachingMedia := app.PeerApproaching{
-				Type:      "APPROACHING",
+				Type:      ACCEPT,
 				Code:      peer.Code,
 				Latitude:  req.Latitude,
 				Longitude: req.Longitude,
@@ -198,6 +241,71 @@ func (c *WebsocketController) SendCurrentPeerLocationWSHandler(ctx *app.SendCurr
 			if err != nil {
 				log.Println(err)
 				ws.Write([]byte(WsErrInternalServerError))
+				continue
+			}
+
+			podCoords := math.Coordinate{
+				Latitude:  pod.Latitude,
+				Longitude: pod.Longitude,
+			}
+			peerCoords := math.Coordinate{
+				Latitude:  req.Latitude,
+				Longitude: req.Longitude,
+			}
+			gap := math.HubenyDistance(podCoords, peerCoords)
+			if gap <= approachThreshold && !pod.Approaching.Bool {
+				approachingMedia := app.PeerApproaching{
+					Type:      APPROACHING,
+					Code:      peer.Code,
+					Latitude:  req.Latitude,
+					Longitude: req.Longitude,
+					CreatedAt: at.Unix(),
+				}
+				bytes, err := json.Marshal(approachingMedia)
+				if err != nil {
+					log.Println(err)
+					ws.Write([]byte(WsErrInternalServerError))
+					continue
+				}
+				ws.Write(bytes)
+
+				pod.Approaching = sql.NullBool{
+					Valid: true,
+					Bool:  true,
+				}
+				err = pod.Update(c.db)
+				if err != nil {
+					log.Println(err)
+					continue
+				}
+				continue
+			}
+			log.Println(gap)
+			if gap >= leaveThreshold && pod.Approaching.Bool {
+				approachingMedia := app.PeerApproaching{
+					Type:      LEAVED,
+					Code:      peer.Code,
+					Latitude:  req.Latitude,
+					Longitude: req.Longitude,
+					CreatedAt: at.Unix(),
+				}
+				bytes, err := json.Marshal(approachingMedia)
+				if err != nil {
+					log.Println(err)
+					ws.Write([]byte(WsErrInternalServerError))
+					continue
+				}
+				ws.Write(bytes)
+
+				pod.Approaching = sql.NullBool{
+					Valid: true,
+					Bool:  false,
+				}
+				err = pod.Update(c.db)
+				if err != nil {
+					log.Println(err)
+					continue
+				}
 				continue
 			}
 		}

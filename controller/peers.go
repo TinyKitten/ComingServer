@@ -7,7 +7,9 @@ import (
 	"time"
 
 	"github.com/TinyKitten/ComingServer/app"
+	"github.com/TinyKitten/ComingServer/math"
 	"github.com/TinyKitten/ComingServer/models"
+	"github.com/TinyKitten/ComingServer/utils"
 	"github.com/go-redis/redis"
 	"github.com/goadesign/goa"
 )
@@ -199,6 +201,17 @@ func (c *PeersController) SendLocation(ctx *app.SendLocationPeersContext) error 
 	// PeersController_SendLocation: start_implement
 
 	// Put your logic here
+	approachThreshold, err := utils.GetApproachedThreshold()
+	if err != nil {
+		log.Println(err)
+		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
+	}
+	leaveThreshold, err := utils.GetLeaveThreshold()
+	if err != nil {
+		log.Println(err)
+		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
+	}
+
 	peer, err := models.PeerByID(c.db, uint64(ctx.ID))
 	if err != nil {
 		log.Println(err)
@@ -237,7 +250,7 @@ func (c *PeersController) SendLocation(ctx *app.SendLocationPeersContext) error 
 	}
 
 	approachingMedia := app.PeerApproaching{
-		Type:      "APPROACHING",
+		Type:      ACCEPT,
 		Code:      peer.Code,
 		Latitude:  ctx.Payload.Latitude,
 		Longitude: ctx.Payload.Longitude,
@@ -255,7 +268,55 @@ func (c *PeersController) SendLocation(ctx *app.SendLocationPeersContext) error 
 		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
 	}
 
-	return ctx.NoContent()
+	podCoords := math.Coordinate{
+		Latitude:  pod.Latitude,
+		Longitude: pod.Longitude,
+	}
+	peerCoords := math.Coordinate{
+		Latitude:  ctx.Payload.Latitude,
+		Longitude: ctx.Payload.Longitude,
+	}
+
+	gap := math.HubenyDistance(podCoords, peerCoords)
+	if gap <= approachThreshold && !pod.Approaching.Bool {
+		approachingMedia = app.PeerApproaching{
+			Type:      APPROACHING,
+			Code:      peer.Code,
+			Latitude:  ctx.Payload.Latitude,
+			Longitude: ctx.Payload.Longitude,
+			CreatedAt: at.Unix(),
+		}
+		pod.Approaching = sql.NullBool{
+			Valid: true,
+			Bool:  true,
+		}
+		err = pod.Update(c.db)
+		if err != nil {
+			log.Println(err)
+			return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
+		}
+	}
+	if gap >= leaveThreshold && pod.Approaching.Bool {
+		approachingMedia = app.PeerApproaching{
+			Type:      LEAVED,
+			Code:      peer.Code,
+			Latitude:  ctx.Payload.Latitude,
+			Longitude: ctx.Payload.Longitude,
+			CreatedAt: at.Unix(),
+		}
+
+		pod.Approaching = sql.NullBool{
+			Valid: true,
+			Bool:  false,
+		}
+		err = pod.Update(c.db)
+		if err != nil {
+			log.Println(err)
+			return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
+		}
+	}
+
+	return ctx.Created(&approachingMedia)
 	// PeersController_SendLocation: end_implement
 }
 

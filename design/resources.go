@@ -459,7 +459,7 @@ var _ = Resource("peers", func() {
 			})
 			Required("token", "latitude", "longitude")
 		})
-		Response(NoContent)
+		Response(Created, PeerApproachingMedia)
 		Response(NotFound, ErrorMedia)
 		Response(Forbidden, ErrorMedia)
 		Response(BadRequest, ErrorMedia)

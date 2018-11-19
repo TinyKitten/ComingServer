@@ -7,6 +7,15 @@ import (
 	hashids "github.com/speps/go-hashids"
 )
 
+const (
+	// APPROACHING 接近
+	APPROACHING = "APPROACHING"
+	// LEAVED 離れた
+	LEAVED = "LEAVED"
+	// ACCEPT ピア報告
+	ACCEPT = "ACCEPT"
+)
+
 func generateToken() (string, error) {
 	now := time.Now()
 	hd := hashids.NewData()
