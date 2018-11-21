@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"log"
+	"sort"
 	"time"
 
 	"github.com/TinyKitten/ComingServer/app"
@@ -13,6 +14,12 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/goadesign/goa"
 )
+
+type SortablePeerLocations []*models.PeerLocation
+
+func (a SortablePeerLocations) Len() int           { return len(a) }
+func (a SortablePeerLocations) Less(i, j int) bool { return a[i].ID < a[j].ID }
+func (a SortablePeerLocations) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 
 // PeersController implements the peers resource.
 type PeersController struct {
@@ -107,10 +114,10 @@ func (c *PeersController) CurrentLocation(ctx *app.CurrentLocationPeersContext) 
 	}
 
 	res := &app.PeerLocation{
-		Latitude:  locs[0].Latitude,
-		Longitude: locs[0].Longitude,
-		CreatedAt: locs[0].CreatedAt.Unix(),
-		UpdatedAt: locs[0].UpdatedAt.Unix(),
+		Latitude:  locs[len(locs)-1].Latitude,
+		Longitude: locs[len(locs)-1].Longitude,
+		CreatedAt: locs[len(locs)-1].CreatedAt.Unix(),
+		UpdatedAt: locs[len(locs)-1].UpdatedAt.Unix(),
 	}
 	return ctx.OK(res)
 	// PeersController_CurrentLocation: end_implement
@@ -147,12 +154,13 @@ func (c *PeersController) Locations(ctx *app.LocationsPeersContext) error {
 	// PeersController_Locations: start_implement
 
 	// Put your logic here
-
 	locs, err := models.PeerLocationsByPeerID(c.db, uint64(ctx.ID))
 	if err != nil {
 		log.Println(err)
 		return ctx.InternalServerError(goa.ErrInternal(err))
 	}
+
+	sort.Sort(sort.Reverse(SortablePeerLocations(locs)))
 
 	res := app.PeerLocationCollection{}
 	for _, loc := range locs {
