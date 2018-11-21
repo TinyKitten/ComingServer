@@ -27,6 +27,11 @@ var (
 		Code:    "ERR_POD_NOT_FOUND",
 		Message: "Pod not found",
 	}
+	WsErrPeerNotFound = app.WsError{
+		Type:    "ERROR",
+		Code:    "ERR_PEER_NOT_FOUND",
+		Message: "Peer not found",
+	}
 )
 
 // WebsocketController implements the websocket resource.
@@ -67,7 +72,12 @@ func (c *WebsocketController) ReceivePeerLocationWSHandler(ctx *app.ReceivePeerL
 			log.Println(err)
 			ws.Close()
 		}
-		err404bytes, err := json.Marshal(WsErrPodNotFound)
+		errPodNotFound, err := json.Marshal(WsErrPodNotFound)
+		if err != nil {
+			log.Println(err)
+			ws.Close()
+		}
+		errPeerNotFound, err := json.Marshal(WsErrPeerNotFound)
 		if err != nil {
 			log.Println(err)
 			ws.Close()
@@ -76,7 +86,7 @@ func (c *WebsocketController) ReceivePeerLocationWSHandler(ctx *app.ReceivePeerL
 		pod, err := models.PodByToken(c.db, ctx.Token)
 		if err != nil {
 			log.Println(err)
-			ws.Write(err404bytes)
+			ws.Write(errPodNotFound)
 			ws.Close()
 		}
 
@@ -97,7 +107,7 @@ func (c *WebsocketController) ReceivePeerLocationWSHandler(ctx *app.ReceivePeerL
 			msgi, err := pubsub.Receive()
 			if err != nil {
 				log.Println(err)
-				ws.Write(err404bytes)
+				ws.Write(err500bytes)
 				return
 			}
 			switch msg := msgi.(type) {
@@ -108,12 +118,12 @@ func (c *WebsocketController) ReceivePeerLocationWSHandler(ctx *app.ReceivePeerL
 				err := json.Unmarshal([]byte(msg.Payload), &peerLoc)
 				if err != nil {
 					log.Println(err)
-					ws.Write(err404bytes)
+					ws.Write(err500bytes)
 				}
-				peer, err := models.PeerByToken(c.db, peerLoc.Code)
+				peer, err := models.PeerByCode(c.db, peerLoc.Code)
 				if err != nil {
 					log.Println(err)
-					ws.Write(err404bytes)
+					ws.Write(errPeerNotFound)
 					return
 				}
 				podCoords := math.Coordinate{
@@ -186,7 +196,7 @@ func (c *WebsocketController) SendCurrentPeerLocationWSHandler(ctx *app.SendCurr
 			log.Println(err)
 			ws.Close()
 		}
-		err404bytes, err := json.Marshal(WsErrPodNotFound)
+		errPeerNotFound, err := json.Marshal(WsErrPeerNotFound)
 		if err != nil {
 			log.Println(err)
 			ws.Close()
@@ -195,7 +205,7 @@ func (c *WebsocketController) SendCurrentPeerLocationWSHandler(ctx *app.SendCurr
 		peer, err := models.PeerByToken(c.db, ctx.Token)
 		if err != nil {
 			log.Println(err)
-			ws.Write(err404bytes)
+			ws.Write(errPeerNotFound)
 			return
 		}
 
