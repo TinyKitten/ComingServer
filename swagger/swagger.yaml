@@ -117,11 +117,16 @@ definitions:
   Peer:
     description: ピア (default view)
     example:
+      approaching: false
       code: TS
       created_at: 1.0173276e+09
       id: 0
       updated_at: 1.0173276e+09
     properties:
+      approaching:
+        description: ポッド装置に接近している
+        example: false
+        type: boolean
       code:
         description: コード
         example: TS
@@ -146,17 +151,23 @@ definitions:
     - code
     - created_at
     - updated_at
+    - approaching
     title: 'Mediatype identifier: application/vnd.peer+json; view=default'
     type: object
   PeerApproaching:
     description: ピア接近 (default view)
     example:
+      approaching: false
       code: TS
       created_at: 1.0173276e+09
       latitude: 35.658034
       longitude: 139.701636
       type: APPROACHING
     properties:
+      approaching:
+        description: ポッド装置に接近している
+        example: false
+        type: boolean
       code:
         description: ピアコード
         example: TS
@@ -187,16 +198,19 @@ definitions:
     - latitude
     - longitude
     - created_at
+    - approaching
     title: 'Mediatype identifier: application/vnd.peer.approaching+json; view=default'
     type: object
   PeerCollection:
     description: PeerCollection is the media type for an array of Peer (default view)
     example:
-    - code: TS
+    - approaching: false
+      code: TS
       created_at: 1.0173276e+09
       id: 0
       updated_at: 1.0173276e+09
-    - code: TS
+    - approaching: false
+      code: TS
       created_at: 1.0173276e+09
       id: 0
       updated_at: 1.0173276e+09
@@ -303,7 +317,6 @@ definitions:
   Pod:
     description: ポッド (default view)
     example:
-      approaching: false
       code: SHIBUYA
       created_at: 1.0173276e+09
       id: 0
@@ -311,10 +324,6 @@ definitions:
       longitude: 139.701636
       updated_at: 1.0173276e+09
     properties:
-      approaching:
-        description: ポッド装置に接近している
-        example: false
-        type: boolean
       code:
         description: コード
         example: SHIBUYA
@@ -349,7 +358,6 @@ definitions:
     - code
     - latitude
     - longitude
-    - approaching
     - created_at
     - updated_at
     title: 'Mediatype identifier: application/vnd.pod+json; view=default'
@@ -357,8 +365,7 @@ definitions:
   PodCollection:
     description: PodCollection is the media type for an array of Pod (default view)
     example:
-    - approaching: false
-      code: SHIBUYA
+    - code: SHIBUYA
       created_at: 1.0173276e+09
       id: 0
       latitude: 35.658034
@@ -371,7 +378,6 @@ definitions:
   PodCreated:
     description: ポッド作成成功 (default view)
     example:
-      approaching: false
       code: SHIBUYA
       created_at: 1.0173276e+09
       id: 0
@@ -380,10 +386,6 @@ definitions:
       token: AHO-AHO-MAN
       updated_at: 1.0173276e+09
     properties:
-      approaching:
-        description: ポッド装置に接近している
-        example: false
-        type: boolean
       code:
         description: コード
         example: SHIBUYA
@@ -422,7 +424,6 @@ definitions:
     - code
     - latitude
     - longitude
-    - approaching
     - token
     - created_at
     - updated_at

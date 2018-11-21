@@ -86,9 +86,6 @@ var PodMedia = MediaType("application/vnd.pod+json", func() {
 		Attribute("longitude", Number, "経度", func() {
 			Example(139.701636)
 		})
-		Attribute("approaching", Boolean, "ポッド装置に接近している", func() {
-			Example(false)
-		})
 		Attribute("created_at", Number, "作成日", func() {
 			Metadata("struct:field:type", "int64")
 			Example(1017327600)
@@ -103,7 +100,6 @@ var PodMedia = MediaType("application/vnd.pod+json", func() {
 			"code",
 			"latitude",
 			"longitude",
-			"approaching",
 			"created_at",
 			"updated_at",
 		)
@@ -113,7 +109,6 @@ var PodMedia = MediaType("application/vnd.pod+json", func() {
 		Attribute("code")
 		Attribute("latitude")
 		Attribute("longitude")
-		Attribute("approaching")
 		Attribute("created_at")
 		Attribute("updated_at")
 	})
@@ -139,12 +134,16 @@ var PeerMedia = MediaType("application/vnd.peer+json", func() {
 			Metadata("struct:field:type", "int64")
 			Example(1017327600)
 		})
+		Attribute("approaching", Boolean, "ポッド装置に接近している", func() {
+			Example(false)
+		})
 
 		Required(
 			"id",
 			"code",
 			"created_at",
 			"updated_at",
+			"approaching",
 		)
 	})
 	View("default", func() {
@@ -152,6 +151,7 @@ var PeerMedia = MediaType("application/vnd.peer+json", func() {
 		Attribute("code")
 		Attribute("created_at")
 		Attribute("updated_at")
+		Attribute("approaching")
 	})
 })
 
@@ -173,9 +173,6 @@ var PodCreatedMedia = MediaType("application/vnd.pod.created+json", func() {
 		Attribute("longitude", Number, "経度", func() {
 			Example(139.701636)
 		})
-		Attribute("approaching", Boolean, "ポッド装置に接近している", func() {
-			Example(false)
-		})
 		Attribute("token", String, "トークン", func() {
 			Example("AHO-AHO-MAN")
 		})
@@ -193,7 +190,6 @@ var PodCreatedMedia = MediaType("application/vnd.pod.created+json", func() {
 			"code",
 			"latitude",
 			"longitude",
-			"approaching",
 			"token",
 			"created_at",
 			"updated_at",
@@ -204,7 +200,6 @@ var PodCreatedMedia = MediaType("application/vnd.pod.created+json", func() {
 		Attribute("code")
 		Attribute("latitude")
 		Attribute("longitude")
-		Attribute("approaching")
 		Attribute("token")
 		Attribute("created_at")
 		Attribute("updated_at")
@@ -309,6 +304,9 @@ var PeerApproachingMedia = MediaType("application/vnd.peer.approaching+json", fu
 			Metadata("struct:field:type", "int64")
 			Example(1017327600)
 		})
+		Attribute("approaching", Boolean, "ポッド装置に接近している", func() {
+			Example(false)
+		})
 
 		Required(
 			"type",
@@ -316,6 +314,7 @@ var PeerApproachingMedia = MediaType("application/vnd.peer.approaching+json", fu
 			"latitude",
 			"longitude",
 			"created_at",
+			"approaching",
 		)
 	})
 	View("default", func() {
@@ -324,6 +323,36 @@ var PeerApproachingMedia = MediaType("application/vnd.peer.approaching+json", fu
 		Attribute("latitude")
 		Attribute("longitude")
 		Attribute("created_at")
+		Attribute("approaching")
+	})
+})
+
+// WSErrorMedia WebSocketエラーメディア
+var WSErrorMedia = MediaType("application/vnd.ws.error+json", func() {
+	Description("WebSocketエラー")
+
+	Attributes(func() {
+		Attribute("type", String, "タイプ", func() {
+			Example("ERROR")
+			Default("ERROR")
+		})
+		Attribute("code", String, "エラーコード", func() {
+			Example("ERR_PEER_NOT_FOUND")
+		})
+		Attribute("message", String, "エラーメッセージ", func() {
+			Example("Peer not found.")
+		})
+
+		Required(
+			"type",
+			"code",
+			"message",
+		)
+	})
+	View("default", func() {
+		Attribute("type")
+		Attribute("code")
+		Attribute("message")
 	})
 })
 

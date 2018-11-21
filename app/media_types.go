@@ -39,6 +39,8 @@ func (mt *AuthSucces) Validate() (err error) {
 //
 // Identifier: application/vnd.peer+json; view=default
 type Peer struct {
+	// ポッド装置に接近している
+	Approaching bool `form:"approaching" json:"approaching" yaml:"approaching" xml:"approaching"`
 	// コード
 	Code string `form:"code" json:"code" yaml:"code" xml:"code"`
 	// 作成日
@@ -63,6 +65,8 @@ func (mt *Peer) Validate() (err error) {
 //
 // Identifier: application/vnd.peer.approaching+json; view=default
 type PeerApproaching struct {
+	// ポッド装置に接近している
+	Approaching bool `form:"approaching" json:"approaching" yaml:"approaching" xml:"approaching"`
 	// ピアコード
 	Code string `form:"code" json:"code" yaml:"code" xml:"code"`
 	// 作成日
@@ -174,8 +178,6 @@ func (mt PeerCollection) Validate() (err error) {
 //
 // Identifier: application/vnd.pod+json; view=default
 type Pod struct {
-	// ポッド装置に接近している
-	Approaching bool `form:"approaching" json:"approaching" yaml:"approaching" xml:"approaching"`
 	// コード
 	Code string `form:"code" json:"code" yaml:"code" xml:"code"`
 	// 作成日
@@ -204,8 +206,6 @@ func (mt *Pod) Validate() (err error) {
 //
 // Identifier: application/vnd.pod.created+json; view=default
 type PodCreated struct {
-	// ポッド装置に接近している
-	Approaching bool `form:"approaching" json:"approaching" yaml:"approaching" xml:"approaching"`
 	// コード
 	Code string `form:"code" json:"code" yaml:"code" xml:"code"`
 	// 作成日
@@ -312,6 +312,32 @@ func (mt UserCollection) Validate() (err error) {
 				err = goa.MergeErrors(err, err2)
 			}
 		}
+	}
+	return
+}
+
+// WebSocketエラー (default view)
+//
+// Identifier: application/vnd.ws.error+json; view=default
+type WsError struct {
+	// エラーコード
+	Code string `form:"code" json:"code" yaml:"code" xml:"code"`
+	// エラーメッセージ
+	Message string `form:"message" json:"message" yaml:"message" xml:"message"`
+	// タイプ
+	Type string `form:"type" json:"type" yaml:"type" xml:"type"`
+}
+
+// Validate validates the WsError media type instance.
+func (mt *WsError) Validate() (err error) {
+	if mt.Type == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "type"))
+	}
+	if mt.Code == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "code"))
+	}
+	if mt.Message == "" {
+		err = goa.MergeErrors(err, goa.MissingAttributeError(`response`, "message"))
 	}
 	return
 }

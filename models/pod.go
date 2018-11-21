@@ -22,7 +22,6 @@ func PodList(db XODB, offset, limit int) ([]*Pod, error) {
 			&r.Code,
 			&r.Latitude,
 			&r.Longitude,
-			&r.Approaching,
 			&r.CreatedAt,
 			&r.UpdatedAt,
 		)
@@ -51,7 +50,7 @@ func PodByToken(db XODB, token string) (*Pod, error) {
 		_exists: true,
 	}
 
-	err = db.QueryRow(sqlstr, token).Scan(&p.ID, &p.Code, &p.Latitude, &p.Longitude, &p.Approaching, &p.Token, &p.CreatedAt, &p.UpdatedAt)
+	err = db.QueryRow(sqlstr, token).Scan(&p.ID, &p.Code, &p.Latitude, &p.Longitude, &p.Token, &p.CreatedAt, &p.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}

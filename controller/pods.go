@@ -51,14 +51,13 @@ func (c *PodsController) Add(ctx *app.AddPodsContext) error {
 	}
 
 	created := &app.PodCreated{
-		ID:          int64(pod.ID),
-		Code:        ctx.Payload.Code,
-		CreatedAt:   at.Unix(),
-		UpdatedAt:   at.Unix(),
-		Approaching: false,
-		Token:       token,
-		Latitude:    ctx.Payload.Latitude,
-		Longitude:   ctx.Payload.Longitude,
+		ID:        int64(pod.ID),
+		Code:      ctx.Payload.Code,
+		CreatedAt: at.Unix(),
+		UpdatedAt: at.Unix(),
+		Token:     token,
+		Latitude:  ctx.Payload.Latitude,
+		Longitude: ctx.Payload.Longitude,
 	}
 
 	return ctx.Created(created)
@@ -199,10 +198,11 @@ func (c *PodsController) PeersList(ctx *app.PeersListPodsContext) error {
 			return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
 		}
 		peerMedia := &app.Peer{
-			ID:        int64(peer.ID),
-			Code:      peer.Code,
-			CreatedAt: peer.CreatedAt.Unix(),
-			UpdatedAt: peer.UpdatedAt.Unix(),
+			ID:          int64(peer.ID),
+			Code:        peer.Code,
+			Approaching: peer.Approaching.Bool,
+			CreatedAt:   peer.CreatedAt.Unix(),
+			UpdatedAt:   peer.UpdatedAt.Unix(),
 		}
 		res = append(res, peerMedia)
 	}

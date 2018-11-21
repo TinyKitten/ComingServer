@@ -47,11 +47,16 @@ func (c *PeersController) Add(ctx *app.AddPeersContext) error {
 		log.Println(err)
 		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
 	}
+	approaching := sql.NullBool{
+		Valid: true,
+		Bool:  false,
+	}
 	peer := models.Peer{
-		Code:      ctx.Payload.Code,
-		Token:     token,
-		CreatedAt: at,
-		UpdatedAt: at,
+		Code:        ctx.Payload.Code,
+		Token:       token,
+		Approaching: approaching,
+		CreatedAt:   at,
+		UpdatedAt:   at,
 	}
 
 	err = peer.Insert(c.db)
@@ -122,12 +127,14 @@ func (c *PeersController) List(ctx *app.ListPeersContext) error {
 		log.Println(err)
 		return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
 	}
+
 	for _, peer := range peers {
 		peerMedia := &app.Peer{
-			ID:        int64(peer.ID),
-			Code:      peer.Code,
-			CreatedAt: peer.CreatedAt.Unix(),
-			UpdatedAt: peer.UpdatedAt.Unix(),
+			ID:          int64(peer.ID),
+			Code:        peer.Code,
+			Approaching: peer.Approaching.Bool,
+			CreatedAt:   peer.CreatedAt.Unix(),
+			UpdatedAt:   peer.UpdatedAt.Unix(),
 		}
 		res = append(res, peerMedia)
 	}
@@ -278,7 +285,7 @@ func (c *PeersController) SendLocation(ctx *app.SendLocationPeersContext) error 
 	}
 
 	gap := math.HubenyDistance(podCoords, peerCoords)
-	if gap <= approachThreshold && !pod.Approaching.Bool {
+	if gap <= approachThreshold && !peer.Approaching.Bool {
 		approachingMedia = app.PeerApproaching{
 			Type:      APPROACHING,
 			Code:      peer.Code,
@@ -286,17 +293,17 @@ func (c *PeersController) SendLocation(ctx *app.SendLocationPeersContext) error 
 			Longitude: ctx.Payload.Longitude,
 			CreatedAt: at.Unix(),
 		}
-		pod.Approaching = sql.NullBool{
+		peer.Approaching = sql.NullBool{
 			Valid: true,
 			Bool:  true,
 		}
-		err = pod.Update(c.db)
+		err = peer.Update(c.db)
 		if err != nil {
 			log.Println(err)
 			return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
 		}
 	}
-	if gap >= leaveThreshold && pod.Approaching.Bool {
+	if gap >= leaveThreshold && peer.Approaching.Bool {
 		approachingMedia = app.PeerApproaching{
 			Type:      LEAVED,
 			Code:      peer.Code,
@@ -305,11 +312,11 @@ func (c *PeersController) SendLocation(ctx *app.SendLocationPeersContext) error 
 			CreatedAt: at.Unix(),
 		}
 
-		pod.Approaching = sql.NullBool{
+		peer.Approaching = sql.NullBool{
 			Valid: true,
 			Bool:  false,
 		}
-		err = pod.Update(c.db)
+		err = peer.Update(c.db)
 		if err != nil {
 			log.Println(err)
 			return ctx.InternalServerError(goa.ErrInternal(ErrInternalServerError))
@@ -332,10 +339,11 @@ func (c *PeersController) Show(ctx *app.ShowPeersContext) error {
 	}
 
 	res := &app.Peer{
-		ID:        int64(peer.ID),
-		Code:      peer.Code,
-		CreatedAt: peer.CreatedAt.Unix(),
-		UpdatedAt: peer.UpdatedAt.Unix(),
+		ID:          int64(peer.ID),
+		Code:        peer.Code,
+		Approaching: peer.Approaching.Bool,
+		CreatedAt:   peer.CreatedAt.Unix(),
+		UpdatedAt:   peer.UpdatedAt.Unix(),
 	}
 	return ctx.OK(res)
 	// PeersController_Show: end_implement
