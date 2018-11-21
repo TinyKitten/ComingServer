@@ -120,6 +120,14 @@ func (c *WebsocketController) ReceivePeerLocationWSHandler(ctx *app.ReceivePeerL
 					log.Println(err)
 					ws.Write(err500bytes)
 				}
+
+				bytes, err := json.Marshal(peerLoc)
+				if err != nil {
+					log.Println(err)
+					continue
+				}
+				ws.Write([]byte(bytes))
+
 				peer, err := models.PeerByCode(c.db, peerLoc.Code)
 				if err != nil {
 					log.Println(err)
