@@ -76,7 +76,7 @@ func (c *WebsocketController) ReceivePeerLocationWSHandler(ctx *app.ReceivePeerL
 		pod, err := models.PodByToken(c.db, ctx.Token)
 		if err != nil {
 			log.Println(err)
-			ws.Write(err500bytes)
+			ws.Write(err404bytes)
 			ws.Close()
 		}
 

@@ -421,7 +421,7 @@ var _ = Resource("peers", func() {
 			Scope("api:write")
 		})
 		Routing(
-			PATCH("/:id/token"),
+			POST("/:id/token"),
 		)
 		Params(func() {
 			Param("id", Integer, "ピアID", func() {

@@ -2,7 +2,7 @@ package models
 
 // PeerList すべてのピア
 func PeerList(db XODB, offset, limit int) ([]*Peer, error) {
-	sqlstr := `SELECT id, code, created_at, updated_at
+	sqlstr := `SELECT id, code, approaching, created_at, updated_at
 	FROM peers
 	LIMIT ?
 	OFFSET ?`
@@ -20,6 +20,7 @@ func PeerList(db XODB, offset, limit int) ([]*Peer, error) {
 		err = q.Scan(
 			&r.ID,
 			&r.Code,
+			&r.Approaching,
 			&r.CreatedAt,
 			&r.UpdatedAt,
 		)
@@ -38,7 +39,7 @@ func PeerByToken(db XODB, token string) (*Peer, error) {
 
 	// sql query
 	const sqlstr = `SELECT ` +
-		`id, code, token, created_at, updated_at ` +
+		`id, code, approaching, token, created_at, updated_at ` +
 		`FROM comingserver.peers ` +
 		`WHERE token = ?`
 
@@ -48,7 +49,7 @@ func PeerByToken(db XODB, token string) (*Peer, error) {
 		_exists: true,
 	}
 
-	err = db.QueryRow(sqlstr, token).Scan(&p.ID, &p.Code, &p.Token, &p.CreatedAt, &p.UpdatedAt)
+	err = db.QueryRow(sqlstr, token).Scan(&p.ID, &p.Code, &p.Approaching, &p.Token, &p.CreatedAt, &p.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}
