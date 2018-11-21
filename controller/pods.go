@@ -210,3 +210,25 @@ func (c *PodsController) PeersList(ctx *app.PeersListPodsContext) error {
 	return ctx.OK(res)
 	// PodsController_PeersList: end_implement
 }
+
+// ShowByToken runs the show by token action.
+func (c *PodsController) ShowByToken(ctx *app.ShowByTokenPodsContext) error {
+	// PodsController_ShowByToken: start_implement
+
+	// Put your logic here
+	pod, err := models.PodByToken(c.db, ctx.Token)
+	if err != nil {
+		return ctx.NotFound(goa.ErrNotFound("Pod not found."))
+	}
+
+	res := &app.Pod{
+		ID:        int64(pod.ID),
+		Code:      pod.Code,
+		Latitude:  pod.Latitude,
+		Longitude: pod.Longitude,
+		CreatedAt: pod.CreatedAt.Unix(),
+		UpdatedAt: pod.UpdatedAt.Unix(),
+	}
+	return ctx.OK(res)
+	// PodsController_ShowByToken: end_implement
+}

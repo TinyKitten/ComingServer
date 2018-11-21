@@ -379,3 +379,24 @@ func (c *PeersController) Update(ctx *app.UpdatePeersContext) error {
 	return ctx.NoContent()
 	// PeersController_Update: end_implement
 }
+
+// ShowByToken runs the show by token action.
+func (c *PeersController) ShowByToken(ctx *app.ShowByTokenPeersContext) error {
+	// PeersController_ShowByToken: start_implement
+
+	// Put your logic here
+	peer, err := models.PeerByToken(c.db, ctx.Token)
+	if err != nil {
+		return ctx.NotFound(goa.ErrNotFound("Peer not found."))
+	}
+
+	res := &app.Peer{
+		ID:          int64(peer.ID),
+		Code:        peer.Code,
+		Approaching: peer.Approaching.Bool,
+		CreatedAt:   peer.CreatedAt.Unix(),
+		UpdatedAt:   peer.UpdatedAt.Unix(),
+	}
+	return ctx.OK(res)
+	// PeersController_ShowByToken: end_implement
+}

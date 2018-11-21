@@ -12,7 +12,7 @@ var AuthSuccessMedia = MediaType("application/vnd.auth.succes+json", func() {
 	Attributes(func() {
 		Attribute("id", Integer, "ID", func() {
 			Metadata("struct:field:type", "uint64")
-			Example(0)
+			Example(1)
 		})
 		Attribute("screen_name", String, "コード", func() {
 			Example("tinykitten")
@@ -39,7 +39,7 @@ var UserMedia = MediaType("application/vnd.user+json", func() {
 	Attributes(func() {
 		Attribute("id", Integer, "ID", func() {
 			Metadata("struct:field:type", "uint64")
-			Example(0)
+			Example(1)
 		})
 		Attribute("screen_name", String, "スクリーンネーム", func() {
 			Example("tinykitten")
@@ -75,7 +75,7 @@ var PodMedia = MediaType("application/vnd.pod+json", func() {
 	Attributes(func() {
 		Attribute("id", Integer, "ID", func() {
 			Metadata("struct:field:type", "int64")
-			Example(0)
+			Example(1)
 		})
 		Attribute("code", String, "コード", func() {
 			Example("SHIBUYA")
@@ -121,7 +121,7 @@ var PeerMedia = MediaType("application/vnd.peer+json", func() {
 	Attributes(func() {
 		Attribute("id", Integer, "ID", func() {
 			Metadata("struct:field:type", "int64")
-			Example(0)
+			Example(1)
 		})
 		Attribute("code", String, "コード", func() {
 			Example("TS")
@@ -162,7 +162,7 @@ var PodCreatedMedia = MediaType("application/vnd.pod.created+json", func() {
 	Attributes(func() {
 		Attribute("id", Integer, "ID", func() {
 			Metadata("struct:field:type", "int64")
-			Example(0)
+			Example(1)
 		})
 		Attribute("code", String, "コード", func() {
 			Example("SHIBUYA")
@@ -213,7 +213,7 @@ var PeerCreatedMedia = MediaType("application/vnd.peer.created+json", func() {
 	Attributes(func() {
 		Attribute("id", Integer, "ID", func() {
 			Metadata("struct:field:type", "int64")
-			Example(0)
+			Example(1)
 		})
 		Attribute("code", String, "コード", func() {
 			Example("TS")
@@ -363,7 +363,7 @@ var TokenMedia = MediaType("application/vnd.token+json", func() {
 	Attributes(func() {
 		Attribute("id", Integer, "対象ID", func() {
 			Metadata("struct:field:type", "uint64")
-			Example(0)
+			Example(1)
 		})
 		Attribute("token", String, "トークン", func() {
 			Example("AHO-AHO-MAN")

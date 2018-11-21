@@ -122,7 +122,7 @@ var _ = Resource("users", func() {
 		)
 		Params(func() {
 			Param("id", Integer, "ユーザーID", func() {
-				Example(0)
+				Example(1)
 			})
 		})
 		Response(OK, UserMedia)
@@ -141,7 +141,7 @@ var _ = Resource("users", func() {
 		Payload(func() {
 			Attribute("privilege_id", Integer, "権限ID", func() {
 				Default(2)
-				Example(0)
+				Example(1)
 			})
 			Attribute("password", String, "パスワード", func() {
 				Example("password")
@@ -192,7 +192,7 @@ var _ = Resource("pods", func() {
 
 		Params(func() {
 			Param("id", Integer, "ポッドID", func() {
-				Example(0)
+				Example(1)
 			})
 		})
 
@@ -217,7 +217,22 @@ var _ = Resource("pods", func() {
 		)
 		Params(func() {
 			Param("id", Integer, "ポッドID", func() {
-				Example(0)
+				Example(1)
+			})
+		})
+		Response(OK, PodMedia)
+
+		Response(NotFound, ErrorMedia)
+		Response(InternalServerError, ErrorMedia)
+	})
+	Action("show by token", func() {
+		Description("ポッドをトークンで取得")
+		Routing(
+			GET("/token/:token"),
+		)
+		Params(func() {
+			Param("token", String, "Token", func() {
+				Example("AHO-AHO-MAN")
 			})
 		})
 		Response(OK, PodMedia)
@@ -260,7 +275,7 @@ var _ = Resource("pods", func() {
 		)
 		Params(func() {
 			Param("id", Integer, "ポッドID", func() {
-				Example(0)
+				Example(1)
 			})
 		})
 		Payload(func() {
@@ -289,7 +304,7 @@ var _ = Resource("pods", func() {
 		)
 		Params(func() {
 			Param("id", Integer, "ポッドID", func() {
-				Example(0)
+				Example(1)
 			})
 		})
 		Response(OK, TokenMedia)
@@ -331,7 +346,22 @@ var _ = Resource("peers", func() {
 		)
 		Params(func() {
 			Param("id", Integer, "ピアID", func() {
-				Example(0)
+				Example(1)
+			})
+		})
+		Response(OK, PeerMedia)
+
+		Response(NotFound, ErrorMedia)
+		Response(InternalServerError, ErrorMedia)
+	})
+	Action("show by token", func() {
+		Description("ピアをトークンで取得")
+		Routing(
+			GET("/token/:token"),
+		)
+		Params(func() {
+			Param("token", String, "トークン", func() {
+				Example("AHO-AHO-MAN")
 			})
 		})
 		Response(OK, PeerMedia)
@@ -346,7 +376,7 @@ var _ = Resource("peers", func() {
 		)
 		Params(func() {
 			Param("id", Integer, "ピアID", func() {
-				Example(0)
+				Example(1)
 			})
 		})
 		Response(OK, CollectionOf(PeerLocationMedia))
@@ -361,7 +391,7 @@ var _ = Resource("peers", func() {
 		)
 		Params(func() {
 			Param("id", Integer, "ピアID", func() {
-				Example(0)
+				Example(1)
 			})
 		})
 		Response(OK, PeerLocationMedia)
@@ -382,7 +412,7 @@ var _ = Resource("peers", func() {
 				Example("TS")
 			})
 			Attribute("pod_id", Integer, "ポッドID", func() {
-				Example(0)
+				Example(1)
 			})
 			Required("code", "pod_id")
 		})
@@ -402,7 +432,7 @@ var _ = Resource("peers", func() {
 		)
 		Params(func() {
 			Param("id", Integer, "ピアID", func() {
-				Example(0)
+				Example(1)
 			})
 		})
 		Payload(func() {
@@ -425,7 +455,7 @@ var _ = Resource("peers", func() {
 		)
 		Params(func() {
 			Param("id", Integer, "ピアID", func() {
-				Example(0)
+				Example(1)
 			})
 		})
 		Response(OK, TokenMedia)
@@ -444,7 +474,7 @@ var _ = Resource("peers", func() {
 		)
 		Params(func() {
 			Param("id", Integer, "ピアID", func() {
-				Example(0)
+				Example(1)
 			})
 		})
 		Payload(func() {

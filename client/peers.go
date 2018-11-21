@@ -134,12 +134,12 @@ func (c *Client) NewListPeersRequest(ctx context.Context, path string, limit *in
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	values := u.Query()
 	if limit != nil {
-		tmp23 := strconv.Itoa(*limit)
-		values.Set("limit", tmp23)
+		tmp25 := strconv.Itoa(*limit)
+		values.Set("limit", tmp25)
 	}
 	if offset != nil {
-		tmp24 := strconv.Itoa(*offset)
-		values.Set("offset", tmp24)
+		tmp26 := strconv.Itoa(*offset)
+		values.Set("offset", tmp26)
 	}
 	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -212,7 +212,7 @@ func (c *Client) NewRegenerateTokenPeersRequest(ctx context.Context, path string
 		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
-	req, err := http.NewRequest("PATCH", u.String(), nil)
+	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -301,6 +301,41 @@ func (c *Client) ShowPeers(ctx context.Context, path string) (*http.Response, er
 
 // NewShowPeersRequest create the request corresponding to the show action endpoint of the peers resource.
 func (c *Client) NewShowPeersRequest(ctx context.Context, path string) (*http.Request, error) {
+	scheme := c.Scheme
+	if scheme == "" {
+		scheme = "http"
+	}
+	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	if c.JWTSigner != nil {
+		if err := c.JWTSigner.Sign(req); err != nil {
+			return nil, err
+		}
+	}
+	return req, nil
+}
+
+// ShowByTokenPeersPath computes a request path to the show by token action of peers.
+func ShowByTokenPeersPath(token string) string {
+	param0 := token
+
+	return fmt.Sprintf("/v1/peers/token/%s", param0)
+}
+
+// ピアをトークンで取得
+func (c *Client) ShowByTokenPeers(ctx context.Context, path string) (*http.Response, error) {
+	req, err := c.NewShowByTokenPeersRequest(ctx, path)
+	if err != nil {
+		return nil, err
+	}
+	return c.Client.Do(ctx, req)
+}
+
+// NewShowByTokenPeersRequest create the request corresponding to the show by token action endpoint of the peers resource.
+func (c *Client) NewShowByTokenPeersRequest(ctx context.Context, path string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"

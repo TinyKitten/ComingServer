@@ -7,7 +7,7 @@ definitions:
   AddPeersPayload:
     example:
       code: TS
-      pod_id: 0
+      pod_id: 1
     properties:
       code:
         description: ピアコード
@@ -15,7 +15,7 @@ definitions:
         type: string
       pod_id:
         description: ポッドID
-        example: 0
+        example: 1
         format: int64
         type: integer
     required:
@@ -52,7 +52,7 @@ definitions:
   AddUsersPayload:
     example:
       password: password
-      privilege_id: 0
+      privilege_id: 1
       screen_name: tinykitten
     properties:
       password:
@@ -63,7 +63,7 @@ definitions:
       privilege_id:
         default: 2
         description: 権限ID
-        example: 0
+        example: 1
         format: int64
         type: integer
       screen_name:
@@ -120,7 +120,7 @@ definitions:
       approaching: false
       code: TS
       created_at: 1.0173276e+09
-      id: 0
+      id: 1
       updated_at: 1.0173276e+09
     properties:
       approaching:
@@ -138,7 +138,7 @@ definitions:
         type: number
       id:
         description: ID
-        example: 0
+        example: 1
         format: int64
         type: integer
       updated_at:
@@ -207,12 +207,12 @@ definitions:
     - approaching: false
       code: TS
       created_at: 1.0173276e+09
-      id: 0
+      id: 1
       updated_at: 1.0173276e+09
     - approaching: false
       code: TS
       created_at: 1.0173276e+09
-      id: 0
+      id: 1
       updated_at: 1.0173276e+09
     items:
       $ref: '#/definitions/Peer'
@@ -223,7 +223,7 @@ definitions:
     example:
       code: TS
       created_at: 1.0173276e+09
-      id: 0
+      id: 1
       token: AHO-AHO-MAN
       updated_at: 1.0173276e+09
     properties:
@@ -238,7 +238,7 @@ definitions:
         type: number
       id:
         description: ID
-        example: 0
+        example: 1
         format: int64
         type: integer
       token:
@@ -319,7 +319,7 @@ definitions:
     example:
       code: SHIBUYA
       created_at: 1.0173276e+09
-      id: 0
+      id: 1
       latitude: 35.658034
       longitude: 139.701636
       updated_at: 1.0173276e+09
@@ -335,7 +335,7 @@ definitions:
         type: number
       id:
         description: ID
-        example: 0
+        example: 1
         format: int64
         type: integer
       latitude:
@@ -367,7 +367,7 @@ definitions:
     example:
     - code: SHIBUYA
       created_at: 1.0173276e+09
-      id: 0
+      id: 1
       latitude: 35.658034
       longitude: 139.701636
       updated_at: 1.0173276e+09
@@ -380,7 +380,7 @@ definitions:
     example:
       code: SHIBUYA
       created_at: 1.0173276e+09
-      id: 0
+      id: 1
       latitude: 35.658034
       longitude: 139.701636
       token: AHO-AHO-MAN
@@ -397,7 +397,7 @@ definitions:
         type: number
       id:
         description: ID
-        example: 0
+        example: 1
         format: int64
         type: integer
       latitude:
@@ -458,13 +458,13 @@ definitions:
   Token:
     description: トークン (default view)
     example:
-      id: 0
+      id: 1
       token: AHO-AHO-MAN
       updated_at: 1.0173276e+09
     properties:
       id:
         description: 対象ID
-        example: 0
+        example: 1
         format: int64
         type: integer
       token:
@@ -531,7 +531,7 @@ definitions:
     description: ユーザー (default view)
     example:
       created_at: 1.0173276e+09
-      id: 0
+      id: 1
       screen_name: tinykitten
       updated_at: 1.0173276e+09
     properties:
@@ -542,7 +542,7 @@ definitions:
         type: integer
       id:
         description: ID
-        example: 0
+        example: 1
         format: int64
         type: integer
       screen_name:
@@ -565,7 +565,7 @@ definitions:
     description: UserCollection is the media type for an array of User (default view)
     example:
     - created_at: 1.0173276e+09
-      id: 0
+      id: 1
       screen_name: tinykitten
       updated_at: 1.0173276e+09
     items:
@@ -1075,7 +1075,7 @@ paths:
       tags:
       - peers
   /v1/peers/{id}/token:
-    patch:
+    post:
       description: |-
         トークン再発行
 
@@ -1114,6 +1114,44 @@ paths:
       - jwt:
         - api:write
       summary: regenerate token peers
+      tags:
+      - peers
+  /v1/peers/token/{token}:
+    get:
+      description: |-
+        ピアをトークンで取得
+
+        Required security scopes:
+          * `api:read`
+      operationId: peers#show by token
+      parameters:
+      - description: トークン
+        in: path
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.peer+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Peer'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:read
+      summary: show by token peers
       tags:
       - peers
   /v1/pod:
@@ -1387,6 +1425,44 @@ paths:
       - jwt:
         - api:write
       summary: regenerate token pods
+      tags:
+      - pods
+  /v1/pods/token/{token}:
+    get:
+      description: |-
+        ポッドをトークンで取得
+
+        Required security scopes:
+          * `api:read`
+      operationId: pods#show by token
+      parameters:
+      - description: Token
+        in: path
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.pod+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Pod'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/error'
+      schemes:
+      - http
+      security:
+      - jwt:
+        - api:read
+      summary: show by token pods
       tags:
       - pods
   /v1/users:

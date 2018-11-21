@@ -216,6 +216,7 @@ type PeersController interface {
 	RegenerateToken(*RegenerateTokenPeersContext) error
 	SendLocation(*SendLocationPeersContext) error
 	Show(*ShowPeersContext) error
+	ShowByToken(*ShowByTokenPeersContext) error
 	Update(*UpdatePeersContext) error
 }
 
@@ -228,6 +229,7 @@ func MountPeersController(service *goa.Service, ctrl PeersController) {
 	service.Mux.Handle("OPTIONS", "/v1/peers/:id/locations", ctrl.MuxHandler("preflight", handlePeersOrigin(cors.HandlePreflight()), nil))
 	service.Mux.Handle("OPTIONS", "/v1/peers/:id/token", ctrl.MuxHandler("preflight", handlePeersOrigin(cors.HandlePreflight()), nil))
 	service.Mux.Handle("OPTIONS", "/v1/peers/:id", ctrl.MuxHandler("preflight", handlePeersOrigin(cors.HandlePreflight()), nil))
+	service.Mux.Handle("OPTIONS", "/v1/peers/token/:token", ctrl.MuxHandler("preflight", handlePeersOrigin(cors.HandlePreflight()), nil))
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -317,8 +319,8 @@ func MountPeersController(service *goa.Service, ctrl PeersController) {
 	}
 	h = handleSecurity("jwt", h, "api:write")
 	h = handlePeersOrigin(h)
-	service.Mux.Handle("PATCH", "/v1/peers/:id/token", ctrl.MuxHandler("regenerate token", h, nil))
-	service.LogInfo("mount", "ctrl", "Peers", "action", "RegenerateToken", "route", "PATCH /v1/peers/:id/token", "security", "jwt")
+	service.Mux.Handle("POST", "/v1/peers/:id/token", ctrl.MuxHandler("regenerate token", h, nil))
+	service.LogInfo("mount", "ctrl", "Peers", "action", "RegenerateToken", "route", "POST /v1/peers/:id/token", "security", "jwt")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -359,6 +361,23 @@ func MountPeersController(service *goa.Service, ctrl PeersController) {
 	h = handlePeersOrigin(h)
 	service.Mux.Handle("GET", "/v1/peers/:id", ctrl.MuxHandler("show", h, nil))
 	service.LogInfo("mount", "ctrl", "Peers", "action", "Show", "route", "GET /v1/peers/:id", "security", "jwt")
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewShowByTokenPeersContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.ShowByToken(rctx)
+	}
+	h = handleSecurity("jwt", h, "api:read")
+	h = handlePeersOrigin(h)
+	service.Mux.Handle("GET", "/v1/peers/token/:token", ctrl.MuxHandler("show by token", h, nil))
+	service.LogInfo("mount", "ctrl", "Peers", "action", "ShowByToken", "route", "GET /v1/peers/token/:token", "security", "jwt")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -459,6 +478,7 @@ type PodsController interface {
 	PeersList(*PeersListPodsContext) error
 	RegenerateToken(*RegenerateTokenPodsContext) error
 	Show(*ShowPodsContext) error
+	ShowByToken(*ShowByTokenPodsContext) error
 	Update(*UpdatePodsContext) error
 }
 
@@ -470,6 +490,7 @@ func MountPodsController(service *goa.Service, ctrl PodsController) {
 	service.Mux.Handle("OPTIONS", "/v1/pods/:id/peers", ctrl.MuxHandler("preflight", handlePodsOrigin(cors.HandlePreflight()), nil))
 	service.Mux.Handle("OPTIONS", "/v1/pods/:id/token", ctrl.MuxHandler("preflight", handlePodsOrigin(cors.HandlePreflight()), nil))
 	service.Mux.Handle("OPTIONS", "/v1/pods/:id", ctrl.MuxHandler("preflight", handlePodsOrigin(cors.HandlePreflight()), nil))
+	service.Mux.Handle("OPTIONS", "/v1/pods/token/:token", ctrl.MuxHandler("preflight", handlePodsOrigin(cors.HandlePreflight()), nil))
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request
@@ -561,6 +582,23 @@ func MountPodsController(service *goa.Service, ctrl PodsController) {
 	h = handlePodsOrigin(h)
 	service.Mux.Handle("GET", "/v1/pods/:id", ctrl.MuxHandler("show", h, nil))
 	service.LogInfo("mount", "ctrl", "Pods", "action", "Show", "route", "GET /v1/pods/:id", "security", "jwt")
+
+	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
+		// Check if there was an error loading the request
+		if err := goa.ContextError(ctx); err != nil {
+			return err
+		}
+		// Build the context
+		rctx, err := NewShowByTokenPodsContext(ctx, req, service)
+		if err != nil {
+			return err
+		}
+		return ctrl.ShowByToken(rctx)
+	}
+	h = handleSecurity("jwt", h, "api:read")
+	h = handlePodsOrigin(h)
+	service.Mux.Handle("GET", "/v1/pods/token/:token", ctrl.MuxHandler("show by token", h, nil))
+	service.LogInfo("mount", "ctrl", "Pods", "action", "ShowByToken", "route", "GET /v1/pods/token/:token", "security", "jwt")
 
 	h = func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 		// Check if there was an error loading the request

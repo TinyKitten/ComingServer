@@ -779,6 +779,55 @@ func (ctx *ShowPeersContext) InternalServerError(r error) error {
 	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
 }
 
+// ShowByTokenPeersContext provides the peers show by token action context.
+type ShowByTokenPeersContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	Token string
+}
+
+// NewShowByTokenPeersContext parses the incoming request URL and body, performs validations and creates the
+// context used by the peers controller show by token action.
+func NewShowByTokenPeersContext(ctx context.Context, r *http.Request, service *goa.Service) (*ShowByTokenPeersContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := ShowByTokenPeersContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramToken := req.Params["token"]
+	if len(paramToken) > 0 {
+		rawToken := paramToken[0]
+		rctx.Token = rawToken
+	}
+	return &rctx, err
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *ShowByTokenPeersContext) OK(r *Peer) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.peer+json")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// NotFound sends a HTTP response with status code 404.
+func (ctx *ShowByTokenPeersContext) NotFound(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
+}
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *ShowByTokenPeersContext) InternalServerError(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}
+
 // UpdatePeersContext provides the peers update action context.
 type UpdatePeersContext struct {
 	context.Context
@@ -1220,6 +1269,55 @@ func (ctx *ShowPodsContext) NotFound(r error) error {
 
 // InternalServerError sends a HTTP response with status code 500.
 func (ctx *ShowPodsContext) InternalServerError(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 500, r)
+}
+
+// ShowByTokenPodsContext provides the pods show by token action context.
+type ShowByTokenPodsContext struct {
+	context.Context
+	*goa.ResponseData
+	*goa.RequestData
+	Token string
+}
+
+// NewShowByTokenPodsContext parses the incoming request URL and body, performs validations and creates the
+// context used by the pods controller show by token action.
+func NewShowByTokenPodsContext(ctx context.Context, r *http.Request, service *goa.Service) (*ShowByTokenPodsContext, error) {
+	var err error
+	resp := goa.ContextResponse(ctx)
+	resp.Service = service
+	req := goa.ContextRequest(ctx)
+	req.Request = r
+	rctx := ShowByTokenPodsContext{Context: ctx, ResponseData: resp, RequestData: req}
+	paramToken := req.Params["token"]
+	if len(paramToken) > 0 {
+		rawToken := paramToken[0]
+		rctx.Token = rawToken
+	}
+	return &rctx, err
+}
+
+// OK sends a HTTP response with status code 200.
+func (ctx *ShowByTokenPodsContext) OK(r *Pod) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.pod+json")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// NotFound sends a HTTP response with status code 404.
+func (ctx *ShowByTokenPodsContext) NotFound(r error) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 404, r)
+}
+
+// InternalServerError sends a HTTP response with status code 500.
+func (ctx *ShowByTokenPodsContext) InternalServerError(r error) error {
 	if ctx.ResponseData.Header().Get("Content-Type") == "" {
 		ctx.ResponseData.Header().Set("Content-Type", "application/vnd.goa.error")
 	}

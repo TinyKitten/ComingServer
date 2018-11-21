@@ -101,12 +101,12 @@ func (c *Client) NewListPodsRequest(ctx context.Context, path string, limit *int
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	values := u.Query()
 	if limit != nil {
-		tmp25 := strconv.Itoa(*limit)
-		values.Set("limit", tmp25)
+		tmp27 := strconv.Itoa(*limit)
+		values.Set("limit", tmp27)
 	}
 	if offset != nil {
-		tmp26 := strconv.Itoa(*offset)
-		values.Set("offset", tmp26)
+		tmp28 := strconv.Itoa(*offset)
+		values.Set("offset", tmp28)
 	}
 	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -146,12 +146,12 @@ func (c *Client) NewPeersListPodsRequest(ctx context.Context, path string, limit
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
 	values := u.Query()
 	if limit != nil {
-		tmp27 := strconv.Itoa(*limit)
-		values.Set("limit", tmp27)
+		tmp29 := strconv.Itoa(*limit)
+		values.Set("limit", tmp29)
 	}
 	if offset != nil {
-		tmp28 := strconv.Itoa(*offset)
-		values.Set("offset", tmp28)
+		tmp30 := strconv.Itoa(*offset)
+		values.Set("offset", tmp30)
 	}
 	u.RawQuery = values.Encode()
 	req, err := http.NewRequest("GET", u.String(), nil)
@@ -219,6 +219,41 @@ func (c *Client) ShowPods(ctx context.Context, path string) (*http.Response, err
 
 // NewShowPodsRequest create the request corresponding to the show action endpoint of the pods resource.
 func (c *Client) NewShowPodsRequest(ctx context.Context, path string) (*http.Request, error) {
+	scheme := c.Scheme
+	if scheme == "" {
+		scheme = "http"
+	}
+	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
+	req, err := http.NewRequest("GET", u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+	if c.JWTSigner != nil {
+		if err := c.JWTSigner.Sign(req); err != nil {
+			return nil, err
+		}
+	}
+	return req, nil
+}
+
+// ShowByTokenPodsPath computes a request path to the show by token action of pods.
+func ShowByTokenPodsPath(token string) string {
+	param0 := token
+
+	return fmt.Sprintf("/v1/pods/token/%s", param0)
+}
+
+// ポッドをトークンで取得
+func (c *Client) ShowByTokenPods(ctx context.Context, path string) (*http.Response, error) {
+	req, err := c.NewShowByTokenPodsRequest(ctx, path)
+	if err != nil {
+		return nil, err
+	}
+	return c.Client.Do(ctx, req)
+}
+
+// NewShowByTokenPodsRequest create the request corresponding to the show by token action endpoint of the pods resource.
+func (c *Client) NewShowByTokenPodsRequest(ctx context.Context, path string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"
