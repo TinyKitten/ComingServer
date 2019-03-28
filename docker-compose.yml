@@ -1,4 +1,7 @@
 version: "3"
+volumes:
+  db:
+  redis:
 services:
   app:
     build: .
@@ -9,6 +12,7 @@ services:
     depends_on:
       - db
       - redis
+    restart: always
   db:
     image: mariadb:10.4.3
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
@@ -18,9 +22,11 @@ services:
       MYSQL_USER: comingserver
       MYSQL_PASSWORD: comingserver
     volumes:
-        - ./data/mysql:/var/lib/mysql
+        - db:/var/lib/mysql
+    restart: always
   redis:
     image: redis:5.0.4-alpine
     command: redis-server --appendonly yes
     volumes:
-      - ./data/redis:/data
+      - redis:/data
+    restart: always

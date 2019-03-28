@@ -21,6 +21,4 @@ dbconfig.yml
 jwtkey/jwt.key
 jwtkey/jwt.pub
 
-data/
-
 .env
