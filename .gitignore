@@ -18,4 +18,9 @@ comingserver
 
 dbconfig.yml
 
-jwtkey/
+jwtkey/jwt.key
+jwtkey/jwt.pub
+
+data/
+
+.env

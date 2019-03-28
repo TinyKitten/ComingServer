@@ -39,11 +39,14 @@ deploy:
 ##### Database ######
 
 DBUSERNAME:=comingserver
-DBNAME:=comingserver
+DATABASE_NAME:=comingserver
+DATABASE_USERNAME:=comingserver
+DATABASE_PASSWORD:=comingserver
+DATABASE_HOST:=db
 ENV:=development
 
 migrate/init:
-	mysql -u comingserver -h localhost --protocol tcp -e "create database \`$(DBNAME)\`" -p
+	mysql -u $(DATABASE_USERNAME) -p $(DATABASE_PASSWORD) -h $(DATABASE_HOST) --protocol tcp -e "create database \`$(DATABASE_NAME)\`" -p
 
 migrate/up:
 	sql-migrate up -env=$(ENV)

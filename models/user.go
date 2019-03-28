@@ -2,7 +2,7 @@ package models
 
 // UserList すべてのユーザ
 func UserList(db XODB, offset, limit int) ([]*User, error) {
-	sqlstr := `SELECT screen_name, privilege_id, created_at, updated_at
+	sqlstr := `SELECT id, screen_name, privilege_id, created_at, updated_at
 	FROM users
 	LIMIT ?
 	OFFSET ?`
