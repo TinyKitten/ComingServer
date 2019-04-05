@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/TeamKitten/API/utils"
+	"github.com/TinyKitten/ComingServer/utils"
 )
 
 func TestMain(m *testing.M) {
@@ -19,8 +19,15 @@ func before() {
 
 func TestGetPort(t *testing.T) {
 	port := utils.GetPort()
-	if port != ":8080" {
+	if port != ":52360" {
 		t.Fatal("port number is invalid")
+	}
+}
+
+func TestGetDSN(t *testing.T) {
+	dsn := utils.GetDSN()
+	if dsn != "" {
+		t.Fatal("default DSN is invalid")
 	}
 }
 

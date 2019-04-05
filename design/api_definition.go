@@ -14,13 +14,13 @@ var _ = API("ComingServer", func() {
 	})
 	License(func() {
 		Name("MIT")
-		URL("https://github.com/TeamKitten/ComingServer/blob/master/LICENSE")
+		URL("https://github.com/TinyKitten/ComingServer/blob/master/LICENSE")
 	})
 	Docs(func() {
 		Description("wiki")
-		URL("https://github.com/TeamKitten/ComingServer/wiki")
+		URL("https://github.com/TinyKitten/ComingServer/wiki")
 	})
-	Host("localhost:8080")
+	Host("localhost:52360")
 	Scheme("http")
 	BasePath("/v1")
 

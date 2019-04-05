@@ -1,5 +1,5 @@
--- +migrate Up
--- SQL in section 'Up' is executed when this migration is applied
+SET CHARSET UTF8;
+
 CREATE TABLE users
 (
 	id BIGINT unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
@@ -93,12 +93,3 @@ ALTER TABLE peers_map
 	ON UPDATE RESTRICT
 	ON DELETE RESTRICT
 ;
-
--- +migrate Down
--- SQL section 'Down' is executed when this migration is rolled back
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS privileges;
-DROP TABLE IF EXISTS pods;
-DROP TABLE IF EXISTS peers;
-DROP TABLE IF EXISTS peer_locations;
-DROP TABLE IF EXISTS peers_map;

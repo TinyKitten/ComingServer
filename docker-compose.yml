@@ -6,12 +6,17 @@ services:
   app:
     build: .
     ports:
-      - "8080:8080"
+      - "52360:52360"
     volumes:
       - .:/go/src/github.com/TinyKitten/ComingServer
     depends_on:
       - db
       - redis
+    environment:
+      REDIS_URL: redis://redis:6379
+      APPROACHED_THRESHOLD: 1000
+      LEAVE_THRESHOLD: 1500
+      DSN: comingserver:comingserver@tcp(db:3306)/comingserver?parseTime=true&loc=Asia%2FTokyo
     restart: always
   db:
     image: mysql:5.7.25
@@ -23,6 +28,7 @@ services:
       MYSQL_PASSWORD: comingserver
     volumes:
         - db:/var/lib/mysql
+        - ./migrations:/docker-entrypoint-initdb.d
     restart: always
   redis:
     image: redis:5.0.4-alpine

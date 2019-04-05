@@ -3,13 +3,13 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/TinyKitten/ComingServer/app"
 	"github.com/TinyKitten/ComingServer/controller"
-	"github.com/TinyKitten/ComingServer/database"
 	"github.com/TinyKitten/ComingServer/security"
 	"github.com/TinyKitten/ComingServer/utils"
 	"github.com/go-redis/redis"
@@ -20,11 +20,8 @@ import (
 func main() {
 	utils.LoadEnv()
 
-	cs, err := database.NewConfigsFromFile("dbconfig.yml")
-	if err != nil {
-		log.Fatalf("cannot open database configuration. exit. %s", err)
-	}
-	dbConn, err := cs.Open(utils.GetEnv())
+	dsn := utils.GetDSN()
+	dbConn, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatalf("database initialization failed: %s", err)
 	}
@@ -79,7 +76,8 @@ func main() {
 	app.MountAccountController(service, c7)
 
 	// Start service
-	if err := service.ListenAndServe(":8080"); err != nil {
+	port := utils.GetPort()
+	if err := service.ListenAndServe(port); err != nil {
 		service.LogError("startup", "err", err)
 	}
 
