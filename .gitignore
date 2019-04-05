@@ -16,8 +16,6 @@ vendor/
 
 comingserver
 
-dbconfig.yml
-
 jwtkey/jwt.key
 jwtkey/jwt.pub
 

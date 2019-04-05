@@ -119,9 +119,9 @@ definitions:
     example:
       approaching: false
       code: TS
-      created_at: 1.0173276e+09
+      created_at: 1017327600
       id: 1
-      updated_at: 1.0173276e+09
+      updated_at: 1017327600
     properties:
       approaching:
         description: ポッド装置に接近している
@@ -133,7 +133,7 @@ definitions:
         type: string
       created_at:
         description: 作成日
-        example: 1.0173276e+09
+        example: 1017327600
         format: double
         type: number
       id:
@@ -143,7 +143,7 @@ definitions:
         type: integer
       updated_at:
         description: 更新日
-        example: 1.0173276e+09
+        example: 1017327600
         format: int64
         type: integer
     required:
@@ -159,7 +159,7 @@ definitions:
     example:
       approaching: false
       code: TS
-      created_at: 1.0173276e+09
+      created_at: 1017327600
       latitude: 35.658034
       longitude: 139.701636
       type: APPROACHING
@@ -174,7 +174,7 @@ definitions:
         type: string
       created_at:
         description: 作成日
-        example: 1.0173276e+09
+        example: 1017327600
         format: double
         type: number
       latitude:
@@ -206,14 +206,14 @@ definitions:
     example:
     - approaching: false
       code: TS
-      created_at: 1.0173276e+09
+      created_at: 1017327600
       id: 1
-      updated_at: 1.0173276e+09
+      updated_at: 1017327600
     - approaching: false
       code: TS
-      created_at: 1.0173276e+09
+      created_at: 1017327600
       id: 1
-      updated_at: 1.0173276e+09
+      updated_at: 1017327600
     items:
       $ref: '#/definitions/Peer'
     title: 'Mediatype identifier: application/vnd.peer+json; type=collection; view=default'
@@ -222,10 +222,10 @@ definitions:
     description: ピア作成成功 (default view)
     example:
       code: TS
-      created_at: 1.0173276e+09
+      created_at: 1017327600
       id: 1
       token: AHO-AHO-MAN
-      updated_at: 1.0173276e+09
+      updated_at: 1017327600
     properties:
       code:
         description: コード
@@ -233,7 +233,7 @@ definitions:
         type: string
       created_at:
         description: 作成日
-        example: 1.0173276e+09
+        example: 1017327600
         format: double
         type: number
       id:
@@ -247,7 +247,7 @@ definitions:
         type: string
       updated_at:
         description: 更新日
-        example: 1.0173276e+09
+        example: 1017327600
         format: int64
         type: integer
     required:
@@ -261,14 +261,14 @@ definitions:
   PeerLocation:
     description: ピア位置情報 (default view)
     example:
-      created_at: 1.0173276e+09
+      created_at: 1017327600
       latitude: 35.658034
       longitude: 139.701636
-      updated_at: 1.0173276e+09
+      updated_at: 1017327600
     properties:
       created_at:
         description: 作成日
-        example: 1.0173276e+09
+        example: 1017327600
         format: double
         type: number
       latitude:
@@ -283,7 +283,7 @@ definitions:
         type: number
       updated_at:
         description: 更新日
-        example: 1.0173276e+09
+        example: 1017327600
         format: int64
         type: integer
     required:
@@ -297,18 +297,18 @@ definitions:
     description: PeerLocationCollection is the media type for an array of PeerLocation
       (default view)
     example:
-    - created_at: 1.0173276e+09
+    - created_at: 1017327600
       latitude: 35.658034
       longitude: 139.701636
-      updated_at: 1.0173276e+09
-    - created_at: 1.0173276e+09
+      updated_at: 1017327600
+    - created_at: 1017327600
       latitude: 35.658034
       longitude: 139.701636
-      updated_at: 1.0173276e+09
-    - created_at: 1.0173276e+09
+      updated_at: 1017327600
+    - created_at: 1017327600
       latitude: 35.658034
       longitude: 139.701636
-      updated_at: 1.0173276e+09
+      updated_at: 1017327600
     items:
       $ref: '#/definitions/PeerLocation'
     title: 'Mediatype identifier: application/vnd.peer.location+json; type=collection;
@@ -318,11 +318,11 @@ definitions:
     description: ポッド (default view)
     example:
       code: SHIBUYA
-      created_at: 1.0173276e+09
+      created_at: 1017327600
       id: 1
       latitude: 35.658034
       longitude: 139.701636
-      updated_at: 1.0173276e+09
+      updated_at: 1017327600
     properties:
       code:
         description: コード
@@ -330,7 +330,7 @@ definitions:
         type: string
       created_at:
         description: 作成日
-        example: 1.0173276e+09
+        example: 1017327600
         format: double
         type: number
       id:
@@ -350,7 +350,7 @@ definitions:
         type: number
       updated_at:
         description: 更新日
-        example: 1.0173276e+09
+        example: 1017327600
         format: int64
         type: integer
     required:
@@ -366,11 +366,11 @@ definitions:
     description: PodCollection is the media type for an array of Pod (default view)
     example:
     - code: SHIBUYA
-      created_at: 1.0173276e+09
+      created_at: 1017327600
       id: 1
       latitude: 35.658034
       longitude: 139.701636
-      updated_at: 1.0173276e+09
+      updated_at: 1017327600
     items:
       $ref: '#/definitions/Pod'
     title: 'Mediatype identifier: application/vnd.pod+json; type=collection; view=default'
@@ -379,12 +379,12 @@ definitions:
     description: ポッド作成成功 (default view)
     example:
       code: SHIBUYA
-      created_at: 1.0173276e+09
+      created_at: 1017327600
       id: 1
       latitude: 35.658034
       longitude: 139.701636
       token: AHO-AHO-MAN
-      updated_at: 1.0173276e+09
+      updated_at: 1017327600
     properties:
       code:
         description: コード
@@ -392,7 +392,7 @@ definitions:
         type: string
       created_at:
         description: 作成日
-        example: 1.0173276e+09
+        example: 1017327600
         format: double
         type: number
       id:
@@ -416,7 +416,7 @@ definitions:
         type: string
       updated_at:
         description: 更新日
-        example: 1.0173276e+09
+        example: 1017327600
         format: int64
         type: integer
     required:
@@ -460,7 +460,7 @@ definitions:
     example:
       id: 1
       token: AHO-AHO-MAN
-      updated_at: 1.0173276e+09
+      updated_at: 1017327600
     properties:
       id:
         description: 対象ID
@@ -473,7 +473,7 @@ definitions:
         type: string
       updated_at:
         description: 更新日
-        example: 1.0173276e+09
+        example: 1017327600
         format: int64
         type: integer
     required:
@@ -530,14 +530,14 @@ definitions:
   User:
     description: ユーザー (default view)
     example:
-      created_at: 1.0173276e+09
+      created_at: 1017327600
       id: 1
       screen_name: tinykitten
-      updated_at: 1.0173276e+09
+      updated_at: 1017327600
     properties:
       created_at:
         description: 作成日
-        example: 1.0173276e+09
+        example: 1017327600
         format: int64
         type: integer
       id:
@@ -551,7 +551,7 @@ definitions:
         type: string
       updated_at:
         description: 更新日
-        example: 1.0173276e+09
+        example: 1017327600
         format: int64
         type: integer
     required:
@@ -564,10 +564,10 @@ definitions:
   UserCollection:
     description: UserCollection is the media type for an array of User (default view)
     example:
-    - created_at: 1.0173276e+09
+    - created_at: 1017327600
       id: 1
       screen_name: tinykitten
-      updated_at: 1.0173276e+09
+      updated_at: 1017327600
     items:
       $ref: '#/definitions/User'
     title: 'Mediatype identifier: application/vnd.user+json; type=collection; view=default'
@@ -579,7 +579,7 @@ definitions:
       detail: Value of ID must be an integer
       id: 3F1FKVRR
       meta:
-        timestamp: 1.458609066e+09
+        timestamp: 1458609066
       status: "400"
     properties:
       code:
@@ -600,7 +600,7 @@ definitions:
         description: a meta object containing non-standard meta-information about
           the error.
         example:
-          timestamp: 1.458609066e+09
+          timestamp: 1458609066
         type: object
       status:
         description: the HTTP status code applicable to this problem, expressed as
@@ -611,8 +611,8 @@ definitions:
     type: object
 externalDocs:
   description: wiki
-  url: https://github.com/TeamKitten/ComingServer/wiki
-host: localhost:8080
+  url: https://github.com/TinyKitten/ComingServer/wiki
+host: localhost:52360
 info:
   contact:
     email: catwalk8205@gmail.com
@@ -621,7 +621,7 @@ info:
   description: Coming API Server
   license:
     name: MIT
-    url: https://github.com/TeamKitten/ComingServer/blob/master/LICENSE
+    url: https://github.com/TinyKitten/ComingServer/blob/master/LICENSE
   title: TinyKitten/ComingServer
   version: ""
 paths:

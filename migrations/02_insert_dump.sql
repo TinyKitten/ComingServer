@@ -1,5 +1,4 @@
--- +migrate Up
--- SQL in section 'Up' is executed when this migration is applied
+SET CHARSET UTF8;
 
 --
 -- テーブルのデータのダンプ `privileges`

@@ -22,7 +22,7 @@ func LoadEnv() {
 func GetPort() string {
 	port := os.Getenv("PORT")
 	if port == "" {
-		return ":8080"
+		return ":52360"
 	}
 	return fmt.Sprintf(":%s", port)
 }
@@ -60,4 +60,10 @@ func GetLeaveThreshold() (float64, error) {
 		return 0, err
 	}
 	return threshold, nil
+}
+
+// GetDSN DSNを返す
+func GetDSN() string {
+	dsn := os.Getenv("DSN")
+	return dsn
 }
