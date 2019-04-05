@@ -3,7 +3,6 @@
 ##### Convenience targets ######
 
 REPO:=github.com/TinyKitten/ComingServer
-GAE_PROJECT:=coming-222616
 
 init: depend bootstrap
 gen: clean generate
@@ -31,10 +30,6 @@ generate:
 	@goagen app     -d $(REPO)/design
 	@goagen swagger -d $(REPO)/design
 	@goagen client  -d $(REPO)/design
-
-deploy:
-	gcloud app deploy --project $(GAE_PROJECT) .
-
 
 ##### Database ######
 

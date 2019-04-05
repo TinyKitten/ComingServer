@@ -4,12 +4,10 @@ volumes:
   redis:
 services:
   app:
-    build: .
+    image: asia.gcr.io/coming/comingserver
     ports:
       - "52360:52360"
-    volumes:
-      - .:/go/src/github.com/TinyKitten/ComingServer
-    depends_on:
+    links:
       - db
       - redis
     environment:
@@ -19,9 +17,7 @@ services:
       DSN: comingserver:comingserver@tcp(db:3306)/comingserver?parseTime=true&loc=Asia%2FTokyo
     restart: always
   db:
-    build:
-      context: .
-      dockerfile: ./docker/mysql/Dockerfile
+    image: asia.gcr.io/coming/comingserver-mysql
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: comingserver
